@@ -7,8 +7,8 @@ services:
     volumes:
       - ./backend:/usr/src/app
       - /usr/src/app/node_modules
-    depends_on:
-      - mongo
+    environment:
+      - MONGO_URI
 
   frontend:
     build: ./frontend
@@ -22,13 +22,6 @@ services:
     environment:
       - CHOKIDAR_USEPOLLING=true
       - CHOKIDAR_INTERVAL=10000
-
-  mongo:
-    image: mongo:latest
-    ports:
-      - '27017:27017'
-    volumes:
-      - mongo-data:/data/db
 
 volumes:
   mongo-data:
