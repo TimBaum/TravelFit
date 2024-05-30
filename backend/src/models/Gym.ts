@@ -7,7 +7,6 @@ import Review from './Review';
 import { ObjectId } from 'mongodb';
 
 const gymSchema = new mongoose.Schema({
-  owner: { type: ObjectId, ref: 'GymManager' },
   name: String,
   highlights: [{ type: String, enum: ["Sauna", "Posing room", "..."] }],
   websiteLink: String,

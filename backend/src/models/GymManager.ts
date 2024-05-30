@@ -11,6 +11,7 @@ const gymManagerSchema = new mongoose.Schema({
   salutation: { type: String, enum: ["Mr.", "Ms.", "Diverse"] },
   password: String,
   address: Address,
+  gyms: [Gym],
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }
 });
