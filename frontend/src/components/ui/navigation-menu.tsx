@@ -3,6 +3,7 @@ import * as NavigationMenuPrimitive from "@radix-ui/react-navigation-menu"
 import { cva } from "class-variance-authority"
 import { ChevronDown } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import '@/styles/navigationMenu.css'
 
 
 import { cn } from "@/lib/utils"
@@ -117,43 +118,48 @@ const NavigationMenuIndicator = React.forwardRef<
 NavigationMenuIndicator.displayName =
   NavigationMenuPrimitive.Indicator.displayName
 
-function NavigationMenuUser(){
-  return(
-    <NavigationMenu>
-      <NavigationMenuList>
-        <NavigationMenuLink className="NavigationMenuLink" href="https://www.instagram.com/leonie_popk/">
-          <img src="/TravelFit Icon.svg"></img>
-        </NavigationMenuLink>
-        <NavigationMenuItem>
-          <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-            Find gyms
-          </NavigationMenuLink>
-        </NavigationMenuItem>
-        <NavigationMenuItem>
-          <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-            Favourites
-          </NavigationMenuLink>
-        </NavigationMenuItem>
-        <NavigationMenuItem>
-          <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-            My gyms
-          </NavigationMenuLink>
-        </NavigationMenuItem>
-        <NavigationMenuItem>
-          <NavigationMenuTrigger>
-            <Avatar>
-              <AvatarFallback>CN</AvatarFallback>
-            </Avatar>
-          </NavigationMenuTrigger>
-        </NavigationMenuItem>
-      </NavigationMenuList>
-    </NavigationMenu>
-  )
+function NavigationMenuUser() {
+    return (
+        <NavigationMenu className="navigationmenu">
+            <div className="navigationmenu-left">
+                <NavigationMenuList>
+                    <NavigationMenuLink className="NavigationMenuLink" href="https://www.instagram.com/leonie_popk/">
+                        <img src="/TravelFit Icon.svg" />
+                    </NavigationMenuLink>
+                    <NavigationMenuItem>
+                        <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                            Find gyms
+                        </NavigationMenuLink>
+                    </NavigationMenuItem>
+                    <NavigationMenuItem>
+                        <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                            Favourites
+                        </NavigationMenuLink>
+                    </NavigationMenuItem>
+                    <NavigationMenuItem>
+                        <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                            My gyms
+                        </NavigationMenuLink>
+                    </NavigationMenuItem>
+                </NavigationMenuList>
+            </div>
+            <div className="navigationmenu-right">
+                <NavigationMenuItem>
+                    <NavigationMenuTrigger>
+                        <Avatar>
+                            <AvatarFallback>CN</AvatarFallback>
+                        </Avatar>
+                    </NavigationMenuTrigger>
+                </NavigationMenuItem>
+            </div>
+        </NavigationMenu>
+    );
 }
+
 
 function NavigationMenuGym(){
   return(
-    <NavigationMenu>
+    <NavigationMenu className="navigationmenu">
       <NavigationMenuList>
         <NavigationMenuLink className="NavigationMenuLink" href="https://www.instagram.com/leonie_popk/">
           <img src="/TravelFit Icon.svg"></img>

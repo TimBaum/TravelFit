@@ -1,0 +1,20 @@
+.navigationmenu {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px; /* Adjust the padding as needed */
+    background-color: #333; /* Adjust the background color as needed */
+    color: white; /* Adjust the text color as needed */
+    margin-bottom: 20px; /* Adjust spacing below the navbar */
+}
+
+/* Optional styling for left and right sections */
+.navigationmenu-left {
+    display: flex;
+    align-items: center;
+}
+
+.navigationmenu -right {
+    display: flex;
+    align-items: center;
+}
