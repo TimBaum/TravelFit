@@ -13,20 +13,78 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuCheckboxItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+    DropdownMenuItem,
+  } from "@/components/ui/dropdown-menu"
+import { DropdownMenuCheckboxItemProps } from "@radix-ui/react-dropdown-menu"
+import React from "react"
+  
+type Checked = DropdownMenuCheckboxItemProps["checked"]
 
-const formSchema = z.object({
-  username: z.string().min(2, {
-    message: "Username must be at least 2 characters.",
-  }),
-})
+export function DropdownMenuCheckboxes() {
+    const [showStatusBar, setShowStatusBar] = React.useState<Checked>(true)
+    const [showActivityBar, setShowActivityBar] = React.useState<Checked>(false)
+    const [showPanel, setShowPanel] = React.useState<Checked>(false)
+   
+    return (
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="outline">Open</Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent className="w-56">
+          <DropdownMenuLabel>Appearance</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuCheckboxItem
+            checked={showStatusBar}
+            onCheckedChange={setShowStatusBar}
+          >
+            Status Bar
+          </DropdownMenuCheckboxItem>
+          <DropdownMenuCheckboxItem
+            checked={showActivityBar}
+            onCheckedChange={setShowActivityBar}
+            disabled
+          >
+            Activity Bar
+          </DropdownMenuCheckboxItem>
+          <DropdownMenuCheckboxItem
+            checked={showPanel}
+            onCheckedChange={setShowPanel}
+          >
+            Panel
+          </DropdownMenuCheckboxItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    )
+  }
 
-export function GymAccountForm() {
-   const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      username: "",
-    },
+  const formSchema = z.object({
+    salutation: z.enum(["Mr.", "Ms.", "Diverse"]),
+    firstName: z.string().min(2, { message: "First name must be at least 2 characters." }),
+    name: z.string().min(2, { message: "Name must be at least 2 characters." }),
+    email: z.string().email({ message: "Invalid email address." }),
+    phone: z.string().min(10, { message: "Phone number must be at least 10 characters." }),
+    address: z.string().min(5, { message: "Address must be at least 5 characters." })
   })
+
+  export function GymAccountForm() {
+    const form = useForm<z.infer<typeof formSchema>>({
+      resolver: zodResolver(formSchema),
+      defaultValues: {
+        salutation: "Mr.",
+        firstName: "",
+        name: "",
+        email: "",
+        phone: "",
+        address: ""
+      },
+    })
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values)
@@ -37,19 +95,34 @@ export function GymAccountForm() {
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
       <FormField
           control={form.control}
-          name="username"
+          name="salutation"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Salutation</FormLabel>
               <FormControl>
-                <Input placeholder="salutation" {...field} />
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline">{field.value}</Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    {["Mr.", "Ms.", "Diverse"].map(option => (
+                      <DropdownMenuItem
+                        key={option}
+                        onSelect={() => field.onChange(option)}
+                      >
+                        {option}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </FormControl>
+              <FormMessage>{form.formState.errors.salutation?.message}</FormMessage>
             </FormItem>
           )}
         />
         <FormField
           control={form.control}
-          name="username"
+          name="firstName"
           render={({ field }) => (
             <FormItem>
               <FormLabel>First name</FormLabel>
@@ -61,7 +134,7 @@ export function GymAccountForm() {
         />
         <FormField
           control={form.control}
-          name="username"
+          name="name"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Name</FormLabel>
@@ -73,7 +146,7 @@ export function GymAccountForm() {
         />
         <FormField
           control={form.control}
-          name="username"
+          name="address"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Address</FormLabel>
@@ -85,7 +158,7 @@ export function GymAccountForm() {
         />
         <FormField
           control={form.control}
-          name="username"
+          name="email"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Email</FormLabel>
@@ -97,7 +170,7 @@ export function GymAccountForm() {
         />
         <FormField
           control={form.control}
-          name="username"
+          name="phone"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Phone</FormLabel>
