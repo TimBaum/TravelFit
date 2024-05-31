@@ -1,12 +1,16 @@
 import GymAccountForm from "@/components/GymAccountForm";
-
-function storeGymAccountInDB() {}
+import { Button } from "@/components/ui/button";
 
 function CreateGymAccount() {
     return (
       <>
-        <h1>Create your parter account</h1>
+        <h1>Create your partner account</h1>
+        <p>Attract a broad audience</p>
+        <p>Spread information about offers and subscriptions</p>
+        <p>Stand out with fitting offers for travellers</p>
         <GymAccountForm />
+        <p>Already a partner?</p>
+        <Button type="submit">Log in as partner</Button>
       </>
     )
   }
