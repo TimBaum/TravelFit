@@ -1,0 +1,31 @@
+/* Dropdown Menu */
+.dropdown-menu {
+    background-color: #fff; /* Ensure the background color is white */
+    border: 1px solid #ccc; /* Optional: Add border for better visibility */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Optional: Add shadow for depth */
+  }
+  
+  /* Dropdown Menu Item */
+  .dropdown-menu-item {
+    background-color: #fff; /* Ensure each item has a white background */
+    color: #333; /* Set the text color */
+    padding: 10px 15px; 
+    cursor: pointer;
+  }
+  
+  .dropdown-menu-item:hover {
+    background-color: #f0f0f0; /* Change background on hover for better UX */
+  }
+  
+  /* Dropdown Menu Checkbox Item */
+  .dropdown-menu-checkbox-item {
+    background-color: #fff; /* Ensure each checkbox item has a white background */
+    color: #333; /* Set the text color */
+    padding: 10px 15px; 
+    cursor: pointer;
+  }
+  
+  .dropdown-menu-checkbox-item:hover {
+    background-color: #f0f0f0; /* Change background on hover for better UX */
+  }
+  

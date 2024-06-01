@@ -1,5 +1,6 @@
 import React from "react"
 import '@/styles/GymAccountForm.css'
+import '@/styles/DropdownMenuCheckboxes.css'
 
 import { Button } from "@/components/ui/button"
 import {
@@ -30,6 +31,7 @@ export function DropdownMenuCheckboxes() {
           <DropdownMenuCheckboxItem
             checked={showStatusBar}
             onCheckedChange={setShowStatusBar}
+            className="dropdown-menu-checkbox-item"
           >
             Status Bar
           </DropdownMenuCheckboxItem>
@@ -37,12 +39,14 @@ export function DropdownMenuCheckboxes() {
             checked={showActivityBar}
             onCheckedChange={setShowActivityBar}
             disabled
+            className="dropdown-menu-checkbox-item"
           >
             Activity Bar
           </DropdownMenuCheckboxItem>
           <DropdownMenuCheckboxItem
             checked={showPanel}
             onCheckedChange={setShowPanel}
+            className="dropdown-menu-checkbox-item"
           >
             Panel
           </DropdownMenuCheckboxItem>
