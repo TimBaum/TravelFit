@@ -58,7 +58,7 @@ import {
               <FormControl>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="outline">{field.value}</Button>
+                    <Button variant="outline">{field.value || "Select"}</Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>
                     {["Mr.", "Ms.", "Diverse"].map(option => (
@@ -140,7 +140,7 @@ import {
           )}
         />
         </div>
-        <Button type="submit">Create account</Button>
+        <Button type="submit" variant="outline">Create account</Button>
       </form>
     </Form>
   )
