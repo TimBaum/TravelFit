@@ -91,3 +91,12 @@ button:focus-visible {
   float: right;
   display: flex;
 }
+
+.breadcrumps {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px; /* Adjust the padding as needed */
+  color: white; /* Adjust the text color as needed */
+  margin-bottom: 20px; /* Adjust spacing below the navbar */
+}

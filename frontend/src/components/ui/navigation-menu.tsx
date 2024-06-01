@@ -5,7 +5,7 @@ import { ChevronDown } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { PersonIcon } from '@radix-ui/react-icons'
 import '@/styles/icon.css'
-import '@/styles/navigationMenu.css'
+import '@/index.css'
 
 
 import { cn } from "@/lib/utils"
