@@ -1,12 +1,12 @@
 import GymAccountForm from "@/components/GymAccountForm"
 import { Button } from "@/components/ui/button"
-import { NavigationMenuGym } from "@/components/ui/navigation-menu"
+import { NavigationMenuManager } from "@/components/ui/navigation-menu"
 import '@/styles/CreateGymAccount.css'
 
 function CreateGymAccount() {
     return (
       <>
-      <NavigationMenuGym/>
+      <NavigationMenuManager/>
       <div className="container">
         <div className="info-box">
         <h1>Create your partner account</h1>
