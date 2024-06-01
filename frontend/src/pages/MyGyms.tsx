@@ -5,6 +5,14 @@ import { Card } from '@/components/ui/card'
 import { FaSearch } from 'react-icons/fa'
 import { LucidePencil as Pencil } from 'lucide-react'
 import '../styles/MyGyms.css'
+import { NavigationMenuManager } from '@/components/ui/navigation-menu'
+import {
+  Breadcrumb,
+  BreadcrumbList,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbSeparator,
+} from '@/components/ui/breadcrumb'
 
 const MyGyms: React.FC = () => {
   const [gyms, setGyms] = useState([
@@ -31,37 +39,55 @@ const MyGyms: React.FC = () => {
   }
 
   return (
-    <div className="container">
-      <h1 className="title">My Gyms</h1>
-      <div className="search-bar">
-        <Input className="input" placeholder="Search gyms..." />
-        <Button className="search-button">
-          <FaSearch style={{ transform: 'scaleX(-1)', fontSize: '20px' }} />
+    <>
+      <div className="navigationmenu">
+        <NavigationMenuManager />
+      </div>
+      <div className="breadcrumps">
+        <Breadcrumb>
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/">Home</BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/my-gyms">My Gyms</BreadcrumbLink>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+      </div>
+      <div className="container">
+        <h1 className="title">My Gyms</h1>
+        <div className="search-bar">
+          <Input className="input" placeholder="Search gyms..." />
+          <Button className="search-button">
+            <FaSearch style={{ transform: 'scaleX(-1)', fontSize: '20px' }} />
+          </Button>
+        </div>
+
+        {gyms.map((gym, index) => (
+          <Card key={index} className="card">
+            <div className="card-content">
+              <Button onClick={() => handleGymClick(gym)}> {gym} </Button>
+              <div>
+                <Button>
+                  <Pencil />
+                </Button>
+                <Button
+                  variant="destructive"
+                  onClick={() => handleDeleteGym(gym)}
+                >
+                  Delete
+                </Button>
+              </div>
+            </div>
+          </Card>
+        ))}
+        <Button className="add-gym-button" onClick={handleAddGym}>
+          + Add your gym
         </Button>
       </div>
-
-      {gyms.map((gym, index) => (
-        <Card key={index} className="card">
-          <div className="card-content">
-            <Button onClick={() => handleGymClick(gym)}> {gym} </Button>
-            <div>
-              <Button>
-                <Pencil className="text-xl" />
-              </Button>
-              <Button
-                variant="destructive"
-                onClick={() => handleDeleteGym(gym)}
-              >
-                Delete
-              </Button>
-            </div>
-          </div>
-        </Card>
-      ))}
-      <Button className="add-gym-button" onClick={handleAddGym}>
-        + Add your gym
-      </Button>
-    </div>
+    </>
   )
 }
 

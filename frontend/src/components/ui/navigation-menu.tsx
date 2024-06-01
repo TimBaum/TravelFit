@@ -118,7 +118,7 @@ const NavigationMenuIndicator = React.forwardRef<
 NavigationMenuIndicator.displayName =
   NavigationMenuPrimitive.Indicator.displayName
 
-function NavigationMenuUser() {
+function NavigationMenuManager() {
   return (
     <NavigationMenu>
       <NavigationMenuList>
@@ -156,7 +156,7 @@ function NavigationMenuUser() {
   )
 }
 
-function NavigationMenuManager() {
+function NavigationMenuUser() {
   return (
     <NavigationMenu>
       <NavigationMenuList>
