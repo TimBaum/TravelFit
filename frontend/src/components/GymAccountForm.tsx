@@ -86,6 +86,7 @@ import {
               <FormControl>
                 <Input placeholder="first name" {...field} />
               </FormControl>
+              <FormMessage>{form.formState.errors.firstName?.message}</FormMessage>
             </FormItem>
           )}
         />
@@ -98,6 +99,7 @@ import {
               <FormControl>
                 <Input placeholder="name" {...field} />
               </FormControl>
+              <FormMessage>{form.formState.errors.name?.message}</FormMessage>
             </FormItem>
           )}
         />
@@ -111,6 +113,7 @@ import {
               <FormControl>
                 <Input placeholder="address" {...field} />
               </FormControl>
+              <FormMessage>{form.formState.errors.address?.message}</FormMessage>
             </FormItem>
           )}
         />
@@ -124,6 +127,7 @@ import {
               <FormControl>
                 <Input placeholder="email" {...field} />
               </FormControl>
+              <FormMessage>{form.formState.errors.email?.message}</FormMessage>
             </FormItem>
           )}
         />
@@ -136,6 +140,7 @@ import {
               <FormControl>
                 <Input placeholder="phone" {...field} />
               </FormControl>
+              <FormMessage>{form.formState.errors.phone?.message}</FormMessage>
             </FormItem>
           )}
         />
