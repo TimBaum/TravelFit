@@ -29,5 +29,5 @@ function CreateGymAccount() {
       </>
     )
   }
-  
+
   export default CreateGymAccount  
