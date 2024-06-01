@@ -8,13 +8,7 @@
     margin-bottom: 20px; /* Adjust spacing below the navbar */
 }
 
-/* Optional styling for left and right sections */
-.navigationmenu-left {
+.navigationmenuRight {
+    float: right;
     display: flex;
-    align-items: center;
-}
-
-.navigationmenu -right {
-    display: flex;
-    align-items: center;
 }
