@@ -20,14 +20,16 @@ import {
     DropdownMenuItem,
 } from "@/components/ui/dropdown-menu"
 
-  const formSchema = z.object({
-    salutation: z.enum(["Mr.", "Ms.", "Diverse"]),
-    firstName: z.string().min(2, { message: "First name must be at least 2 characters." }),
-    name: z.string().min(2, { message: "Name must be at least 2 characters." }),
-    email: z.string().email({ message: "Invalid email address." }),
-    phone: z.string().min(10, { message: "Phone number must be at least 10 characters." }),
-    address: z.string().min(5, { message: "Address must be at least 5 characters." })
-  })
+const phoneValidationRegex = /^\+?[1-9]\d{1,14}$/; // E.164 international phone number format
+
+const formSchema = z.object({
+  salutation: z.enum(["Mr.", "Ms.", "Diverse"]),
+  firstName: z.string().min(2, { message: "First name must be at least 2 characters." }),
+  name: z.string().min(2, { message: "Name must be at least 2 characters." }),
+  email: z.string().email({ message: "Invalid email address." }),
+  phone: z.string().min(10, { message: "Phone number must be at least 10 characters." }).regex(phoneValidationRegex, { message: "Please enter a valid phone number." }),
+  address: z.string().min(5, { message: "Address must be at least 5 characters." })
+});
 
   export function GymAccountForm() {
     const form = useForm<z.infer<typeof formSchema>>({
