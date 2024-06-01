@@ -4,6 +4,8 @@ import { Input } from '@/components/ui/input'
 import { Card } from '@/components/ui/card'
 import { FaSearch } from 'react-icons/fa'
 import { LucidePencil as Pencil } from 'lucide-react'
+import '../styles/MyGyms.css'
+
 const MyGyms: React.FC = () => {
   const [gyms, setGyms] = useState([
     'McFit Laim',
@@ -13,6 +15,7 @@ const MyGyms: React.FC = () => {
 
   const handleDeleteGym = (gymToDelete: string) => {
     // Funktion zum Löschen eines Gyms hinzufügen
+    alert(`Are you sure you want to delete ${gymToDelete}?`)
     setGyms(gyms.filter((gym) => gym !== gymToDelete))
   }
 
@@ -28,40 +31,18 @@ const MyGyms: React.FC = () => {
   }
 
   return (
-    <div style={{ width: '90%', height: '90%' }}>
-      <h1
-        style={{ fontSize: '2.5rem', marginBottom: '20px', fontWeight: 'bold' }}
-      >
-        My Gyms
-      </h1>
-      <div
-        style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}
-      >
-        <Input
-          className="bg-gray-400"
-          style={{
-            width: '100%',
-            borderRadius: '8px',
-          }}
-          placeholder="Search gyms..."
-        />
-        <Button
-          style={{ borderRadius: '8px', marginLeft: '20px' }}
-          className="bg-gray-400 w-12 h-12"
-        >
+    <div className="container">
+      <h1 className="title">My Gyms</h1>
+      <div className="search-bar">
+        <Input className="input" placeholder="Search gyms..." />
+        <Button className="search-button">
           <FaSearch style={{ transform: 'scaleX(-1)', fontSize: '20px' }} />
         </Button>
       </div>
 
       {gyms.map((gym, index) => (
-        <Card key={index} style={{ width: '100%', marginBottom: '10px' }}>
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-            }}
-          >
+        <Card key={index} className="card">
+          <div className="card-content">
             <Button onClick={() => handleGymClick(gym)}> {gym} </Button>
             <div>
               <Button>
@@ -77,14 +58,7 @@ const MyGyms: React.FC = () => {
           </div>
         </Card>
       ))}
-      <Button
-        className="bg-gray-400"
-        style={{
-          width: '100%',
-          borderRadius: '8px',
-        }}
-        onClick={handleAddGym}
-      >
+      <Button className="add-gym-button" onClick={handleAddGym}>
         + Add your gym
       </Button>
     </div>
