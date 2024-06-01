@@ -1,6 +1,8 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import App from './App.tsx'
+import MyGyms from './pages/MyGyms.tsx'
+import { NavigationMenuUser } from './components/ui/navigation-menu.tsx'
+
 import './index.css'
 import CreateGymAccount from './pages/CreateGymAccount.tsx'
 
