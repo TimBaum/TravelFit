@@ -1,0 +1,10 @@
+.save-button {
+  display: flex;
+  justify-content: flex-end; /* Inhalt nach rechts schieben */
+  margin-top: 20px;
+}
+
+.dropdown-menu-content {
+  border: 1px solid white; /* Rahmen hinzufügen */
+  border-radius: 8px; /* Optional: abgerundete Ecken */
+}

@@ -72,18 +72,18 @@ button:focus-visible {
 }
 
 .icon {
-  width: 20px; /* Adjust the width as needed */
-  height: 20px; /* Adjust the height as needed */
+  width: 20px;
+  height: 20px;
 }
 
 .navigationmenu {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 20px; /* Adjust the padding as needed */
-  background-color: #333; /* Adjust the background color as needed */
-  color: white; /* Adjust the text color as needed */
-  margin-bottom: 20px; /* Adjust spacing below the navbar */
+  padding: 10px 20px;
+  background-color: #333;
+  color: white;
+  margin-bottom: 20px;
 }
 
 .navigationmenuRight {
@@ -95,7 +95,7 @@ button:focus-visible {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 20px; /* Adjust the padding as needed */
-  color: white; /* Adjust the text color as needed */
-  margin-bottom: 20px; /* Adjust spacing below the navbar */
+  padding: 10px 20px;
+  color: white;
+  margin-bottom: 20px;
 }

@@ -2,9 +2,8 @@ import * as React from 'react'
 import * as NavigationMenuPrimitive from '@radix-ui/react-navigation-menu'
 import { cva } from 'class-variance-authority'
 import { ChevronDown } from 'lucide-react'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { PersonIcon } from '@radix-ui/react-icons'
-import '@/styles/icon.css'
 import '@/index.css'
 
 import { cn } from '@/lib/utils'
@@ -119,7 +118,7 @@ const NavigationMenuIndicator = React.forwardRef<
 NavigationMenuIndicator.displayName =
   NavigationMenuPrimitive.Indicator.displayName
 
-function NavigationMenuUser() {
+function NavigationMenuManager() {
   return (
     <NavigationMenu>
       <NavigationMenuList>
@@ -157,7 +156,7 @@ function NavigationMenuUser() {
   )
 }
 
-function NavigationMenuManager() {
+function NavigationMenuUser() {
   return (
     <NavigationMenu>
       <NavigationMenuList>
