@@ -11,11 +11,11 @@ function CreateGymAccount() {
       <h1 className="centered-headline">Create your partner account</h1>
       <div className="container">
         <div className="info-box">
-        <Users size={48}/>
+        <Users size={80}/>
         <p>Attract a broad audience</p>
-        <Megaphone size={48}/>
+        <Megaphone size={80}/>
         <p>Spread information about offers and subscriptions</p>
-        <Star size={48}/>
+        <Star size={80}/>
         <p>Stand out with fitting offers for travellers</p>
         </div>
         <div className="form-container">
