@@ -23,7 +23,7 @@ import {
 const phoneValidationRegex = /^\+?[1-9]\d{1,14}$/; // E.164 international phone number format
 
 const formSchema = z.object({
-  salutation: z.enum(["Mr.", "Ms.", "Diverse"]),
+  salutation: z.enum(["Mr.", "Ms.", "Diverse"], { required_error: "Salutation is required." }),
   firstName: z.string().min(2, { message: "First name must be at least 2 characters." }),
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
   email: z.string().email({ message: "Invalid email address." }),
