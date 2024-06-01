@@ -18,7 +18,7 @@ function CreateGymAccount() {
         <GymAccountForm />
         <div className="already-partner">
         <p>Already a partner?</p>
-        <Button type="submit">Log in as partner</Button>
+        <Button type="submit" variant='outline'>Log in as partner</Button>
       </div>
       </div>
       </div>
