@@ -1,6 +1,8 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
+import React from "react"
+import '@/styles/GymAccountForm.css'
 
 import { Button } from "@/components/ui/button"
 import {
@@ -23,7 +25,6 @@ import {
     DropdownMenuItem,
   } from "@/components/ui/dropdown-menu"
 import { DropdownMenuCheckboxItemProps } from "@radix-ui/react-dropdown-menu"
-import React from "react"
   
 type Checked = DropdownMenuCheckboxItemProps["checked"]
 
@@ -120,6 +121,7 @@ export function DropdownMenuCheckboxes() {
             </FormItem>
           )}
         />
+        <div className="form-row">
         <FormField
           control={form.control}
           name="firstName"
@@ -144,6 +146,7 @@ export function DropdownMenuCheckboxes() {
             </FormItem>
           )}
         />
+        </div>
         <FormField
           control={form.control}
           name="address"
@@ -156,6 +159,7 @@ export function DropdownMenuCheckboxes() {
             </FormItem>
           )}
         />
+        <div className="form-row">
         <FormField
           control={form.control}
           name="email"
@@ -180,6 +184,7 @@ export function DropdownMenuCheckboxes() {
             </FormItem>
           )}
         />
+        </div>
         <Button type="submit">Create account</Button>
       </form>
     </Form>
@@ -187,4 +192,3 @@ export function DropdownMenuCheckboxes() {
 }
   
 export default GymAccountForm
-  
