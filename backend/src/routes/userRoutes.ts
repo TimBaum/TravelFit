@@ -1,12 +1,12 @@
-//The routes declared here are just for trying out at the moment. Feel free to remove and/or change them!
-
 import { Router } from "express";
-import { createUser, getUser } from '../controllers/userController';
+import { createUser, getUser, getAllUsers, updateUser, deleteUser } from '../controllers/userController';
 
 const router = Router();
 
-router.post('/', createUser);
-router.get('/:id', getUser);
-router.put("/:id");
+router.post('/create', createUser);
+router.get('/get/:id', getUser);
+router.get('/get/', getAllUsers);
+router.patch('/update/:id', updateUser);
+router.delete('/delete/:id', deleteUser);
 
 export default router;

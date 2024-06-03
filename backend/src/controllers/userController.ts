@@ -44,7 +44,8 @@ export const updateUser = async (req: Request, res: Response) => {
       return res.status(404).json({ message: 'User not found' });
     }
     user.set(req.body);
-    return res.json(user);
+    await user.save();
+    return res.status(201).json({user});
   } catch (err) {
     return res.status(500).json({ error });
   }
@@ -52,11 +53,11 @@ export const updateUser = async (req: Request, res: Response) => {
 
 export const deleteUser = async (req: Request, res: Response) => {
   try {
-    const user = await User.findById(req.params.id);
+    const user = await User.findByIdAndDelete(req.params.id);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
-    return res.json(user);
+    return res.status(201).json({ message: 'User deleted'});
   } catch (err) {
     return res.status(500).json({ error });
   }
