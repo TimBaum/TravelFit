@@ -40,9 +40,6 @@ const MyGyms: React.FC = () => {
 
   return (
     <>
-      <div className="navigationmenu">
-        <NavigationMenuManager />
-      </div>
       <div className="breadcrumps">
         <Breadcrumb>
           <BreadcrumbList>

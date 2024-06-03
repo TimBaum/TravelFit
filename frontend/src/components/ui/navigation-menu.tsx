@@ -15,7 +15,7 @@ const NavigationMenu = React.forwardRef<
   <NavigationMenuPrimitive.Root
     ref={ref}
     className={cn(
-      'relative z-10 flex max-w-max flex-1 items-center justify-center',
+      'relative z-10 flex flex-1 items-center justify-center',
       className,
     )}
     {...props}
@@ -118,9 +118,9 @@ const NavigationMenuIndicator = React.forwardRef<
 NavigationMenuIndicator.displayName =
   NavigationMenuPrimitive.Indicator.displayName
 
-function NavigationMenuManager() {
+function NavigationMenuManager({ className }: { className: string }) {
   return (
-    <NavigationMenu>
+    <NavigationMenu className={`navigationmenu w-full ${className}`}>
       <NavigationMenuList>
         <NavigationMenuLink>
           <img src="/TravelFit Icon.svg" />
@@ -156,9 +156,9 @@ function NavigationMenuManager() {
   )
 }
 
-function NavigationMenuUser() {
+function NavigationMenuUser({ className }: { className: string }) {
   return (
-    <NavigationMenu>
+    <NavigationMenu className={`navigationmenu w-full ${className}`}>
       <NavigationMenuList>
         <NavigationMenuLink href="https://www.instagram.com/leonie_popk/">
           <img src="/TravelFit Icon.svg"></img>
