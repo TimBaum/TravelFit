@@ -15,7 +15,7 @@ const App: React.FC = () => {
           {/* TODO: exemplary routes, should be changed */}
           <Route path="/my-gyms/" element={<MyGyms />} />
           <Route path="/create-gym-account/" element={<CreateGymAccount />} />
-          <Route path="/greate-user-account/" element={<CreateUserAccount />} />
+          <Route path="/create-user-account/" element={<CreateUserAccount />} />
           <Route path="/add-gym/" element={<AddGym />} />
           {/* <Route path="*" element={<NoPage />} /> */}
         </Routes>
