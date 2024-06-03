@@ -13,8 +13,11 @@ const createGym = (req: Request, res: Response, next: NextFunction) => {
   return gym
     .save()
     .then((gym) => res.status(201).json({ gym }))
-    .catch((error) => res.status(500).json({ error }))
-}
+    .catch((error) => {
+      console.error('Error saving gym:', error); // Detaillierte Fehlermeldung
+      res.status(500).json({ error: error.message });
+    });
+};
 
 const readAll = (req: Request, res: Response, next: NextFunction) => {
   return Gym.find()
