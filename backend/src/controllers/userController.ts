@@ -14,7 +14,7 @@ export const createUser = async (req: Request, res: Response) => {
     const newUser = new User({ _id: new mongoose.Types.ObjectId(),
       testName });
     await newUser.save();
-    return res.status(201).json(newUser);
+    return res.status(201).json({newUser});
   } catch (err) {
     return res.status(500).json({ error });
   }
