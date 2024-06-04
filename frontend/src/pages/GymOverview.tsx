@@ -41,7 +41,31 @@ function GymOverview(){
                     Mark as favourite
                 </div>
             </div>
-        </div>
+            {/* Basic structure for the rest of the page */}
+            <div>
+                <div>
+                    {/* Image Gallery Component */}
+                </div>
+                <div> {/* left side*/}
+                    <div>
+                        {/* Pool, Sauna, Posing room details */}
+                    </div>
+                    <div>
+                        <h2>All offers</h2>
+                        {/* Offers Component */}
+                    </div>
+                    <div>
+                        {/* Map Component */}
+                    </div>
+                </div>
+                <div> {/* right side*/}
+                    <div>
+                        <h2>Reviews</h2>
+                        {/* Reviews Component */}
+                    </div>
+                </div>
+                </div>
+            </div>
     )
 }
 
