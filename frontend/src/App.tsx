@@ -8,6 +8,7 @@ import CreateUserAccount from './pages/CreateUserAccount'
 import AddGym from './pages/AddGym'
 import Layout from './components/Layout'
 import '../app/globals.css'
+import GymOverview from './pages/GymOverview'
 
 const App: React.FC = () => {
   return (
@@ -25,6 +26,7 @@ const App: React.FC = () => {
               element={<CreateUserAccount />}
             />
             <Route path="/add-gym/" element={<AddGym />} />
+            <Route path="/gymoverview" element={<GymOverview />} /> 
             {/* <Route path="*" element={<NoPage />} /> */}
           </Route>
         </Routes>
