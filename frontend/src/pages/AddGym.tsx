@@ -1,5 +1,4 @@
 import React from 'react'
-import { NavigationMenuManager } from '@/components/ui/navigation-menu'
 import {
   Breadcrumb,
   BreadcrumbList,
@@ -20,9 +19,6 @@ import {
 const AddGym: React.FC = () => {
   return (
     <>
-      <div className="navigationmenu">
-        <NavigationMenuManager />
-      </div>
       <div className="breadcrumps">
         <Breadcrumb>
           <BreadcrumbList>

@@ -14,10 +14,7 @@ const NavigationMenu = React.forwardRef<
 >(({ className, children, ...props }, ref) => (
   <NavigationMenuPrimitive.Root
     ref={ref}
-    className={cn(
-      'relative z-10 flex max-w-max flex-1 items-center justify-center',
-      className,
-    )}
+    className={cn('relative z-10 flex flex-1 items-center', className)}
     {...props}
   >
     {children}
@@ -44,7 +41,7 @@ NavigationMenuList.displayName = NavigationMenuPrimitive.List.displayName
 const NavigationMenuItem = NavigationMenuPrimitive.Item
 
 const navigationMenuTriggerStyle = cva(
-  'group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-accent/50 data-[state=open]:bg-accent/50',
+  'group inline-flex h-10 w-max items-center rounded-md px-4 py-2 text-md font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-accent/50 data-[state=open]:bg-accent/50',
 )
 
 const NavigationMenuTrigger = React.forwardRef<
@@ -118,66 +115,49 @@ const NavigationMenuIndicator = React.forwardRef<
 NavigationMenuIndicator.displayName =
   NavigationMenuPrimitive.Indicator.displayName
 
-function NavigationMenuManager() {
+function NavigationMenuManager({ className }: { className: string }) {
+  // We display different menu items based on the user's role
+  // TODO: Implement user roles
+  const isGymUser = true
+
   return (
-    <NavigationMenu>
+    <NavigationMenu
+      className={`navigationmenu w-full bg-emerald-500 text-black ${className} flex align-center justify-between drop-shadow-md`}
+    >
       <NavigationMenuList>
-        <NavigationMenuLink>
+        <NavigationMenuLink
+          href="https://www.instagram.com/leonie_popk/"
+          className="pr-8"
+        >
           <img src="/TravelFit Icon.svg" />
         </NavigationMenuLink>
         <NavigationMenuItem>
-          <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+          <NavigationMenuLink className={navigationMenuTriggerStyle()} href="/">
             Find gyms
           </NavigationMenuLink>
         </NavigationMenuItem>
         <NavigationMenuItem>
-          <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+          <NavigationMenuLink className={navigationMenuTriggerStyle()} href="/">
             Favourites
           </NavigationMenuLink>
         </NavigationMenuItem>
-        <NavigationMenuItem>
-          <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-            My gyms
-          </NavigationMenuLink>
-        </NavigationMenuItem>
-        <div className="navigationmenuRight">
+        {isGymUser && (
           <NavigationMenuItem>
-            <NavigationMenuTrigger>
-              <Avatar>
-                <AvatarFallback>
-                  <PersonIcon className="icon" />
-                </AvatarFallback>
-              </Avatar>
-            </NavigationMenuTrigger>
+            <NavigationMenuLink
+              className={navigationMenuTriggerStyle()}
+              href="/my-gyms"
+            >
+              My gyms
+            </NavigationMenuLink>
           </NavigationMenuItem>
-        </div>
+        )}
       </NavigationMenuList>
-    </NavigationMenu>
-  )
-}
-
-function NavigationMenuUser() {
-  return (
-    <NavigationMenu>
       <NavigationMenuList>
-        <NavigationMenuLink href="https://www.instagram.com/leonie_popk/">
-          <img src="/TravelFit Icon.svg"></img>
-        </NavigationMenuLink>
-        <NavigationMenuItem>
-          <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-            Find gyms
-          </NavigationMenuLink>
-        </NavigationMenuItem>
-        <NavigationMenuItem>
-          <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-            Favourites
-          </NavigationMenuLink>
-        </NavigationMenuItem>
         <NavigationMenuItem>
           <NavigationMenuTrigger>
             <Avatar>
               <AvatarFallback>
-                <PersonIcon />
+                <PersonIcon className="icon" />
               </AvatarFallback>
             </Avatar>
           </NavigationMenuTrigger>
@@ -187,4 +167,4 @@ function NavigationMenuUser() {
   )
 }
 
-export { NavigationMenuUser, NavigationMenuManager }
+export { NavigationMenuManager }
