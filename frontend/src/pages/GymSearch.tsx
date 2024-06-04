@@ -3,9 +3,12 @@ import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { MagnifyingGlassIcon } from '@radix-ui/react-icons'
 import { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 
 function GymSearch() {
-  const { searchTerm, setSearchTerm } = useState('')
+  const [searchTerm, setSearchTerm] = useState('')
+
+  const navigate = useNavigate()
 
   const cityTiles = [
     { city: 'Munich', picture: '/src/assets/munich.png' },
@@ -27,8 +30,21 @@ function GymSearch() {
         .
       </p>
       <div className="flex gap-2 mt-4">
-        <Input className="h-14" placeholder="Search for your location"></Input>
-        <Button className="w-14 h-14" size="icon" variant={'outline'}>
+        <Input
+          className="h-14"
+          placeholder="Search for your location"
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+        <Button
+          className="w-14 h-14"
+          size="icon"
+          variant={'outline'}
+          onClick={() => {
+            if (searchTerm) {
+              navigate(`/find-gyms?search=${searchTerm}`)
+            }
+          }}
+        >
           <MagnifyingGlassIcon className="h-6 w-6" />
         </Button>
       </div>
@@ -46,12 +62,14 @@ function GymSearch() {
 
 function CityTile({ city, picture }: { city: string; picture: string }) {
   return (
-    <Card className="aspect-square relative drop-shadow-md rounded-lg overflow-hidden">
-      <img src={picture} alt={city} className="h-full w-full object-cover" />
-      <p className="absolute bottom-0 left-0 text-white text-xl font-bold p-2">
-        {city}
-      </p>
-    </Card>
+    <Link to={`/find-gyms?search=${city}`}>
+      <Card className="aspect-square relative drop-shadow-md rounded-lg overflow-hidden">
+        <img src={picture} alt={city} className="h-full w-full object-cover" />
+        <p className="absolute bottom-0 left-0 text-white text-xl font-bold p-2">
+          {city}
+        </p>
+      </Card>
+    </Link>
   )
 }
 

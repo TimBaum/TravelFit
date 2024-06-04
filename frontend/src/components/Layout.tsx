@@ -4,7 +4,7 @@ import { NavigationMenuManager } from './ui/navigation-menu'
 function Layout() {
   return (
     <div>
-      <NavigationMenuManager className="w-full" />
+      <NavigationMenuManager className="w-full mb-10" />
       <Main />
       <Footer />
     </div>
