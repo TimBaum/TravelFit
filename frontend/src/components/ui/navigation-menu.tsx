@@ -122,7 +122,7 @@ function NavigationMenuManager({ className }: { className: string }) {
 
   return (
     <NavigationMenu
-      className={`navigationmenu w-full bg-emerald-500 text-black ${className} flex align-center justify-between drop-shadow-md`}
+      className={`navigationmenu w-full bg-emerald-500 text-black ${className} flex align-center justify-between drop-shadow-md sticky top-0 z-50`}
     >
       <NavigationMenuList>
         <NavigationMenuLink
