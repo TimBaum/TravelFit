@@ -5,7 +5,7 @@ import { Card } from '@/components/ui/card'
 import { FaSearch } from 'react-icons/fa'
 import { LucidePencil as Pencil } from 'lucide-react'
 import '../styles/MyGyms.css'
-import { NavigationMenuManager } from '@/components/ui/navigation-menu'
+
 import {
   Breadcrumb,
   BreadcrumbList,
