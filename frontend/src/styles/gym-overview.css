@@ -1,0 +1,21 @@
+#root{
+  
+}
+
+.header-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Adjust if needed */
+  padding: 10px 20px;
+}
+
+.header-title {
+  margin: 0;
+  color: white; /* Adjust color as needed */
+}
+
+.header-icons {
+  display: flex;
+  align-items: center;
+  gap: 20px; /* Adjust the gap between icons as needed */
+}
