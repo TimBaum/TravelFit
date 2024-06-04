@@ -15,7 +15,7 @@ function Main() {
   return (
     <main className="flex">
       <div className="flex-1"></div>
-      <div className="w-2/3">
+      <div className="w-3/5">
         <Outlet />
       </div>
       <div className="flex-1"></div>
