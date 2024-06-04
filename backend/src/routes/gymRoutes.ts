@@ -1,10 +1,12 @@
-import express from 'express';
-import controller from '../controllers/gymController';
-import { Schemas, ValidateJoi } from '../middleware/joi';
+import express from 'express'
+import controller from '../controllers/gymController'
+import { Schemas, ValidateJoi } from '../middleware/joi'
 
-const router = express.Router();
+const router = express.Router()
 
-router.post('/create', ValidateJoi(Schemas.author.create), controller.createGym);
-router.get('/get', controller.readAll);
+router.post('/create', ValidateJoi(Schemas.author.create), controller.createGym)
+router.get('/get', controller.readAll)
+router.get('/get/:id', controller.getGym)
+router.post('/search', ValidateJoi(Schemas.search), controller.searchGyms)
 
-export = router;
+export = router

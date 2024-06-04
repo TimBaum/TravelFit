@@ -1,6 +1,15 @@
 // backend/src/models/Address.js
 import mongoose from 'mongoose'
 
+interface IAddress {
+  street: string
+  postalCode: string
+  city: string
+  country: string
+  latitude: number
+  longitude: number
+}
+
 const addressSchema = new mongoose.Schema({
   street: String,
   postalCode: String,
@@ -13,3 +22,5 @@ const addressSchema = new mongoose.Schema({
 const Address = mongoose.model('Address', addressSchema)
 
 export default Address
+
+export { IAddress }

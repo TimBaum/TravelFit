@@ -1,24 +1,29 @@
 // backend/src/models/Gym.js
 import mongoose, { Document, Schema } from 'mongoose'
-import Adress from './Address'
+import Address, { IAddress } from './Address'
 import TimeRange from './TimeRange'
 import Offer from './Offer'
 import Review from './Review'
-import { ObjectId } from 'mongodb'
 
 export interface IGym {
   name: String
+  highlights: String[]
+  websiteLink: String
+  pictures: String[]
+  averageRating: Number
+  address: IAddress
+  // ...
 }
 
 export interface IGymModel extends IGym, Document {}
 
 const GymSchema: Schema = new mongoose.Schema({
-  name: String,
+  name: { type: String, required: true },
   highlights: [{ type: String, enum: ['Sauna', 'Posing room', 'Pool'] }],
-  websiteLink: String,
+  websiteLink: { type: String, required: true },
   pictures: [String],
   averageRating: Number,
-  address: Adress.schema,
+  address: { type: Address.schema, required: true },
   openingHours: [TimeRange.schema],
   offers: [Offer.schema],
   reviews: [Review.schema],
