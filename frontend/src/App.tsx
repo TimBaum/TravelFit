@@ -6,6 +6,7 @@ import CreateGymAccount from './pages/CreateGymAccount'
 import CreateUserAccount from './pages/CreateUserAccount'
 import AddGym from './pages/AddGym'
 import Layout from './components/Layout'
+import '../app/globals.css'
 
 const App: React.FC = () => {
   return (
