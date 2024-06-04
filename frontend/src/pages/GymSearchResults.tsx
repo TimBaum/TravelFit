@@ -26,7 +26,7 @@ function GymSearchResults() {
   return (
     <div>
       <h1>Search Results for {searchString}</h1>
-      <div>{JSON.stringify(searchResults)}</div>
+      {searchResults && <div>{JSON.stringify(searchResults)}</div>}
     </div>
   )
 }
