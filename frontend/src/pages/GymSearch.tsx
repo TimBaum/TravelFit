@@ -1,14 +1,10 @@
-import { Button } from '@/components/ui/button'
+import SearchBar from '@/components/SearchBar'
 import { Card } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { MagnifyingGlassIcon } from '@radix-ui/react-icons'
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 
 function GymSearch() {
   const [searchTerm, setSearchTerm] = useState('')
-
-  const navigate = useNavigate()
 
   const cityTiles = [
     { city: 'Munich', picture: '/src/assets/munich.png' },
@@ -29,25 +25,7 @@ function GymSearch() {
         </u>
         .
       </p>
-      <div className="flex gap-2 mt-4">
-        <Input
-          className="h-14"
-          placeholder="Search for your location"
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-        <Button
-          className="w-14 h-14"
-          size="icon"
-          variant={'outline'}
-          onClick={() => {
-            if (searchTerm) {
-              navigate(`/find-gyms?search=${searchTerm}`)
-            }
-          }}
-        >
-          <MagnifyingGlassIcon className="h-6 w-6" />
-        </Button>
-      </div>
+      <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
       <div className="mb-16">
         <h3 className="text-xl font-bold mt-8">Or explore cities</h3>
         <div className="grid grid-cols-3 gap-4 mt-4">
