@@ -22,7 +22,6 @@ const GymSchema: Schema = new mongoose.Schema({
   highlights: [{ type: String, enum: ['Sauna', 'Posing room', 'Pool'] }],
   websiteLink: { type: String, required: true },
   pictures: [String],
->>>>>>> main
   averageRating: Number,
   address: { type: Address.schema, required: true },
   openingHours: [TimeRange.schema],
