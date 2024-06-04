@@ -1,6 +1,6 @@
 // backend/src/models/Gym.js
 import mongoose, { Document, Schema } from 'mongoose'
-import Adress from './Adress'
+import Adress from './Address'
 import TimeRange from './TimeRange'
 import Offer from './Offer'
 import Review from './Review'
