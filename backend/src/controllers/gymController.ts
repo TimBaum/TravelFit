@@ -35,7 +35,7 @@ const searchGyms = (req: Request, res: Response, next: NextFunction) => {
 
   return Gym.where('address.city')
     .in([searchString])
-    .then((gyms) => res.status(200).json({ gyms }))
+    .then((gyms) => res.status(200).json(gyms))
     .catch((error) => res.status(500).json({ error }))
 }
 

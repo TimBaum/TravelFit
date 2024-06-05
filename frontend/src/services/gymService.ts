@@ -1,7 +1,27 @@
 import { config } from '@/config'
 import { useEffect, useState } from 'react'
 
-function useGymSearch(searchString: string | null) {
+export interface IGym {
+  name: string
+  highlights: ['Sauna', 'Posing room', 'Pool']
+  websiteLink: string
+  pictures: [string]
+  averageRating: number
+  // address: IAddress
+  // openingHours: [ITimeRange]
+  // offers: [IOffer]
+  // reviews: [IReview]
+  createdAt: Date
+  updatedAt: Date
+}
+
+interface GymSearchResults {
+  data: IGym[]
+  error: string | null
+  loading: boolean
+}
+
+function useGymSearch(searchString: string | null): GymSearchResults {
   const [data, setData] = useState([])
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(false)
