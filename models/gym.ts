@@ -4,7 +4,6 @@ import { IReview } from './review'
 import { ITimeRange } from './timeRange'
 
 export interface IGym {
-  _id: string
   name: string
   highlights: ['Sauna', 'Posing room', 'Pool']
   websiteLink: string
@@ -16,4 +15,8 @@ export interface IGym {
   reviews: [IReview]
   createdAt: Date
   updatedAt: Date
+}
+
+export interface IGymWithId extends IGym {
+  id: string
 }

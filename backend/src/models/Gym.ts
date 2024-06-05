@@ -1,23 +1,10 @@
 // backend/src/models/Gym.js
 import mongoose, { Document, Schema } from 'mongoose'
-import Address, { IAddress } from './Address'
-import TimeRange, { ITimeRange } from './TimeRange'
-import Offer, { IOffer } from './Offer'
-import Review, { IReview } from './Review'
-
-export interface IGym {
-  name: string
-  highlights: 'Sauna' | 'Posing room' | 'Pool'
-  websiteLink: string
-  pictures: [string]
-  averageRating: Number
-  address: IAddress
-  openingHours: [ITimeRange]
-  offers: [IOffer]
-  reviews: [IReview]
-  createdAt: Date
-  updatedAt: Date
-}
+import Address from './Address'
+import TimeRange from './TimeRange'
+import Offer from './Offer'
+import Review from './Review'
+import { IGym } from '@models/Gym'
 
 export interface IGymModel extends IGym, Document {}
 

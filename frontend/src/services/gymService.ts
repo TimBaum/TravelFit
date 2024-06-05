@@ -1,15 +1,15 @@
 import { config } from '@/config'
 import { useEffect, useState } from 'react'
-import { IGym } from '@models/gym'
+import { IGymWithId } from '@models/gym'
 
 interface GymSearchResults {
-  data: IGym[]
+  data: IGymWithId[]
   error: string | null
   loading: boolean
 }
 
 function useGymSearch(searchString: string | null): GymSearchResults {
-  const [data, setData] = useState<IGym[]>([])
+  const [data, setData] = useState<IGymWithId[]>([])
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(false)
 
