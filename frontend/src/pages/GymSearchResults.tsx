@@ -1,11 +1,12 @@
 import SearchBar from '@/components/SearchBar'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
-import { IGym, useGymSearch } from '@/services/gymService'
+import { useGymSearch } from '@/services/gymService'
 import { CalendarIcon, StarIcon } from '@radix-ui/react-icons'
 import { ArrowDown, Coins, MapIcon } from 'lucide-react'
 import React from 'react'
 import { useState } from 'react'
+import { IGym } from '@models/gym'
 
 function GymSearchResults() {
   const urlParams = new URLSearchParams(window.location.search)
