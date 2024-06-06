@@ -14,11 +14,17 @@ import { useState } from 'react'
 import { IGym } from '@models/gym'
 
 function GymOverview() {
-  const urlParams = new URLSearchParams(window.location.search)
+  const pathname = window.location.pathname
+  const regex = /\/gymoverview\/([a-f0-9]+)/
+  const match = pathname.match(regex)
+  const id = match ? match[1] : null
 
-  const id = urlParams.get('id')
+  // Assuming useState and useEffect are already imported
+  const [idState, setIdState] = useState(id)
 
-  const { data, error, loading } = useGetGym(id)
+  const { data, error, loading } = useGetGym(idState)
+
+  console.log(data)
 
   return (
     <div>
@@ -36,15 +42,7 @@ function GymOverview() {
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbPage>
-                {!loading && (
-                  <div>
-                    {data.map((gym) => (
-                      <GymTile key={gym.name} gym={gym} />
-                    ))}
-                  </div>
-                )}
-              </BreadcrumbPage>
+              <BreadcrumbPage>{!loading && <div></div>}</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
