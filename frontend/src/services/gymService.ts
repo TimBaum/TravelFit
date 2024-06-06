@@ -38,21 +38,20 @@ function useGymSearch(searchString: string | null): GymSearchResults {
   return { data, error, loading }
 }
 
-function useSearchByName(searchString: string | null): GymSearchResults {
+function useGetGym(id: string | null): GymSearchResults {
   const [data, setData] = useState<IGymWithId[]>([])
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     async function fetchData() {
-      if (!searchString) return
+      if (!id) return
       setLoading(true)
-      const response = await fetch(`${config.BACKEND_URL}/gyms/search-name`, {
-        method: 'POST',
+      const response = await fetch(`${config.BACKEND_URL}/gyms/get/${id}`, {
+        method: 'GET',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ searchString: searchString }),
       })
         .then((response) => response.json())
         .catch((error) => {
@@ -63,9 +62,9 @@ function useSearchByName(searchString: string | null): GymSearchResults {
     }
 
     fetchData()
-  }, [searchString])
+  }, [id])
 
   return { data, error, loading }
 }
 
-export { useGymSearch, useSearchByName }
+export { useGymSearch, useGetGym }

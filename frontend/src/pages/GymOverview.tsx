@@ -9,16 +9,16 @@ import {
 import '@/index.css'
 import '@/styles/gym-overview.css'
 import { Share1Icon, BookmarkIcon } from '@radix-ui/react-icons'
-import { useSearchByName } from '@/services/gymService'
+import { useGetGym } from '@/services/gymService'
 import { useState } from 'react'
 import { IGym } from '@models/gym'
 
 function GymOverview() {
   const urlParams = new URLSearchParams(window.location.search)
 
-  const [searchString, setSearchString] = useState(urlParams.get('search'))
+  const id = urlParams.get('id')
 
-  const { data, error, loading } = useSearchByName(searchString)
+  const { data, error, loading } = useGetGym(id)
 
   return (
     <div>

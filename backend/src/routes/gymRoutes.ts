@@ -8,6 +8,5 @@ router.post('/create', controller.createGym)
 router.get('/get', controller.readAll)
 router.get('/get/:id', controller.getGym)
 router.post('/search', controller.searchGyms)
-router.post('/search-name', controller.searchByName)
 
 export = router

@@ -26,7 +26,7 @@ const App: React.FC = () => {
               element={<CreateUserAccount />}
             />
             <Route path="/add-gym/" element={<AddGym />} />
-            <Route path="/gymoverview/" element={<GymOverview />} />
+            <Route path="/gymoverview/:id" element={<GymOverview />} />
             {/* <Route path="*" element={<NoPage />} /> */}
           </Route>
         </Routes>
