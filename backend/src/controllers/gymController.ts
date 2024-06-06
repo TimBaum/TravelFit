@@ -26,7 +26,7 @@ const getGym = (req: Request, res: Response, next: NextFunction) => {
   const { id } = req.params
 
   return Gym.findById(id)
-    .then((gym) => res.status(200).json({ gym }))
+    .then((gym) => res.status(200).json(gym))
     .catch((error) => res.status(500).json({ error }))
 }
 

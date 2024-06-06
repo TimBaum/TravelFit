@@ -4,7 +4,7 @@ import Address from './Address'
 import TimeRange from './TimeRange'
 import Offer from './Offer'
 import Review from './Review'
-import { IGym } from '@models/Gym'
+import { IGym } from '@models/gym'
 
 export interface IGymModel extends IGym, Document {}
 

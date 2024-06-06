@@ -20,10 +20,7 @@ function GymOverview() {
   const id = match ? match[1] : null
 
   const { data, error, loading } = useGetGym(id)
-
-  if (typeof data != undefined) {
-    console.log(data?.name)
-  }
+  const gymname = data?.name
 
   return (
     <div>
@@ -47,7 +44,7 @@ function GymOverview() {
         </Breadcrumb>
       </div>
       <div className="header-container">
-        <h1 className="text-5xl font-bold pb-2">placeholder</h1>
+        <h1 className="text-5xl font-bold pb-2">{gymname}</h1>
         <div className="header-icons">
           <Share1Icon className="icon" />
           Share
