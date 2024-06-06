@@ -10,8 +10,7 @@ import '@/index.css'
 import '@/styles/gym-overview.css'
 import { Share1Icon, BookmarkIcon } from '@radix-ui/react-icons'
 import { useGetGym } from '@/services/gymService'
-import { useState, useEffect } from 'react'
-import { IGymWithId } from '@models/gym'
+import PhotoGallery from '@/components/PhotoGallery'
 
 function GymOverview() {
   const pathname = window.location.pathname
@@ -21,6 +20,14 @@ function GymOverview() {
 
   const { data, error, loading } = useGetGym(id)
   const gymname = data?.name
+
+  const photos = [
+    { url: '/src/assets/img1.png', alt: 'Gym photo 1' },
+    { url: '/src/assets/img1.png', alt: 'Gym photo 1' },
+    { url: '/src/assets/img1.png', alt: 'Gym photo 1' },
+    { url: '/src/assets/img1.png', alt: 'Gym photo 1' },
+    { url: '/src/assets/img1.png', alt: 'Gym photo 1' },
+  ]
 
   return (
     <div>
@@ -32,13 +39,11 @@ function GymOverview() {
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbLink href="/components">
-                City placeholder
-              </BreadcrumbLink>
+              <BreadcrumbLink href="/components">city</BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbPage></BreadcrumbPage>
+              <BreadcrumbLink href={pathname}>{gymname}</BreadcrumbLink>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
@@ -54,7 +59,7 @@ function GymOverview() {
       </div>
       {/* Basic structure for the rest of the page */}
       <div>
-        <div>{/* Image Gallery Component */}</div>
+        <div> {/* photo gallery*/}</div>
         <div>
           {' '}
           {/* left side*/}
@@ -76,10 +81,6 @@ function GymOverview() {
       </div>
     </div>
   )
-}
-
-function GymTile({ gym }: { gym: IGymWithId }) {
-  return <div>{gym.name}</div>
 }
 
 export default GymOverview
