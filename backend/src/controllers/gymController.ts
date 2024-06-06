@@ -39,4 +39,13 @@ const searchGyms = (req: Request, res: Response, next: NextFunction) => {
     .catch((error) => res.status(500).json({ error }))
 }
 
-export default { readAll, createGym, getGym, searchGyms }
+const searchByName = (req: Request, res: Response, next: NextFunction) => {
+  const { searchString, pageLimit, sortBy } = req.body
+
+  return Gym.where('name')
+    .in([searchString])
+    .then((gyms) => res.status(200).json(gyms))
+    .catch((error) => res.status(500).json({ error }))
+}
+
+export default { readAll, createGym, getGym, searchGyms, searchByName }
