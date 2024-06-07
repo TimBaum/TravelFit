@@ -23,10 +23,10 @@ function GymOverview() {
 
   const photos = [
     { url: '/src/assets/img1.png', alt: 'Gym photo 1' },
-    { url: '/src/assets/img1.png', alt: 'Gym photo 1' },
-    { url: '/src/assets/img1.png', alt: 'Gym photo 1' },
-    { url: '/src/assets/img1.png', alt: 'Gym photo 1' },
-    { url: '/src/assets/img1.png', alt: 'Gym photo 1' },
+    { url: '/src/assets/img2.png', alt: 'Gym photo 1' },
+    { url: '/src/assets/img3.png', alt: 'Gym photo 1' },
+    { url: '/src/assets/img4.png', alt: 'Gym photo 1' },
+    { url: '/src/assets/img5.png', alt: 'Gym photo 1' },
   ]
 
   return (
@@ -60,6 +60,7 @@ function GymOverview() {
       {/* Basic structure for the rest of the page */}
       <div>
         <div> {/* photo gallery*/}</div>
+        <PhotoGallery photos={photos} />
         <div>
           {' '}
           {/* left side*/}
