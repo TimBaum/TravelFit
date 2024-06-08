@@ -13,7 +13,7 @@ interface PhotoGalleryProps {
 
 function PhotoTile({ url, alt }: { url: string; alt: string | undefined }) {
   return (
-    <Card className="aspect-square relative drop-shadow-md rounded-lg overflow-hidden">
+    <Card className="rectangle relative drop-shadow-md rounded-lg overflow-hidden">
       <img src={url} alt={alt} className="h-full w-full object-cover" />
     </Card>
   )
