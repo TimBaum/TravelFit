@@ -11,6 +11,7 @@ import '@/styles/gym-overview.css'
 import { Share1Icon, BookmarkIcon } from '@radix-ui/react-icons'
 import { useGetGym } from '@/services/gymService'
 import PhotoGallery from '@/components/PhotoGallery'
+import HighlightBar from '@/components/HighlightBar'
 import { Button } from '@/components/ui/button'
 
 function GymOverview() {
@@ -28,6 +29,11 @@ function GymOverview() {
     { url: '/src/assets/img3.png', alt: 'Gym photo 1' },
     { url: '/src/assets/img4.png', alt: 'Gym photo 1' },
     { url: '/src/assets/img5.png', alt: 'Gym photo 1' },
+  ]
+
+  const highlights = [
+    { highlight: 'Pool', icon: 'src/assets/icons/pool.png' },
+    { highlight: 'Sauna', icon: 'src/assets/icons/pool.png' },
   ]
 
   return (
@@ -69,7 +75,10 @@ function GymOverview() {
         <div>
           {' '}
           {/* left side*/}
-          <div>{/* Pool, Sauna, Posing room details */}</div>
+          <div>
+            {/* Pool, Sauna, Posing room details */}
+            <HighlightBar highlights={highlights} />
+          </div>
           <div>
             <h2>All offers</h2>
             {/* Offers Component */}
