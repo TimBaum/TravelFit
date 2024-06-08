@@ -32,8 +32,8 @@ function GymOverview() {
   ]
 
   const highlights = [
-    { highlight: 'Pool', icon: 'src/assets/icons/pool.png' },
-    { highlight: 'Sauna', icon: 'src/assets/icons/pool.png' },
+    { highlight: 'Pool', icon: '/src/assets/icons/pool.png' },
+    { highlight: 'Sauna', icon: '/src/assets/icons/sauna.png' },
   ]
 
   return (
