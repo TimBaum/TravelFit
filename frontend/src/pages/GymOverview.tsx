@@ -11,6 +11,7 @@ import '@/styles/gym-overview.css'
 import { Share1Icon, BookmarkIcon } from '@radix-ui/react-icons'
 import { useGetGym } from '@/services/gymService'
 import PhotoGallery from '@/components/PhotoGallery'
+import { Button } from '@/components/ui/button'
 
 function GymOverview() {
   const pathname = window.location.pathname
@@ -51,10 +52,14 @@ function GymOverview() {
       <div className="header-container">
         <h1 className="text-5xl font-bold pb-2">{gymname}</h1>
         <div className="header-icons">
-          <Share1Icon className="icon" />
-          Share
-          <BookmarkIcon className="icon" />
-          Mark as favourite
+          <Button variant="outline">
+            <Share1Icon className="mr-2 h-4 w-4" />
+            Share
+          </Button>
+          <Button variant="outline">
+            <BookmarkIcon className="mr-2 h-4 w-4" />
+            Mark as favourite
+          </Button>
         </div>
       </div>
       {/* Basic structure for the rest of the page */}
