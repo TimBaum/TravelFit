@@ -110,14 +110,13 @@ function GymOverview() {
                 Visit gym website
               </Link>
             </Button>
-
             <h1 className="mt-2 text-3xl font-bold">Reviews</h1>
             {!loading && (
               <div>
                 {data?.reviews.map((review) => <ReviewTile review={review} />)}
               </div>
             )}
-            {/* Reviews Component */}
+            view more | add review
           </div>
         </div>
       </div>
@@ -216,10 +215,24 @@ function ShareButton({ link }: { link: string }) {
 }
 
 function ReviewTile({ review }: { review: IReview }) {
+  const [showFullText, setShowFullText] = useState(false)
+  const maxLength = 100
+
+  const toggleShowFullText = () => {
+    setShowFullText(!showFullText)
+  }
   return (
     <div className="flex h-46 w-full rounded p-2 relative m-2">
-      {review.author}
-      {review.text}
+      <div>
+        {showFullText || review.text.length <= maxLength
+          ? review.text
+          : `${review.text.substring(0, maxLength)}...`}
+        {review.text.length > maxLength && (
+          <button onClick={toggleShowFullText} className="ml-2 text-blue-500">
+            {showFullText ? 'show less' : 'read more'}
+          </button>
+        )}
+      </div>
     </div>
   )
 }
