@@ -7,6 +7,7 @@ import { PersonIcon } from '@radix-ui/react-icons'
 import '@/index.css'
 
 import { cn } from '@/lib/utils'
+import { Button } from './button'
 
 const NavigationMenu = React.forwardRef<
   React.ElementRef<typeof NavigationMenuPrimitive.Root>,
@@ -117,8 +118,9 @@ NavigationMenuIndicator.displayName =
 
 function NavigationMenuManager({ className }: { className: string }) {
   // We display different menu items based on the user's role
+
   // TODO: Implement user roles
-  const isGymUser = true
+  const userStatus: 'GYM_USER' | 'USER' | 'NOT_LOGGED_IN' = 'NOT_LOGGED_IN'
 
   return (
     <NavigationMenu
@@ -141,7 +143,7 @@ function NavigationMenuManager({ className }: { className: string }) {
             Favourites
           </NavigationMenuLink>
         </NavigationMenuItem>
-        {isGymUser && (
+        {userStatus === 'GYM_USER' && (
           <NavigationMenuItem>
             <NavigationMenuLink
               className={navigationMenuTriggerStyle()}
@@ -152,17 +154,26 @@ function NavigationMenuManager({ className }: { className: string }) {
           </NavigationMenuItem>
         )}
       </NavigationMenuList>
-      <NavigationMenuList>
-        <NavigationMenuItem>
-          <NavigationMenuTrigger>
-            <Avatar>
-              <AvatarFallback>
-                <PersonIcon className="icon" />
-              </AvatarFallback>
-            </Avatar>
-          </NavigationMenuTrigger>
-        </NavigationMenuItem>
-      </NavigationMenuList>
+      {userStatus === 'NOT_LOGGED_IN' && (
+        <div className="flex gap-2">
+          <Button variant={'outline'}>Become a partner</Button>
+          <Button className="bg-black">Login</Button>
+          <Button className="bg-black">Signup</Button>
+        </div>
+      )}
+      {userStatus !== 'NOT_LOGGED_IN' && (
+        <NavigationMenuList>
+          <NavigationMenuItem>
+            <NavigationMenuTrigger>
+              <Avatar>
+                <AvatarFallback>
+                  <PersonIcon className="icon" />
+                </AvatarFallback>
+              </Avatar>
+            </NavigationMenuTrigger>
+          </NavigationMenuItem>
+        </NavigationMenuList>
+      )}
     </NavigationMenu>
   )
 }

@@ -11,8 +11,9 @@ import {
 import { ArrowDown, Coins, MapIcon } from 'lucide-react'
 import React from 'react'
 import { useState } from 'react'
-import { IGym } from '@models/gym'
+import { IGym, IGymWithId } from '@models/gym'
 import HighlightBadge from '@/components/HighlightBadge'
+import { useNavigate } from 'react-router-dom'
 
 function GymSearchResults() {
   const urlParams = new URLSearchParams(window.location.search)
@@ -20,6 +21,8 @@ function GymSearchResults() {
   const [searchString, setSearchString] = useState(urlParams.get('search'))
 
   const { data, error, loading } = useGymSearch(searchString)
+
+  console.log(data)
 
   const filters = [
     { text: 'Date', icon: <CalendarIcon /> },
@@ -30,12 +33,12 @@ function GymSearchResults() {
   if (error) return <div>Error loading gyms</div>
 
   return (
-    <div>
+    <div className="mb-10">
       <h1 className="text-5xl font-bold mb-2">Gyms in {searchString}</h1>
       <SearchBar
         searchTerm={searchString || ''}
         setSearchTerm={setSearchString}
-        className="mb-6"
+        className="mb-2"
       />
       <div className="flex gap-2 mb-2">
         {filters.map((filter) => (
@@ -53,11 +56,23 @@ function GymSearchResults() {
           <MapIcon className="w-5 h-5" />
         </Button>
       </div>
-      {!loading && (
+      {!loading && data.length > 0 && (
         <div>
           {data.map((gym) => (
             <GymTile key={gym.name} gym={gym} />
           ))}
+        </div>
+      )}
+      {loading && <div>Loading...</div>}
+      {!loading && data.length === 0 && (
+        <div className="mt-12 w-full justify-center text-center">
+          <img
+            src="src/assets/illustrations/MessyDoodle.svg"
+            alt="No results found"
+            className="w-2/5 mx-auto mb-6"
+          />
+          <div className="text-2xl font-bold">No gyms found</div>
+          <div>Try another search to find your next workout!</div>
         </div>
       )}
     </div>
@@ -72,7 +87,9 @@ function Filter({ text, icon }: { text: string; icon: JSX.Element }) {
   )
 }
 
-function GymTile({ gym }: { gym: IGym }) {
+function GymTile({ gym }: { gym: IGymWithId }) {
+  const navigate = useNavigate()
+
   return (
     <div className="flex min-h-48 w-full border rounded p-2 items-stretch">
       {/* Section left side */}
@@ -104,7 +121,12 @@ function GymTile({ gym }: { gym: IGym }) {
               ' Reviews'}
           </div>
           <div className="text-left">from 5€</div>
-          <Button className="">Show details</Button>
+          <Button
+            className=""
+            onClick={() => navigate(`/gymoverview/${gym._id}`)}
+          >
+            Show details
+          </Button>
         </div>
       </div>
     </div>
