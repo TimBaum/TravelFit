@@ -80,7 +80,7 @@ function GymOverview() {
             <HighlightBar highlights={highlights} />
           </div>
           <div>
-            <h2>All offers</h2>
+            All offers
             {/* Offers Component */}
           </div>
           <div>{/* Map Component */}</div>
