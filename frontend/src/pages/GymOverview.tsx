@@ -66,32 +66,31 @@ function GymOverview() {
       </div>
       {/* Basic structure for the rest of the page */}
       <div>
-        <div> {/* photo gallery*/}</div>
+        {/* Basic structure for the rest of the page */}
         <PhotoGallery photos={photos} />
-        <div>
-          {' '}
-          {/* left side*/}
-          <div className="flex gap-2">
-            {data?.highlights.map((element) => (
-              <HighlightBadge key={element} name={element} />
-            ))}
+        <div className="flex gap-2">
+          {/* left side */}
+          <div className="w-2/3">
+            <div className="flex gap-2">
+              {data?.highlights.map((element) => (
+                <HighlightBadge key={element} name={element} />
+              ))}
+            </div>
+            <div className="mt-3">
+              {/* Offers Component */}
+              {!loading && (
+                <div>
+                  {data?.offers.map((offer) => (
+                    <OfferTile key={offer.title} offer={offer} />
+                  ))}
+                </div>
+              )}
+              More infors about offers
+            </div>
           </div>
-          <div className="w-2/3 mt-3">
-            {/* Offers Component */}
-            {!loading && (
-              <div>
-                {data?.offers.map((offer) => (
-                  <OfferTile key={offer.title} offer={offer} />
-                ))}
-              </div>
-            )}
-          </div>
-          <div>{/* Map Component */}</div>
-        </div>
-        <div>
-          {' '}
-          {/* right side*/}
-          <div>
+
+          {/* right side */}
+          <div className="w-1/3">
             <h2>Reviews</h2>
             {/* Reviews Component */}
           </div>
