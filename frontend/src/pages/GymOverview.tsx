@@ -113,7 +113,9 @@ function GymOverview() {
             <h1 className="mt-2 text-3xl font-bold">Reviews</h1>
             {!loading && (
               <div>
-                {data?.reviews.map((review) => <ReviewTile review={review} />)}
+                {data?.reviews
+                  .slice(0, 5)
+                  .map((review) => <ReviewTile review={review} />)}
               </div>
             )}
             view more | add review
