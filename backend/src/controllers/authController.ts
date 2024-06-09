@@ -3,6 +3,7 @@ import { Request, Response } from 'express'
 import jwt from 'jsonwebtoken'
 import { config } from '../config/config'
 import bcryptjs from 'bcryptjs'
+import { PublicUser } from '@models/user'
 
 export const login = async (req: Request, res: Response) => {
   const { email, password } = req.body
@@ -22,17 +23,16 @@ export const login = async (req: Request, res: Response) => {
         return res.status(401).json({ error: 'Auth failed' })
       }
 
-      const token = jwt.sign(
-        {
-          email: user.email,
-          name: user.displayName,
-          userId: user._id,
-        },
-        config.JWT_SECRET,
-        {
-          expiresIn: '7days', //TODO: enforce
-        },
-      )
+      const userBody: PublicUser = {
+        _id: user._id.toString(),
+        email: user.email,
+        displayName: user.displayName,
+        salutation: user.salutation,
+      }
+
+      const token = jwt.sign(userBody, config.JWT_SECRET, {
+        expiresIn: '7days', //TODO: enforce
+      })
       return res.status(200).json({ token })
     })
 }
