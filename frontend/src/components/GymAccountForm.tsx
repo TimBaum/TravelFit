@@ -198,7 +198,7 @@ export function GymAccountForm() {
           className="mt-4 bg-primary"
           onClick={() => form.handleSubmit((values) => onSubmit(values))()}
         >
-          Create gym manager account
+          Create partner account
         </Button>
       </form>
     </Form>
