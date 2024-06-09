@@ -3,26 +3,29 @@ import { config } from '@/config'
 import { Input } from '@/components/ui/input'
 import { useState } from 'react'
 
-async function deleteUser(id: string) {
-  console.log('Id:', id)
+async function updateUserAccount(id: string, userData: string) {
   try {
-    const response = await fetch(config.BACKEND_URL + '/users/delete/' + id, {
-      method: 'DELETE',
+    const response = await fetch(config.BACKEND_URL + '/users/update/' + id, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(userData),
     })
 
     if (!response.ok) {
-      throw new Error('Failed to delete user')
+      throw new Error('Failed to update user')
     }
 
     const data = await response.json()
-    console.log('User deleted successfully:', data)
+    console.log('User updated successfully:', data)
   } catch (error) {
-    console.error('Error deleting user:', error)
+    console.error('Error updating user:', error)
   }
 }
 
 function ManageUserAccount() {
-  const [inputValue, setInputValue] = useState('')
+  const [newName, setInputValue] = useState('')
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value)
@@ -34,17 +37,19 @@ function ManageUserAccount() {
       <div className="container">
         <Input
           type="text"
-          value={inputValue}
+          value={newName}
           onChange={handleInputChange}
-          placeholder="user id"
+          placeholder="name"
         />
         <Button
           type="submit"
           variant="outline"
           className="mt-4 bg-primary"
-          onClick={() => deleteUser(inputValue)}
+          onClick={() =>
+            updateUserAccount('TODO: get id of this account', newName)
+          }
         >
-          Delete User with Id {inputValue}
+          Update
         </Button>
       </div>
     </>

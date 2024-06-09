@@ -34,7 +34,8 @@ const App: React.FC = () => {
             <Route
               path="/delete-user-accounts/"
               element={<DeleteUserAccounts />}
-            />
+            />{' '}
+            {/* DeleteUserAccounts is a page for us for testing that the user account deletion works. This option has to be removed in the final app. */}
             <Route path="/add-gym/" element={<AddGym />} />
             <Route path="/gymoverview" element={<GymOverview />} />
             {/* <Route path="*" element={<NoPage />} /> */}

@@ -4,7 +4,6 @@ import { Input } from '@/components/ui/input'
 import { useState } from 'react'
 
 async function deleteUser(id: string) {
-  console.log('Id:', id)
   try {
     const response = await fetch(config.BACKEND_URL + '/users/delete/' + id, {
       method: 'DELETE',
