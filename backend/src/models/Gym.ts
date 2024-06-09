@@ -1,19 +1,10 @@
 // backend/src/models/Gym.js
 import mongoose, { Document, Schema } from 'mongoose'
-import Address, { IAddress } from './Address'
+import Address from './Address'
 import TimeRange from './TimeRange'
 import Offer from './Offer'
 import Review from './Review'
-
-export interface IGym {
-  name: String
-  highlights: String[]
-  websiteLink: String
-  pictures: String[]
-  averageRating: Number
-  address: IAddress
-  // ...
-}
+import { IGym } from '@models/Gym'
 
 export interface IGymModel extends IGym, Document {}
 

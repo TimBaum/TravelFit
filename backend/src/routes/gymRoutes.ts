@@ -4,9 +4,9 @@ import { Schemas, ValidateJoi } from '../middleware/joi'
 
 const router = express.Router()
 
-router.post('/create', ValidateJoi(Schemas.author.create), controller.createGym)
+router.post('/create', controller.createGym)
 router.get('/get', controller.readAll)
 router.get('/get/:id', controller.getGym)
-router.post('/search', ValidateJoi(Schemas.search), controller.searchGyms)
+router.post('/search', controller.searchGyms)
 
 export = router

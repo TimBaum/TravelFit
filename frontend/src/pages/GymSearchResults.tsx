@@ -1,15 +1,114 @@
+import SearchBar from '@/components/SearchBar'
+import { Button } from '@/components/ui/button'
+import { Separator } from '@/components/ui/separator'
 import { useGymSearch } from '@/services/gymService'
+import {
+  BookmarkIcon,
+  CalendarIcon,
+  StarFilledIcon,
+  StarIcon,
+} from '@radix-ui/react-icons'
+import { ArrowDown, Coins, MapIcon } from 'lucide-react'
+import React from 'react'
+import { useState } from 'react'
+import { IGym } from '@models/gym'
 
 function GymSearchResults() {
   const urlParams = new URLSearchParams(window.location.search)
-  const searchString = urlParams.get('search')
+
+  const [searchString, setSearchString] = useState(urlParams.get('search'))
 
   const { data, error, loading } = useGymSearch(searchString)
 
+  console.log(data)
+
+  const filters = [
+    { text: 'Date', icon: <CalendarIcon /> },
+    { text: 'Rating', icon: <StarIcon /> },
+    { text: 'Price', icon: <Coins /> },
+  ]
+
+  if (error) return <div>Error loading gyms</div>
+
   return (
     <div>
-      <h1>Search Results for {searchString}</h1>
-      {data && <div>{JSON.stringify(data)}</div>}
+      <h1 className="text-5xl font-bold mb-2">Gyms in {searchString}</h1>
+      <SearchBar
+        searchTerm={searchString || ''}
+        setSearchTerm={setSearchString}
+        className="mb-6"
+      />
+      <div className="flex gap-2 mb-2">
+        {filters.map((filter) => (
+          <Filter key={filter.text} text={filter.text} icon={filter.icon} />
+        ))}
+      </div>
+      <Separator />
+      <div className="flex items-center gap-2 mt-2 mb-4">
+        <Button variant={'outline'} size={'sm'} className="flex gap-2">
+          Sort by <div className="font-bold">lowest price</div>
+          <ArrowDown className="w-5 h-5" />
+        </Button>
+        <Button variant={'outline'} size={'sm'} className="flex gap-2">
+          Toggle map view
+          <MapIcon className="w-5 h-5" />
+        </Button>
+      </div>
+      {!loading && (
+        <div>
+          {data.map((gym) => (
+            <GymTile key={gym.name} gym={gym} />
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function Filter({ text, icon }: { text: string; icon: JSX.Element }) {
+  return (
+    <Button variant={'outline'} className="gap-2">
+      {icon && React.cloneElement(icon, { className: 'w-5 h-5' })} {text}
+    </Button>
+  )
+}
+
+function GymTile({ gym }: { gym: IGym }) {
+  return (
+    <div className="flex h-48 w-full border rounded p-2">
+      {/* Section left side */}
+      <div className="w-1/3">images</div>
+      <Separator orientation="vertical" />
+      {/* Section right side */}
+      <div className="flex justify-between w-full ml-4 pr-2">
+        <div className="flex flex-col h-full justify-between">
+          <div className="">
+            <div className="text-2xl text-bold flex gap-2 items-center">
+              {gym.name} <BookmarkIcon className="w-6 h-6" />
+            </div>
+            <div>{gym.address.street + ' ' + gym.address.city}</div>
+            <div className="flex gap-2">
+              {gym.highlights.map((element) => (
+                <div key={element} className="px-1 py-1 border rounded">
+                  {element}
+                </div>
+              ))}
+            </div>
+          </div>
+          <div>Open Wednesdays until 22.00</div>
+        </div>
+        <div className="flex flex-col justify-between items-end">
+          <div className="flex items-center gap-1">
+            <StarFilledIcon className="text-primary h-4 w-4" />
+            {gym.averageRating.toFixed(1) +
+              ' · ' +
+              (gym.reviews.length + 3) +
+              ' Reviews'}
+          </div>
+          <div className="text-left">from 5€</div>
+          <Button className="">Show details</Button>
+        </div>
+      </div>
     </div>
   )
 }
