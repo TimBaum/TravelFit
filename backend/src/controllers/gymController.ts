@@ -92,5 +92,20 @@ const searchGyms = async (req: Request, res: Response, next: NextFunction) => {
     })
     .catch((error) => res.status(500).json({ error }))
 }
+const deleteGym = (req: Request, res: Response, next: NextFunction) => {
+  const { id } = req.params
 
-export default { readAll, createGym, getGym, searchGyms }
+  return Gym.findByIdAndDelete(id)
+    .then((gym) => {
+      if (gym) {
+        return res.status(201).json({ message: 'Gym deleted' })
+      } else {
+        return res.status(404).json({ message: 'Gym not found' })
+      }
+    })
+    .catch((error) => {
+      return res.status(500).json({ error })
+    })
+}
+
+export default { readAll, createGym, getGym, searchGyms, deleteGym }

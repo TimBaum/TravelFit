@@ -44,8 +44,36 @@ export function AddGym() {
     },
   })
   // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values)
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+      console.log(values)
+      // API-Aufruf zum Hinzufügen eines neuen Gyms
+      const response = await fetch('http://localhost:5000/gyms/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: values.gymname,
+          websiteLink: values.url,
+          address: {
+            street: values.address,
+            postalCode: '12345', // example; replace
+            city: 'Sample City',
+            country: 'Sample Country',
+            latitude: 40.7128,
+            longitude: -74.006,
+          },
+        }),
+      })
+      if (!response.ok) {
+        throw new Error('Network response was not ok')
+      }
+
+      // const data = await response.json()
+    } catch (error) {
+      console.error('Error adding gym:', error)
+    }
   }
   return (
     <>
