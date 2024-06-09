@@ -5,15 +5,25 @@ import { Request, Response } from 'express'
 import mongoose from 'mongoose'
 
 export const createUser = async (req: Request, res: Response) => {
-  //const { email, displayName, picture, salutation, password, hasPremiumSubscription, payments } = req.body;
-  const { testName } = req.body
+  console.log(
+    'Creating user in controller with values' + JSON.stringify(req.body),
+  )
+  const { email, displayName, salutation, password, hasPremiumSubscription } =
+    req.body
 
   try {
-    //const newUser = new User({ email, displayName, picture, salutation, password, hasPremiumSubscription, payments });
-    const newUser = new User({ _id: new mongoose.Types.ObjectId(), testName })
+    const newUser = new User({
+      _id: new mongoose.Types.ObjectId(),
+      email,
+      displayName,
+      salutation,
+      password,
+      hasPremiumSubscription,
+    })
     await newUser.save()
     return res.status(201).json({ newUser })
   } catch (err) {
+    console.log('Error creating user:', err)
     return res.status(500).json({ error })
   }
 }

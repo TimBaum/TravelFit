@@ -1,9 +1,9 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import '@/styles/UserAccountForm.css';
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
+import '@/styles/UserAccountForm.css'
 
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button'
 import {
   Form,
   FormControl,
@@ -11,46 +11,85 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+} from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
   DropdownMenuItem,
-} from "@/components/ui/dropdown-menu";
-import { LucidePencil } from 'lucide-react';
+} from '@/components/ui/dropdown-menu'
+import { LucidePencil } from 'lucide-react'
+import { config } from '@/config'
 
-const formSchema = z.object({
-  salutation: z.enum(["Mr.", "Ms.", "Diverse"], { required_error: "Salutation is required." }),
-  name: z.string().min(2, { message: "Name must be at least 2 characters." }),
-  email: z.string().email({ message: "Invalid email address." }),
-  password: z.string().min(8, { message: "Password must be at least 8 characters." }),
-  confirmPassword: z.string().min(8, { message: "Confirm Password must be at least 8 characters." }),
-}).refine(data => data.password === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ["confirmPassword"],
-});
+const formSchema = z
+  .object({
+    salutation: z.enum(['Mr.', 'Ms.', 'Diverse'], {
+      required_error: 'Salutation is required.',
+    }),
+    displayName: z
+      .string()
+      .min(2, { message: 'Name must be at least 2 characters.' }),
+    email: z.string().email({ message: 'Invalid email address.' }),
+    password: z
+      .string()
+      .min(8, { message: 'Password must be at least 8 characters.' }),
+    confirmPassword: z
+      .string()
+      .min(8, { message: 'Confirm Password must be at least 8 characters.' }),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ['confirmPassword'],
+  })
 
 export function UserAccountForm() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       salutation: undefined,
-      name: "",
-      email: "",
-      password: "",
-      confirmPassword: ""
+      displayName: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
     },
-  });
+  })
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
+  async function onSubmit(
+    values: z.infer<typeof formSchema>,
+    accountType: string,
+  ) {
+    console.log('User will be created')
+    let hasPremiumSubscription = false
+    if (accountType === 'premium') {
+      hasPremiumSubscription = true
+    }
+
+    const userData = { ...values, hasPremiumSubscription }
+
+    try {
+      const response = await fetch(config.BACKEND_URL + '/users/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to create user')
+      }
+
+      const data = await response.json()
+      console.log('User created successfully:', data)
+    } catch (error) {
+      console.error('Error creating user:', error)
+    }
   }
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="form-box">
+      <form className="form-box">
         <div className="photo-container">
           <LucidePencil size={20} />
           <span>Foto</span>
@@ -64,10 +103,10 @@ export function UserAccountForm() {
               <FormControl>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="outline">{field.value || "Select"}</Button>
+                    <Button variant="outline">{field.value || 'Select'}</Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>
-                    {["Mr.", "Ms.", "Diverse"].map(option => (
+                    {['Mr.', 'Ms.', 'Diverse'].map((option) => (
                       <DropdownMenuItem
                         key={option}
                         onSelect={() => field.onChange(option)}
@@ -78,20 +117,24 @@ export function UserAccountForm() {
                   </DropdownMenuContent>
                 </DropdownMenu>
               </FormControl>
-              <FormMessage>{form.formState.errors.salutation?.message}</FormMessage>
+              <FormMessage>
+                {form.formState.errors.salutation?.message}
+              </FormMessage>
             </FormItem>
           )}
         />
         <FormField
           control={form.control}
-          name="name"
+          name="displayName"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Name</FormLabel>
               <FormControl>
                 <Input placeholder="name" {...field} />
               </FormControl>
-              <FormMessage>{form.formState.errors.name?.message}</FormMessage>
+              <FormMessage>
+                {form.formState.errors.displayName?.message}
+              </FormMessage>
             </FormItem>
           )}
         />
@@ -117,7 +160,9 @@ export function UserAccountForm() {
               <FormControl>
                 <Input type="password" placeholder="password" {...field} />
               </FormControl>
-              <FormMessage>{form.formState.errors.password?.message}</FormMessage>
+              <FormMessage>
+                {form.formState.errors.password?.message}
+              </FormMessage>
             </FormItem>
           )}
         />
@@ -128,17 +173,41 @@ export function UserAccountForm() {
             <FormItem>
               <FormLabel>Confirm Password</FormLabel>
               <FormControl>
-                <Input type="password" placeholder="confirm password" {...field} />
+                <Input
+                  type="password"
+                  placeholder="confirm password"
+                  {...field}
+                />
               </FormControl>
-              <FormMessage>{form.formState.errors.confirmPassword?.message}</FormMessage>
+              <FormMessage>
+                {form.formState.errors.confirmPassword?.message}
+              </FormMessage>
             </FormItem>
           )}
         />
-        <Button type="submit" variant="outline">Create premium account</Button>
-        <Button type="button" variant="outline" className="basic-account-button">Create basic account</Button>
+        <Button
+          type="submit"
+          variant="outline"
+          className="premium-account-button"
+          onClick={() =>
+            form.handleSubmit((values) => onSubmit(values, 'premium'))()
+          }
+        >
+          Create premium account
+        </Button>
+        <Button
+          type="submit"
+          variant="outline"
+          className="basic-account-button"
+          onClick={() =>
+            form.handleSubmit((values) => onSubmit(values, 'basic'))()
+          }
+        >
+          Create basic account
+        </Button>
       </form>
     </Form>
-  );
+  )
 }
 
-export default UserAccountForm;
+export default UserAccountForm
