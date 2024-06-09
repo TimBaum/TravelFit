@@ -14,10 +14,10 @@ const createGym = (req: Request, res: Response, next: NextFunction) => {
     .save()
     .then((gym) => res.status(201).json({ gym }))
     .catch((error) => {
-      console.error('Error saving gym:', error); // Detaillierte Fehlermeldung
-      res.status(500).json({ error: error.message });
-    });
-};
+      console.error('Error saving gym:', error) // Detaillierte Fehlermeldung
+      res.status(500).json({ error: error.message })
+    })
+}
 
 const readAll = (req: Request, res: Response, next: NextFunction) => {
   return Gym.find()
@@ -41,5 +41,20 @@ const searchGyms = (req: Request, res: Response, next: NextFunction) => {
     .then((gyms) => res.status(200).json(gyms))
     .catch((error) => res.status(500).json({ error }))
 }
+const deleteGym = (req: Request, res: Response, next: NextFunction) => {
+  const { id } = req.params
 
-export default { readAll, createGym, getGym, searchGyms }
+  return Gym.findByIdAndDelete(id)
+    .then((gym) => {
+      if (gym) {
+        return res.status(201).json({ message: 'Gym deleted' })
+      } else {
+        return res.status(404).json({ message: 'Gym not found' })
+      }
+    })
+    .catch((error) => {
+      return res.status(500).json({ error })
+    })
+}
+
+export default { readAll, createGym, getGym, searchGyms, deleteGym }
