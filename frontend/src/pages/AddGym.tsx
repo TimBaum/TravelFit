@@ -2,6 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { Button } from '@/components/ui/button'
+import { useNavigate } from 'react-router-dom'
 import {
   Form,
   FormControl,
@@ -22,9 +23,14 @@ import {
 
 import '../styles/AddGym.css'
 
+const simpleUrlRegex =
+  /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/
+
 const formSchema = z.object({
   gymname: z.string().min(2).max(50),
-  url: z.string().url(),
+  url: z.string().refine((value) => simpleUrlRegex.test(value), {
+    message: 'Invalid URL',
+  }),
   address: z.string().min(5).max(100),
   highlights: z.string().optional(),
   offers: z.string().optional(),
@@ -32,6 +38,7 @@ const formSchema = z.object({
 })
 
 export function AddGym() {
+  const navigate = useNavigate()
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -70,7 +77,9 @@ export function AddGym() {
         throw new Error('Network response was not ok')
       }
 
-      // const data = await response.json()
+      const data = await response.json()
+      console.log('Gym added:', data)
+      navigate('/my-gyms')
     } catch (error) {
       console.error('Error adding gym:', error)
     }
