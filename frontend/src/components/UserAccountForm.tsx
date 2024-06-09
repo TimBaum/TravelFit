@@ -59,7 +59,6 @@ export function UserAccountForm() {
     values: z.infer<typeof formSchema>,
     accountType: string,
   ) {
-    console.log('User will be created')
     let hasPremiumSubscription = false
     if (accountType === 'premium') {
       hasPremiumSubscription = true
@@ -188,6 +187,7 @@ export function UserAccountForm() {
         <Button
           type="submit"
           variant="outline"
+          className="mt-4 bg-primary"
           onClick={() =>
             form.handleSubmit((values) => onSubmit(values, 'premium'))()
           }
@@ -197,7 +197,6 @@ export function UserAccountForm() {
         <Button
           type="submit"
           variant="outline"
-          className="mt-4 bg-primary"
           onClick={() =>
             form.handleSubmit((values) => onSubmit(values, 'basic'))()
           }

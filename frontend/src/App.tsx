@@ -5,10 +5,12 @@ import GymSearchResults from './pages/GymSearchResults'
 import MyGyms from './pages/MyGyms'
 import CreateGymAccount from './pages/CreateGymAccount'
 import CreateUserAccount from './pages/CreateUserAccount'
+import ManageUserAccount from './pages/ManageUserAccount'
 import AddGym from './pages/AddGym'
 import Layout from './components/Layout'
 import '../app/globals.css'
 import GymOverview from './pages/GymOverview'
+import DeleteUserAccounts from './pages/DeleteUserAccounts'
 
 const App: React.FC = () => {
   return (
@@ -24,9 +26,17 @@ const App: React.FC = () => {
             <Route
               path="/create-user-account/"
               element={<CreateUserAccount />}
+            />{' '}
+            <Route
+              path="/manage-user-account/"
+              element={<ManageUserAccount />}
+            />
+            <Route
+              path="/delete-user-accounts/"
+              element={<DeleteUserAccounts />}
             />
             <Route path="/add-gym/" element={<AddGym />} />
-            <Route path="/gymoverview" element={<GymOverview />} /> 
+            <Route path="/gymoverview" element={<GymOverview />} />
             {/* <Route path="*" element={<NoPage />} /> */}
           </Route>
         </Routes>
