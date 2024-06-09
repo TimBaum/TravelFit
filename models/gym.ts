@@ -17,7 +17,15 @@ export interface IGym {
   updatedAt: Date
 }
 
-export type Highlight = 'Sauna' | 'Posing room' | 'Pool'
+export type Highlight =
+  | 'Sauna'
+  | 'Posing room'
+  | 'Pool'
+  | 'Courses'
+  | 'Personal trainings'
+  | 'Nutrition bar'
+  | 'Outdoor'
+  | 'Parking'
 
 export interface IGymWithId extends IGym {
   id: string

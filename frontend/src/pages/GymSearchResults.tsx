@@ -74,10 +74,11 @@ function Filter({ text, icon }: { text: string; icon: JSX.Element }) {
 
 function GymTile({ gym }: { gym: IGym }) {
   return (
-    <div className="flex h-48 w-full border rounded p-2">
+    <div className="flex min-h-48 w-full border rounded p-2 items-stretch">
       {/* Section left side */}
-      <div className="w-1/3">images</div>
-      <Separator orientation="vertical" />
+      <div className="w-1/3 h-full">images</div>
+      {/* separator is behaving weirdly with the height */}
+      <Separator orientation="vertical" className="flex h-46" />
       {/* Section right side */}
       <div className="flex justify-between w-full ml-4 pr-2">
         <div className="flex flex-col h-full justify-between">
@@ -86,7 +87,7 @@ function GymTile({ gym }: { gym: IGym }) {
               {gym.name} <BookmarkIcon className="w-6 h-6" />
             </div>
             <div>{gym.address.street + ' ' + gym.address.city}</div>
-            <div className="flex gap-2">
+            <div className="flex gap-2 flex-wrap mt-2">
               {gym.highlights.map((element) => (
                 <HighlightBadge key={element} name={element} />
               ))}
@@ -94,7 +95,7 @@ function GymTile({ gym }: { gym: IGym }) {
           </div>
           <div>Open Wednesdays until 22.00</div>
         </div>
-        <div className="flex flex-col justify-between items-end">
+        <div className="flex flex-col justify-between items-end min-w-40">
           <div className="flex items-center gap-1">
             <StarFilledIcon className="text-primary h-4 w-4" />
             {gym.averageRating.toFixed(1) +
