@@ -14,6 +14,8 @@ import HighlightBadge from '@/components/HighlightBadge'
 import { Button } from '@/components/ui/button'
 import { IOffer } from '@models/offer'
 import { Clock9 } from 'lucide-react'
+import { buttonVariants } from '@/components/ui/button'
+import { Link } from 'react-router-dom'
 
 function GymOverview() {
   const pathname = window.location.pathname
@@ -70,7 +72,7 @@ function GymOverview() {
         <PhotoGallery photos={photos} />
         <div className="flex gap-2">
           {/* left side */}
-          <div className="w-2/3">
+          <div className="w-2/3 m-2">
             <div className="flex gap-2">
               {data?.highlights.map((element) => (
                 <HighlightBadge key={element} name={element} />
@@ -90,7 +92,13 @@ function GymOverview() {
           </div>
 
           {/* right side */}
-          <div className="w-1/3">
+          <div className="w-1/3 m-2">
+            <Button asChild className="w-full">
+              <Link to={data?.websiteLink ?? '/default-url'}>
+                Visit gym website
+              </Link>
+            </Button>
+
             <h2>Reviews</h2>
             {/* Reviews Component */}
           </div>
