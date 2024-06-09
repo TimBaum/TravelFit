@@ -11,7 +11,7 @@ import {
 import { ArrowDown, Coins, MapIcon } from 'lucide-react'
 import React from 'react'
 import { useState } from 'react'
-import { IGym, IGymWithId } from '@models/gym'
+import { IGymWithId } from '@models/gym'
 import HighlightBadge from '@/components/HighlightBadge'
 import { useNavigate } from 'react-router-dom'
 
@@ -57,9 +57,9 @@ function GymSearchResults() {
         </Button>
       </div>
       {!loading && data.length > 0 && (
-        <div>
+        <div className="flex flex-col gap-2">
           {data.map((gym) => (
-            <GymTile key={gym.name} gym={gym} />
+            <GymTile key={gym._id} gym={gym} />
           ))}
         </div>
       )}
@@ -115,10 +115,9 @@ function GymTile({ gym }: { gym: IGymWithId }) {
         <div className="flex flex-col justify-between items-end min-w-40">
           <div className="flex items-center gap-1">
             <StarFilledIcon className="text-primary h-4 w-4" />
-            {gym.averageRating.toFixed(1) +
-              ' · ' +
-              (gym.reviews.length + 3) +
-              ' Reviews'}
+            {gym.averageRating
+              ? gym.averageRating.toFixed(1)
+              : '?' + ' · ' + (gym.reviews.length + 3) + ' Reviews'}
           </div>
           <div className="text-left">from 5€</div>
           <Button
