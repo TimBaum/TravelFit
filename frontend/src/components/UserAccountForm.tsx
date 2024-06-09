@@ -188,7 +188,6 @@ export function UserAccountForm() {
         <Button
           type="submit"
           variant="outline"
-          className="premium-account-button"
           onClick={() =>
             form.handleSubmit((values) => onSubmit(values, 'premium'))()
           }
@@ -198,7 +197,7 @@ export function UserAccountForm() {
         <Button
           type="submit"
           variant="outline"
-          className="basic-account-button"
+          className="mt-4 bg-primary"
           onClick={() =>
             form.handleSubmit((values) => onSubmit(values, 'basic'))()
           }
