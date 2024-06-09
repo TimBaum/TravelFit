@@ -17,6 +17,7 @@ function useGymSearch(searchString: string | null): GymSearchResults {
     async function fetchData() {
       if (!searchString) return
       setLoading(true)
+      setError(null)
       const response = await fetch(`${config.BACKEND_URL}/gyms/search`, {
         method: 'POST',
         headers: {
@@ -25,6 +26,13 @@ function useGymSearch(searchString: string | null): GymSearchResults {
         body: JSON.stringify({ searchString: searchString }),
       })
         .then((response) => response.json())
+        .then((response) => {
+          if (response.error) {
+            setError(response.error)
+            return []
+          }
+          return response
+        })
         .catch((error) => {
           setError(error)
         })

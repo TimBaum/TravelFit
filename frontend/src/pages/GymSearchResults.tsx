@@ -22,15 +22,11 @@ function GymSearchResults() {
 
   const { data, error, loading } = useGymSearch(searchString)
 
-  console.log(data)
-
   const filters = [
     { text: 'Date', icon: <CalendarIcon /> },
     { text: 'Rating', icon: <StarIcon /> },
     { text: 'Price', icon: <Coins /> },
   ]
-
-  if (error) return <div>Error loading gyms</div>
 
   return (
     <div className="mb-10">
@@ -56,7 +52,7 @@ function GymSearchResults() {
           <MapIcon className="w-5 h-5" />
         </Button>
       </div>
-      {!loading && data.length > 0 && (
+      {!loading && data?.length > 0 && (
         <div className="flex flex-col gap-2">
           {data.map((gym) => (
             <GymTile key={gym._id} gym={gym} />
@@ -64,14 +60,19 @@ function GymSearchResults() {
         </div>
       )}
       {loading && <div>Loading...</div>}
-      {!loading && data.length === 0 && (
+      {!loading && data?.length === 0 && (
         <div className="mt-12 w-full justify-center text-center">
           <img
             src="src/assets/illustrations/MessyDoodle.svg"
             alt="No results found"
             className="w-2/5 mx-auto mb-6"
           />
-          <div className="text-2xl font-bold">No gyms found</div>
+          <div className="text-2xl font-bold">
+            {' '}
+            {error === 'LOCATION_NOT_FOUND'
+              ? "Your address wasn't found"
+              : 'No gyms found'}
+          </div>
           <div>Try another search to find your next workout!</div>
         </div>
       )}
