@@ -6,8 +6,10 @@ const addressSchema = new mongoose.Schema({
   postalCode: String,
   city: { type: String, index: true },
   country: String,
-  latitude: Number,
-  longitude: Number,
+  location: {
+    type: { type: String, enum: ['Point'] },
+    coordinates: [Number],
+  },
 })
 
 const Address = mongoose.model('Address', addressSchema)
