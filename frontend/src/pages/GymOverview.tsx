@@ -14,6 +14,7 @@ import HighlightBadge from '@/components/HighlightBadge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Separator } from '@/components/ui/separator'
 import { IOffer } from '@models/offer'
 import { Clock9, Copy, CircleCheckBig } from 'lucide-react'
 import { Link } from 'react-router-dom'
@@ -234,6 +235,7 @@ function ReviewTile({ review }: { review: IReview }) {
             {showFullText ? 'show less' : 'read more'}
           </button>
         )}
+        <Separator className="mt-2" />
       </div>
     </div>
   )
