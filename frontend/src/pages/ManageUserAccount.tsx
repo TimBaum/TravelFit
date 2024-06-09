@@ -3,6 +3,8 @@ import { config } from '@/config'
 import { Input } from '@/components/ui/input'
 import { useState } from 'react'
 
+// This page will be implemented later on when the login functionality has been implemented.
+
 async function updateUserAccount(id: string, userData: string) {
   try {
     const response = await fetch(config.BACKEND_URL + '/users/update/' + id, {
