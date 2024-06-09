@@ -29,6 +29,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog'
 import { IReview } from '@models/review'
+import { IAddress } from '@models/adress'
 
 function GymOverview() {
   const pathname = window.location.pathname
@@ -219,6 +220,32 @@ function ReviewTile({ review }: { review: IReview }) {
     <div className="flex h-46 w-full rounded p-2 relative m-2">
       {review.author}
       {review.text}
+    </div>
+  )
+}
+
+function MapTile({ address }: { address: IAddress }) {
+  const latitude = address.latitude
+  const longitude = address.longitude
+  const delta = 0.05
+  const left = longitude - delta
+  const right = longitude + delta
+  const bottom = latitude - delta
+  const top = latitude + delta
+
+  const mapUrl = `https://www.openstreetmap.org/export/embed.html?bbox=${left},${bottom},${right},${top}&layer=mapnik&marker=${latitude},${longitude}`
+
+  return (
+    <div>
+      <iframe src={mapUrl}></iframe>
+      <br />
+      <small>
+        <a
+          href={`https://www.openstreetmap.org/?mlat=${latitude}&mlon=${longitude}#map=14/${latitude}/${longitude}`}
+        >
+          View Larger Map
+        </a>
+      </small>
     </div>
   )
 }
