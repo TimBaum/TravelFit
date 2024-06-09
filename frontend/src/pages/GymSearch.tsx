@@ -2,9 +2,12 @@ import SearchBar from '@/components/SearchBar'
 import { Card } from '@/components/ui/card'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 function GymSearch() {
   const [searchTerm, setSearchTerm] = useState('')
+
+  const navigate = useNavigate()
 
   const cityTiles = [
     { city: 'Munich', picture: '/src/assets/munich.png' },
@@ -21,7 +24,9 @@ function GymSearch() {
       <p className="">
         Find your gym or{' '}
         <u>
-          <i>become a partner</i>
+          <i onClick={() => navigate('/create-gym-account/')}>
+            become a partner
+          </i>
         </u>
         .
       </p>
