@@ -1,6 +1,7 @@
 import { Highlight } from '@models/gym'
 import { StarIcon } from '@radix-ui/react-icons'
 import {
+  BicepsFlexed,
   Calendar,
   Car,
   Flower,
@@ -12,25 +13,26 @@ import {
 
 function HighlightBadge({ name }: { name: Highlight }) {
   function getIcon() {
+    const className = 'w-5 h-5'
     switch (name) {
       case 'Sauna':
-        return <ThermometerIcon className="w-5 h-5" />
+        return <ThermometerIcon className={className} />
       case 'Posing room':
-        return <img src="src/assets/biceps-flexed.svg" className="w-5 h-5" />
+        return <BicepsFlexed className={className} />
       case 'Pool':
-        return <WavesIcon className="w-5 h-5" />
+        return <WavesIcon className={className} />
       case 'Courses':
-        return <Calendar className="w-5 h-5" />
+        return <Calendar className={className} />
       case 'Personal trainings':
-        return <PersonStanding className="w-5 h-5" />
+        return <PersonStanding className={className} />
       case 'Nutrition bar':
-        return <Salad className="w-5 h-5" />
+        return <Salad className={className} />
       case 'Outdoor':
-        return <Flower className="w-5 h-5" />
+        return <Flower className={className} />
       case 'Parking':
-        return <Car className="w-5 h-5" />
+        return <Car className={className} />
       default:
-        return <StarIcon className="w-5 h-5" />
+        return <StarIcon className={className} />
     }
   }
 
