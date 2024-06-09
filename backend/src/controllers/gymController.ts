@@ -47,7 +47,6 @@ async function getCoordinates(
   )
     .then((response) => response.json())
     .then((response: OpenStreetMapResponse[]) => {
-      console.log(response)
       if (!response || response.length === 0) {
         return undefined
       }
