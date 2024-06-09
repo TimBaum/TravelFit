@@ -110,7 +110,7 @@ function GymOverview() {
 
 function OfferTile({ offer }: { offer: IOffer }) {
   return (
-    <div className="flex h-46 w-full border rounded p-2 relative">
+    <div className="flex h-46 w-full border rounded p-2 relative m-2">
       {/* Section left side */}
       <div className="w-2/3">
         {offer.type === 'Special' && <SpecialOfferTile />}
@@ -119,9 +119,11 @@ function OfferTile({ offer }: { offer: IOffer }) {
       </div>
       {/* Section right side */}
       <div className="flex justify-between w-full ml-4 pr-2">
-        <div className="ml-auto">Valid until {offer.endDate.toString()}</div>
+        <div className="ml-auto">
+          Valid until {new Date(offer.endDate).toLocaleDateString('de-DE')}
+        </div>
         <div className="absolute bottom-2 right-2">
-          Price: {offer.priceEuro}
+          Price: {offer.priceEuro}€
         </div>
       </div>
     </div>
