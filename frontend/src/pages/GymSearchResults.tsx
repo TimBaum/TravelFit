@@ -12,6 +12,7 @@ import { ArrowDown, Coins, MapIcon } from 'lucide-react'
 import React from 'react'
 import { useState } from 'react'
 import { IGym } from '@models/gym'
+import HighlightBadge from '@/components/HighlightBadge'
 
 function GymSearchResults() {
   const urlParams = new URLSearchParams(window.location.search)
@@ -19,8 +20,6 @@ function GymSearchResults() {
   const [searchString, setSearchString] = useState(urlParams.get('search'))
 
   const { data, error, loading } = useGymSearch(searchString)
-
-  console.log(data)
 
   const filters = [
     { text: 'Date', icon: <CalendarIcon /> },
@@ -89,9 +88,7 @@ function GymTile({ gym }: { gym: IGym }) {
             <div>{gym.address.street + ' ' + gym.address.city}</div>
             <div className="flex gap-2">
               {gym.highlights.map((element) => (
-                <div key={element} className="px-1 py-1 border rounded">
-                  {element}
-                </div>
+                <HighlightBadge key={element} name={element} />
               ))}
             </div>
           </div>

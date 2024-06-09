@@ -5,7 +5,7 @@ import { ITimeRange } from './timeRange'
 
 export interface IGym {
   name: string
-  highlights: ['Sauna', 'Posing room', 'Pool']
+  highlights: Highlight[]
   websiteLink: string
   pictures: [string]
   averageRating: Number
@@ -16,6 +16,8 @@ export interface IGym {
   createdAt: Date
   updatedAt: Date
 }
+
+export type Highlight = 'Sauna' | 'Posing room' | 'Pool'
 
 export interface IGymWithId extends IGym {
   id: string
