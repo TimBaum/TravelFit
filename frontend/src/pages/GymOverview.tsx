@@ -31,6 +31,7 @@ import {
 } from '@/components/ui/dialog'
 import { IReview } from '@models/review'
 import { IAddress } from '@models/adress'
+import { IGym } from '@models/gym'
 
 function GymOverview() {
   const pathname = window.location.pathname
@@ -119,7 +120,8 @@ function GymOverview() {
                   .map((review) => <ReviewTile review={review} />)}
               </div>
             )}
-            <ReviewDialog reviews={data?.reviews} /> | add review
+            <ReviewDialog reviews={data?.reviews} /> |{' '}
+            <AddReviewDialog gym={data} />
           </div>
         </div>
       </div>
@@ -283,6 +285,42 @@ function ReviewDialog({ reviews }: { reviews: [IReview] | undefined }) {
             <p>No reviews available.</p>
           )}
         </div>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+function AddReviewDialog({ gym }: { gym: IGym | undefined }) {
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant="ghost">Add review</Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>Write a new review for {gym?.name}</DialogTitle>
+        </DialogHeader>
+        <div className="grid gap-4 py-4">
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="name" className="text-right">
+              Rating
+            </Label>
+            <Input
+              id="name"
+              defaultValue="Pedro Duarte"
+              className="col-span-3"
+            />
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="username" className="text-right">
+              Text
+            </Label>
+            <Input className="col-span-3" />
+          </div>
+        </div>
+        <DialogFooter>
+          <Button type="submit">Submit</Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   )
