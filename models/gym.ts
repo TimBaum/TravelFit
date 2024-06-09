@@ -1,4 +1,4 @@
-import { IAddress } from './adress'
+import { IAddress } from './address'
 import { IOffer } from './offer'
 import { IReview } from './review'
 import { ITimeRange } from './timeRange'
@@ -28,5 +28,5 @@ export type Highlight =
   | 'Parking'
 
 export interface IGymWithId extends IGym {
-  id: string
+  _id: string
 }
