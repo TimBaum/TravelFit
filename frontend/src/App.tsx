@@ -11,6 +11,7 @@ import Layout from './components/Layout'
 import '../app/globals.css'
 import GymOverview from './pages/GymOverview'
 import DeleteUserAccounts from './pages/DeleteUserAccounts'
+import Login from './pages/Login'
 
 const App: React.FC = () => {
   return (
@@ -26,7 +27,8 @@ const App: React.FC = () => {
             <Route
               path="/create-user-account/"
               element={<CreateUserAccount />}
-            />{' '}
+            />
+            <Route path="login" element={<Login />} />
             <Route
               path="/manage-user-account/"
               element={<ManageUserAccount />}
@@ -34,7 +36,7 @@ const App: React.FC = () => {
             <Route
               path="/delete-user-accounts/"
               element={<DeleteUserAccounts />}
-            />{' '}
+            />
             {/* DeleteUserAccounts is a page for us for testing that the user account deletion works. This option has to be removed in the final app. */}
             <Route path="/add-gym/" element={<AddGym />} />
             <Route path="/gymoverview" element={<GymOverview />} />

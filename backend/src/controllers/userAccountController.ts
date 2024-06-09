@@ -3,13 +3,15 @@ import { error } from 'console'
 import User from '../models/User'
 import { Request, Response } from 'express'
 import mongoose from 'mongoose'
+import bcryptjs from 'bcryptjs'
 
 export const createUser = async (req: Request, res: Response) => {
-  console.log(
-    'Creating user in controller with values' + JSON.stringify(req.body),
-  )
   const { email, displayName, salutation, password, hasPremiumSubscription } =
     req.body
+
+  const hashedPassword = await bcryptjs.hash(password, 10)
+
+  // TODO: check if email already exists
 
   try {
     const newUser = new User({
@@ -17,7 +19,7 @@ export const createUser = async (req: Request, res: Response) => {
       email,
       displayName,
       salutation,
-      password,
+      password: hashedPassword,
       hasPremiumSubscription,
     })
     await newUser.save()

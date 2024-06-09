@@ -8,6 +8,7 @@ import '@/index.css'
 
 import { cn } from '@/lib/utils'
 import { Button } from './button'
+import { useNavigate } from 'react-router-dom'
 
 const NavigationMenu = React.forwardRef<
   React.ElementRef<typeof NavigationMenuPrimitive.Root>,
@@ -119,6 +120,8 @@ NavigationMenuIndicator.displayName =
 function NavigationMenuManager({ className }: { className: string }) {
   // We display different menu items based on the user's role
 
+  const navigate = useNavigate()
+
   // TODO: Implement user roles
   const userStatus: 'GYM_USER' | 'USER' | 'NOT_LOGGED_IN' = 'NOT_LOGGED_IN'
 
@@ -157,8 +160,15 @@ function NavigationMenuManager({ className }: { className: string }) {
       {userStatus === 'NOT_LOGGED_IN' && (
         <div className="flex gap-2">
           <Button variant={'outline'}>Become a partner</Button>
-          <Button className="bg-black">Login</Button>
-          <Button className="bg-black">Signup</Button>
+          <Button className="bg-black" onClick={() => navigate('/login')}>
+            Login
+          </Button>
+          <Button
+            className="bg-black"
+            onClick={() => navigate('/create-user-account')}
+          >
+            Signup
+          </Button>
         </div>
       )}
       {userStatus !== 'NOT_LOGGED_IN' && (
