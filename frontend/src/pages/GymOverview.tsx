@@ -118,7 +118,7 @@ function GymOverview() {
                   .map((review) => <ReviewTile review={review} />)}
               </div>
             )}
-            view more | add review
+            <ReviewDialog reviews={data?.reviews} /> | add review
           </div>
         </div>
       </div>
@@ -262,6 +262,27 @@ function MapTile({ address }: { address: IAddress }) {
         </a>
       </small>
     </div>
+  )
+}
+
+function ReviewDialog({ reviews }: { reviews: [IReview] | undefined }) {
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant="ghost">view more</Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>View all reviews</DialogTitle>
+        </DialogHeader>
+
+        <div>
+          {reviews?.map((review) => <ReviewTile review={review} />) || (
+            <p>No reviews available.</p>
+          )}
+        </div>
+      </DialogContent>
+    </Dialog>
   )
 }
 
