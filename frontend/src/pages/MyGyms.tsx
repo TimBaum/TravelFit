@@ -21,15 +21,12 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { IGymWithId } from '@models/gym'
 
-interface Gym {
-  _id: string
-  name: string
-  reviews: number
-  offers: { length: number }[]
-}
+import NoGyms from '@/assets/NoGyms.svg'
+
 const MyGyms: React.FC = () => {
-  const [gyms, setGyms] = useState<Gym[]>([])
+  const [gyms, setGyms] = useState<IGymWithId[]>([])
 
   const navigate = useNavigate()
 
@@ -58,7 +55,10 @@ const MyGyms: React.FC = () => {
     // Abrufen der Gyms vom Backend
     fetch('http://localhost:5000/gyms/get')
       .then((response) => response.json())
-      .then((data) => setGyms(data.gyms))
+      .then((data) => {
+        console.log(data) //  Struktur der Daten überprüfen
+        setGyms(data.gyms)
+      })
       .catch((error) => console.error('Error fetching gyms:', error))
   }, [])
 
@@ -77,6 +77,11 @@ const MyGyms: React.FC = () => {
           </BreadcrumbList>
         </Breadcrumb>
       </div>
+      {gyms.length < 1 && (
+        <div className="svg-container">
+          <img src={NoGyms} alt="No Gyms Available" />
+        </div>
+      )}
       <h1 className="title">My Gyms</h1>
       <input type="text" placeholder="Filter..." />
       <Button className="search-button">
@@ -94,7 +99,7 @@ const MyGyms: React.FC = () => {
           {gyms.map((gym) => (
             <TableRow key={gym._id}>
               <TableCell>{gym.name}</TableCell>
-              <TableCell>{gym.reviews}/5</TableCell>
+              <TableCell>{gym.averageRating?.toString() ?? '?'}/5</TableCell>
               <TableCell>
                 <div>
                   <Button>View</Button>

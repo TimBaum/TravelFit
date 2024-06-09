@@ -28,5 +28,5 @@ export type Highlight =
   | 'Parking'
 
 export interface IGymWithId extends IGym {
-  id: string
+  _id: string
 }
