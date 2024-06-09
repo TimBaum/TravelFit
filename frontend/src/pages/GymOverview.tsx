@@ -28,6 +28,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
+import { IReview } from '@models/review'
 
 function GymOverview() {
   const pathname = window.location.pathname
@@ -81,7 +82,7 @@ function GymOverview() {
         <PhotoGallery photos={photos} />
         <div className="flex gap-2">
           {/* left side */}
-          <div className="w-2/3 m-2">
+          <div className="w-2/3 mr-10">
             <div className="flex gap-2">
               {data?.highlights.map((element) => (
                 <HighlightBadge key={element} name={element} />
@@ -89,6 +90,7 @@ function GymOverview() {
             </div>
             <div className="mt-3">
               {/* Offers Component */}
+              <h1 className="mt-2 text-3xl font-bold">Offers</h1>
               {!loading && (
                 <div>
                   {data?.offers.map((offer) => (
@@ -108,7 +110,12 @@ function GymOverview() {
               </Link>
             </Button>
 
-            <h2>Reviews</h2>
+            <h1 className="mt-2 text-3xl font-bold">Reviews</h1>
+            {!loading && (
+              <div>
+                {data?.reviews.map((review) => <ReviewTile review={review} />)}
+              </div>
+            )}
             {/* Reviews Component */}
           </div>
         </div>
@@ -156,7 +163,7 @@ function ShareButton({ link }: { link: string }) {
       setCopied(true)
       setTimeout(() => {
         setCopied(false)
-      }, 2000) // Reset the icon back after 2 seconds
+      }, 3000) // Reset the icon back after 2 seconds
     })
   }
   return (
@@ -206,6 +213,14 @@ function ShareButton({ link }: { link: string }) {
     </Dialog>
   )
 }
-Copy
+
+function ReviewTile({ review }: { review: IReview }) {
+  return (
+    <div className="flex h-46 w-full rounded p-2 relative m-2">
+      {review.author}
+      {review.text}
+    </div>
+  )
+}
 
 export default GymOverview
