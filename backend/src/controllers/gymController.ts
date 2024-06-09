@@ -92,14 +92,6 @@ const searchGyms = async (req: Request, res: Response, next: NextFunction) => {
       res.status(200).json(gyms)
     })
     .catch((error) => res.status(500).json({ error }))
-
-  return Gym.where('address.city')
-    .in([searchString])
-    .then((gyms) => {
-      console.log(gyms[0].address.location)
-      res.status(200).json(gyms)
-    })
-    .catch((error) => res.status(500).json({ error }))
 }
 
 export default { readAll, createGym, getGym, searchGyms }
