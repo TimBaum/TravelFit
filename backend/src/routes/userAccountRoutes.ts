@@ -5,7 +5,7 @@ import {
   readAllUsers,
   updateUser,
   deleteUser,
-} from '../controllers/userController'
+} from '../controllers/userAccountController'
 
 const router = express.Router()
 
