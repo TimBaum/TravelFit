@@ -27,10 +27,40 @@ const MyGyms: React.FC = () => {
     setGyms(gyms.filter((gym) => gym !== gymToDelete))
   }
 
-  const handleAddGym = () => {
-    // Funktion zum Hinzufügen eines Gyms
-    const newGym = `Gym ${gyms.length + 1}`
-    setGyms([...gyms, newGym])
+  const handleAddGym = async () => {
+    try {
+      // API-Aufruf zum Hinzufügen eines neuen Gyms
+      const response = await fetch('http://localhost:5000/gyms/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: `Gym ${gyms.length + 1}`, // example; replace
+          websiteLink: 'http://example.com', //example; replace
+          address: {
+            street: '123 Main St',
+            postalCode: '12345',
+            city: 'Sample City',
+            country: 'Sample Country',
+            latitude: 40.7128,
+            longitude: -74.0060
+          } // example; replace
+        }),
+      });
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const data = await response.json();
+      const newGym = data.gym._id; // Annahme, dass das Gym-Objekt eine _id hat
+      setGyms([...gyms, newGym]);
+      //** Save: Alte Funktion zum Hinzufügen eines Gyms
+      //const newGym = `Gym ${gyms.length + 1}`
+      //setGyms([...gyms, newGym])
+    } catch (error) {
+      console.error('Error adding gym:', error);
+    }
   }
 
   const handleGymClick = (gym: string) => {
