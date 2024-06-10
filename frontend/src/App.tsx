@@ -12,6 +12,7 @@ import '../app/globals.css'
 import GymOverview from './pages/GymOverview'
 import DeleteUserAccounts from './pages/DeleteUserAccounts'
 import Login from './pages/Login'
+import DeleteGymAccounts from './pages/DeleteGymAccounts'
 
 const App: React.FC = () => {
   return (
@@ -33,6 +34,11 @@ const App: React.FC = () => {
               path="/manage-user-account/"
               element={<ManageUserAccount />}
             />
+            <Route
+              path="/delete-gym-accounts/"
+              element={<DeleteGymAccounts />}
+            />
+            {/* DeleteGymAccounts is a page for us for testing that the gym account deletion works. This option has to be removed in the final app. */}
             <Route
               path="/delete-user-accounts/"
               element={<DeleteUserAccounts />}
