@@ -1,15 +1,12 @@
-import { useState } from 'react'
 import { StarIcon, StarFilledIcon } from '@radix-ui/react-icons'
 
-function StarRating() {
-  const [filledStars, setFilledStars] = useState([
-    false,
-    false,
-    false,
-    false,
-    false,
-  ])
-
+function StarRating({
+  filledStars,
+  setFilledStars,
+}: {
+  filledStars: boolean[]
+  setFilledStars: (stars: boolean[]) => void
+}) {
   const handleStarClick = (index: number) => {
     const newFilledStars = filledStars.map((_, i) => i <= index)
     setFilledStars(newFilledStars)

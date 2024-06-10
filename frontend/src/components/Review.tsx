@@ -1,9 +1,6 @@
 import {
   Dialog,
-  DialogClose,
   DialogContent,
-  DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -11,21 +8,18 @@ import {
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from '@/components/ui/form'
 import { Textarea } from '@/components/ui/textarea'
 import { toast } from '@/components/ui/use-toast'
 import { Button } from '@/components/ui/button'
-import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
 
 import StarRating from './StarRating'
 
-import { IGym } from '@models/gym'
+import { IGymWithId } from '@models/gym'
 
 import { useState } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -34,7 +28,17 @@ import { z } from 'zod'
 
 import { IReview } from '@models/review'
 
-function AddReviewDialog({ gym }: { gym: IGym | undefined }) {
+import { useUpdateReviews } from '@/services/gymService'
+
+function AddReviewDialog({ gym }: { gym: IGymWithId | undefined }) {
+  const [filledStars, setFilledStars] = useState([
+    false,
+    false,
+    false,
+    false,
+    false,
+  ])
+
   const FormSchema = z.object({
     reviewText: z
       .string()
@@ -69,7 +73,10 @@ function AddReviewDialog({ gym }: { gym: IGym | undefined }) {
           <DialogTitle>Write a new review for {gym?.name}</DialogTitle>
         </DialogHeader>
         <div>
-          <StarRating />
+          <StarRating
+            filledStars={filledStars}
+            setFilledStars={setFilledStars}
+          />
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className=" space-y-6">
               <FormField
