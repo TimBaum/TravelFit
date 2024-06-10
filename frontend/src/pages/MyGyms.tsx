@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
-import { FaSearch } from 'react-icons/fa'
 import { LucidePencil as Pencil } from 'lucide-react'
 import '../styles/MyGyms.css'
 import { useNavigate } from 'react-router-dom'
@@ -21,20 +20,30 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { IGymWithId } from '@models/gym'
 
-import NoGyms from '@/assets/NoGyms.svg'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog'
+
+import { IGymWithId } from '@models/gym'
+import NoGyms from '@/assets/illustrations/NoGyms.svg'
+import { Input } from '@/components/ui/input'
 
 const MyGyms: React.FC = () => {
   const [gyms, setGyms] = useState<IGymWithId[]>([])
+  const [searchQuery, setSearchQuery] = useState<string>('')
 
   const navigate = useNavigate()
 
   const handleDeleteGym = async (gymToDelete: string) => {
-    const confirmed = window.confirm(
-      `Are you sure you want to delete ${gymToDelete}?`,
-    )
-    if (!confirmed) return
     try {
       const response = await fetch(
         `http://localhost:5000/gyms/${gymToDelete}`,
@@ -62,6 +71,10 @@ const MyGyms: React.FC = () => {
       .catch((error) => console.error('Error fetching gyms:', error))
   }, [])
 
+  const filteredGyms = gyms.filter((gym) =>
+    gym.name.toLowerCase().includes(searchQuery.toLowerCase()),
+  )
+
   return (
     <>
       <div className="breadcrumps">
@@ -77,48 +90,86 @@ const MyGyms: React.FC = () => {
           </BreadcrumbList>
         </Breadcrumb>
       </div>
-      {gyms.length < 1 && (
-        <div className="svg-container">
-          <img src={NoGyms} alt="No Gyms Available" />
+      <h1 className="text-5xl font-bold mb-2">My Gyms</h1>
+
+      {gyms.length === 0 ? (
+        <div className="no-gyms-container flex flex-col justify-center text-center">
+          <img
+            src={NoGyms}
+            alt="No Gyms Available"
+            className="w-2/5 mx-auto mb-6"
+          />
+          <p className="text-2xl">Nothing here yet.</p>
+          <Button className="mx-auto mt-3" onClick={() => navigate('/add-gym')}>
+            + Add your first gym
+          </Button>
         </div>
+      ) : (
+        <>
+          <div className={`mt-4`}>
+            <Input
+              className="h-10"
+              type="text"
+              placeholder="Filter..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-2/5">Gym name</TableHead>
+                <TableHead>Rating</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredGyms.map((gym) => (
+                <TableRow key={gym._id}>
+                  <TableCell>{gym.name}</TableCell>
+                  <TableCell>
+                    {gym.averageRating?.toString() ?? '?'}/5
+                  </TableCell>
+                  <TableCell>
+                    <div className="button-group">
+                      <Button>View</Button>
+                      <Button onClick={() => navigate('/gyms/')}>
+                        <Pencil className="h-5 w-6" />
+                      </Button>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button variant="destructive">Delete</Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>
+                              Are you sure you want to delete that gym?
+                            </AlertDialogTitle>
+                            <AlertDialogDescription>
+                              This action cannot be undone. This will
+                              permanently delete the gym and remove your data
+                              from our servers.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={() => handleDeleteGym(gym._id)}
+                            >
+                              Continue
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+          <Button onClick={() => navigate('/add-gym')}>+ Add a Gym</Button>
+        </>
       )}
-      <h1 className="title">My Gyms</h1>
-      <input type="text" placeholder="Filter..." />
-      <Button className="search-button">
-        <FaSearch style={{ transform: 'scaleX(-1)', fontSize: '20px' }} />
-      </Button>
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead className="w-[100px]">Gym name</TableHead>
-            <TableHead>Reviews</TableHead>
-            <TableHead className="text-right">Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {gyms.map((gym) => (
-            <TableRow key={gym._id}>
-              <TableCell>{gym.name}</TableCell>
-              <TableCell>{gym.averageRating?.toString() ?? '?'}/5</TableCell>
-              <TableCell>
-                <div>
-                  <Button>View</Button>
-                  <Button onClick={() => navigate('/gyms/')}>
-                    <Pencil />
-                  </Button>
-                  <Button
-                    variant="destructive"
-                    onClick={() => handleDeleteGym(gym._id)}
-                  >
-                    Delete
-                  </Button>
-                </div>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-      <Button onClick={() => navigate('/add-gym')}>+ Add a Gym</Button>
     </>
   )
 }
