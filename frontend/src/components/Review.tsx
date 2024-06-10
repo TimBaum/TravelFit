@@ -8,18 +8,57 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form'
+import { Textarea } from '@/components/ui/textarea'
+import { toast } from '@/components/ui/use-toast'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
+
+import StarRating from './StarRating'
 
 import { IGym } from '@models/gym'
 
 import { useState } from 'react'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
 
 import { IReview } from '@models/review'
 
 function AddReviewDialog({ gym }: { gym: IGym | undefined }) {
+  const FormSchema = z.object({
+    reviewText: z
+      .string()
+      .min(10, {
+        message: 'Write at least 10 characters.',
+      })
+      .max(160, {
+        message: 'Review must not be longer than 30 characters.',
+      }),
+  })
+  const form = useForm<z.infer<typeof FormSchema>>({
+    resolver: zodResolver(FormSchema),
+  })
+
+  function onSubmit(data: z.infer<typeof FormSchema>) {
+    toast({
+      title: 'You submitted the following values:',
+      description: (
+        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
+        </pre>
+      ),
+    })
+  }
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -29,27 +68,30 @@ function AddReviewDialog({ gym }: { gym: IGym | undefined }) {
         <DialogHeader>
           <DialogTitle>Write a new review for {gym?.name}</DialogTitle>
         </DialogHeader>
-        <div className="grid gap-4 py-4">
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="name" className="text-right">
-              Rating
-            </Label>
-            <Input
-              id="name"
-              defaultValue="Pedro Duarte"
-              className="col-span-3"
-            />
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="username" className="text-right">
-              Text
-            </Label>
-            <Input className="col-span-3" />
-          </div>
+        <div>
+          <StarRating />
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className=" space-y-6">
+              <FormField
+                control={form.control}
+                name="reviewText"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Textarea
+                        placeholder="What do you think about this gym?"
+                        className="resize-none"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <Button type="submit">Submit</Button>
+            </form>
+          </Form>
         </div>
-        <DialogFooter>
-          <Button type="submit">Submit</Button>
-        </DialogFooter>
       </DialogContent>
     </Dialog>
   )
@@ -83,7 +125,7 @@ function ReviewDialog({ reviews }: { reviews: [IReview] | undefined }) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="ghost">view more</Button>
+        <Button variant="ghost">View more</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
