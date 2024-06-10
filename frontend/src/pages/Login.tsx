@@ -24,7 +24,7 @@ function Login() {
         navigate('/')
       })
       .catch((err) => {
-        setError('Error: ' + err.message)
+        setError(err.message)
         toast.error(err.message)
       })
       .finally(() => {
