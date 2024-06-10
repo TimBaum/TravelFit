@@ -9,6 +9,7 @@ import '@/index.css'
 import { cn } from '@/lib/utils'
 import { Button } from './button'
 import { useNavigate } from 'react-router-dom'
+import { useAuth } from '@/provider/AuthProvider'
 
 const NavigationMenu = React.forwardRef<
   React.ElementRef<typeof NavigationMenuPrimitive.Root>,
@@ -122,8 +123,12 @@ function NavigationMenuManager({ className }: { className: string }) {
 
   const navigate = useNavigate()
 
+  const { user, logout } = useAuth()
+
+  let userStatus: 'GYM_USER' | 'USER' | 'NOT_LOGGED_IN' = 'NOT_LOGGED_IN'
+
   // TODO: Implement user roles
-  const userStatus: 'GYM_USER' | 'USER' | 'NOT_LOGGED_IN' = 'NOT_LOGGED_IN'
+  if (user) userStatus = 'USER'
 
   return (
     <NavigationMenu
@@ -173,7 +178,7 @@ function NavigationMenuManager({ className }: { className: string }) {
       )}
       {userStatus !== 'NOT_LOGGED_IN' && (
         <NavigationMenuList>
-          <NavigationMenuItem>
+          <NavigationMenuItem onClick={logout}>
             <NavigationMenuTrigger>
               <Avatar>
                 <AvatarFallback>
