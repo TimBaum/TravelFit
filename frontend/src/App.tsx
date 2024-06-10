@@ -1,5 +1,11 @@
 import React from 'react'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate,
+  Outlet,
+} from 'react-router-dom'
 import GymSearch from './pages/GymSearch'
 import GymSearchResults from './pages/GymSearchResults'
 import MyGyms from './pages/MyGyms'
@@ -12,7 +18,7 @@ import '../app/globals.css'
 import GymOverview from './pages/GymOverview'
 import DeleteUserAccounts from './pages/DeleteUserAccounts'
 import Login from './pages/Login'
-import AuthProvider from './provider/AuthProvider'
+import AuthProvider, { useAuth } from './provider/AuthProvider'
 import { Toaster } from 'react-hot-toast'
 
 const App: React.FC = () => {
@@ -35,15 +41,17 @@ const App: React.FC = () => {
                 element={<CreateUserAccount />}
               />
               <Route path="login" element={<Login />} />
-              <Route
-                path="/manage-user-account/"
-                element={<ManageUserAccount />}
-              />
-              <Route
-                path="/delete-user-accounts/"
-                element={<DeleteUserAccounts />}
-              />
-              {/* DeleteUserAccounts is a page for us for testing that the user account deletion works. This option has to be removed in the final app. */}
+              <Route element={<PrivateRoute />}>
+                <Route
+                  path="/manage-user-account/"
+                  element={<ManageUserAccount />}
+                />
+                {/* DeleteUserAccounts is a page for us for testing that the user account deletion works. This option has to be removed in the final app. */}
+                <Route
+                  path="/delete-user-accounts/"
+                  element={<DeleteUserAccounts />}
+                />
+              </Route>
               <Route path="/add-gym/" element={<AddGym />} />
               <Route path="/gymoverview" element={<GymOverview />} />
               {/* <Route path="*" element={<NoPage />} /> */}
@@ -66,6 +74,13 @@ const App: React.FC = () => {
       />
     </>
   )
+}
+
+const PrivateRoute = () => {
+  // If the user is not logged in, redirect to the login page
+  const { user } = useAuth()
+  if (!user) return <Navigate to="/login" />
+  return <Outlet />
 }
 
 export default App
