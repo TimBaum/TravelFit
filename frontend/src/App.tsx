@@ -13,6 +13,7 @@ import GymOverview from './pages/GymOverview'
 import DeleteUserAccounts from './pages/DeleteUserAccounts'
 import Login from './pages/Login'
 import AuthProvider from './provider/AuthProvider'
+import { Toaster } from 'react-hot-toast'
 
 const App: React.FC = () => {
   return (
@@ -50,6 +51,19 @@ const App: React.FC = () => {
           </Routes>
         </AuthProvider>
       </BrowserRouter>
+      <Toaster
+        toastOptions={{
+          position: 'bottom-right',
+          error: {
+            style: {
+              background: 'red',
+              color: 'white',
+              borderRadius: '0.25rem',
+            },
+            icon: '🤕',
+          },
+        }}
+      />
     </>
   )
 }

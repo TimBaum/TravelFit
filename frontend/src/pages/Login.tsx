@@ -4,6 +4,7 @@ import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
 import { useAuth } from '@/provider/AuthProvider'
 import { useState } from 'react'
+import toast from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
 
 function Login() {
@@ -24,6 +25,7 @@ function Login() {
       })
       .catch((err) => {
         setError('Error: ' + err.message)
+        toast.error(err.message)
       })
       .finally(() => {
         setIsLoading(false)
