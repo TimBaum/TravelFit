@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Separator } from '@/components/ui/separator'
-import { login } from '@/services/userService'
+import { useAuth } from '@/provider/AuthProvider'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
@@ -11,6 +11,8 @@ function Login() {
   const [error, setError] = useState('')
 
   const navigate = useNavigate()
+
+  const { login } = useAuth()
 
   function makeLogin() {
     login(email, password)
@@ -55,7 +57,7 @@ function Login() {
           </div>
           <div>
             <Separator className="my-4" />
-            <div className="flex justify-between">
+            <div className="flex justify-between items-center">
               <i>Don't have an account?</i>
               <Button variant={'outline'}>Signup</Button>
             </div>
