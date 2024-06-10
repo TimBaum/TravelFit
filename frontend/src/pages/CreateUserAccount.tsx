@@ -1,5 +1,4 @@
 import UserAccountForm from '@/components/UserAccountForm'
-import '@/styles/CreateUserAccount.css'
 
 function CreateUserAccount() {
   return (
