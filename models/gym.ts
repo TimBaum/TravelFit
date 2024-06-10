@@ -7,12 +7,12 @@ export interface IGym {
   name: string
   highlights: Highlight[]
   websiteLink: string
-  pictures: [string]
+  pictures: string[]
   averageRating: Number
   address: IAddress
-  openingHours: [ITimeRange]
-  offers: [IOffer]
-  reviews: [IReview]
+  openingHours: ITimeRange[]
+  offers: IOffer[]
+  reviews: IReview[]
   createdAt: Date
   updatedAt: Date
 }

@@ -91,6 +91,30 @@ function Filter({ text, icon }: { text: string; icon: JSX.Element }) {
 function GymTile({ gym }: { gym: IGymWithId }) {
   const navigate = useNavigate()
 
+  function getMaxOpeningHourToday() {
+    const today = new Date().getDay()
+    const openingHoursToday = gym.openingHours.filter(
+      (openingHour) => openingHour.weekday === today,
+    )
+    if (openingHoursToday.length === 0) {
+      return 'Closed'
+    }
+    return openingHoursToday.slice(-1)[0].closingTime
+  }
+
+  function findCheapestOffer() {
+    const offers = gym.offers
+    if (offers.length === 0) {
+      return 'Contact gym for prices'
+    }
+    const cheapestOffer = offers.reduce((prev, current) =>
+      prev.priceEuro < current.priceEuro ? prev : current,
+    )
+    return 'from ' + cheapestOffer.priceEuro + '€'
+  }
+
+  const maxOpeningHourToday = getMaxOpeningHourToday()
+
   return (
     <div className="flex min-h-48 w-full border rounded p-2 items-stretch">
       {/* Section left side */}
@@ -111,16 +135,21 @@ function GymTile({ gym }: { gym: IGymWithId }) {
               ))}
             </div>
           </div>
-          <div>Open Wednesdays until 22.00</div>
+          <div>
+            {maxOpeningHourToday === 'Closed'
+              ? 'Closed'
+              : `Open today until ${maxOpeningHourToday.hour}:${maxOpeningHourToday.minute.toString().padStart(2, '0')}`}
+          </div>
         </div>
         <div className="flex flex-col justify-between items-end min-w-40">
           <div className="flex items-center gap-1">
             <StarFilledIcon className="text-primary h-4 w-4" />
-            {gym.averageRating
-              ? gym.averageRating.toFixed(1)
-              : '?' + ' · ' + (gym.reviews.length + 3) + ' Reviews'}
+            {(gym.averageRating ? gym.averageRating.toFixed(1) : '?') +
+              ' · ' +
+              gym.reviews.length +
+              ` Review${gym.reviews.length !== 1 ? 's' : ''}`}
           </div>
-          <div className="text-left">from 5€</div>
+          <div className="text-left">{findCheapestOffer()}</div>
           <Button
             className=""
             onClick={() => navigate(`/gymoverview/${gym._id}`)}
