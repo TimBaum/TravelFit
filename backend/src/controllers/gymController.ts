@@ -63,7 +63,6 @@ async function getCoordinates(
 }
 
 const searchGyms = async (req: Request, res: Response, next: NextFunction) => {
-  console.log(req.ctx)
   const { searchString, pageLimit, sortBy } = req.body
 
   if (!searchString) {
