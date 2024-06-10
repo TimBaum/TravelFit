@@ -1,7 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
-import '@/styles/UserAccountForm.css'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -73,8 +72,8 @@ export function ChangeUserAccountForm() {
 
   return (
     <Form {...form}>
-      <form className="form-box">
-        <div className="photo-container">
+      <form>
+        <div className="flex flex-col items-center mb-5">
           <LucidePencil size={20} />
           <span>Foto</span>
         </div>
