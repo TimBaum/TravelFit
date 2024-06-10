@@ -37,15 +37,17 @@ function ChangeUserAccount() {
           <ChangeUserAccountForm />
         </TabsContent>
         <TabsContent value="subscription">
-          <div className="subscription-box">
-            <p>Active subscription</p>
-            <p>TravelFit basic</p>
-            <p>free</p>
-            <p>Pay via PayPal:</p>
+          <div className="p-6 m-6 text-center">
+            <p className="text-2xl font-bold mb-4">Active subscription</p>
+            <div className="flex justify-center items-baseline">
+              <p className="p-4 text-3xl font-bold">TravelFit basic</p>
+              <p className="text-gray-500 text-2xl">free</p>
+            </div>
+            <p className="text-xl mb-4">Pay via PayPal:</p>
             <Button
               type="submit"
               variant="outline"
-              className="mt-4 bg-primary"
+              className="upgrade-button"
               onClick={() => updateUserAccount('', '')}
             >
               Get TravelFit Premium for 2,99€/month
