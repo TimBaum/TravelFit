@@ -39,4 +39,21 @@ const searchGyms = (req: Request, res: Response, next: NextFunction) => {
     .catch((error) => res.status(500).json({ error }))
 }
 
-export default { readAll, createGym, getGym, searchGyms }
+const updateReviews = (req: Request, res: Response, next: NextFunction) => {
+  const { id } = req.params
+  const { review } = req.body
+
+  // Find the gym by ID and update the reviews array
+  return Gym.findById(id)
+    .then((gym) => {
+      // Update the reviews array
+      gym!.reviews.push(review)
+
+      // Save the updated gym document
+      return gym!.save()
+    })
+    .then((updatedGym) => res.status(200).json(updatedGym))
+    .catch((error) => res.status(500).json({ error }))
+}
+
+export default { readAll, createGym, getGym, searchGyms, updateReviews }

@@ -74,4 +74,45 @@ function useGetGym(id: string | null): GymOverview {
   return { data, error, loading }
 }
 
-export { useGymSearch, useGetGym }
+function useUpdateReviews(id: string | null, review: any): GymOverview {
+  const [data, setData] = useState<IGymWithId>()
+  const [error, setError] = useState(null)
+  const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    async function fetchData() {
+      if (!id) return
+
+      setLoading(true)
+
+      try {
+        const response = await fetch(
+          `${config.BACKEND_URL}/gyms/${id}/reviews`,
+          {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ review }), // Pass the review data in the body
+          },
+        )
+
+        if (!response.ok) {
+          throw new Error('Network response was not ok')
+        }
+
+        const result = await response.json()
+        setData(result)
+      } catch (error) {
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchData()
+  }, [id, review]) // Add review to dependency array to trigger the effect when review changes
+
+  return { data, error, loading }
+}
+
+export { useGymSearch, useGetGym, useUpdateReviews }
