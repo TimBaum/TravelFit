@@ -27,7 +27,7 @@ async function updateUserAccount(id: string, userData: string) {
 function ChangeUserAccount() {
   return (
     <>
-      <h1 className="centered-headline">Account</h1>
+      <h1 className="mb-2 font-bold text-5xl">Account</h1>
       <Tabs defaultValue="account" className="w-[400px]">
         <TabsList>
           <TabsTrigger value="account">Account</TabsTrigger>
@@ -44,12 +44,7 @@ function ChangeUserAccount() {
               <p className="text-gray-500 text-2xl">free</p>
             </div>
             <p className="text-xl mb-4">Pay via PayPal:</p>
-            <Button
-              type="submit"
-              variant="outline"
-              className="upgrade-button"
-              onClick={() => updateUserAccount('', '')}
-            >
+            <Button type="submit" onClick={() => updateUserAccount('', '')}>
               Get TravelFit Premium for 2,99€/month
             </Button>
           </div>

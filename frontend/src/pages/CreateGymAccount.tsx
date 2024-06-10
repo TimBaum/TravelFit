@@ -6,7 +6,7 @@ import { Megaphone, Star, Users } from 'lucide-react'
 function CreateGymAccount() {
   return (
     <>
-      <h1 className="centered-headline">Create your partner account</h1>
+      <h1 className="mb-2 font-bold text-5xl">Create your partner account</h1>
       <div className="container">
         <div className="info-box">
           <Users size={80} />

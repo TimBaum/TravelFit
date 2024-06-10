@@ -32,7 +32,7 @@ function DeleteGymAccounts() {
 
   return (
     <>
-      <h1 className="centered-headline">Delete gym accounts</h1>
+      <h1 className="mb-2 font-bold text-5xl">Delete gym accounts</h1>
       <div className="container">
         <Input
           type="text"
