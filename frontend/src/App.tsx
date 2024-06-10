@@ -5,7 +5,7 @@ import GymSearchResults from './pages/GymSearchResults'
 import MyGyms from './pages/MyGyms'
 import CreateGymAccount from './pages/CreateGymAccount'
 import CreateUserAccount from './pages/CreateUserAccount'
-import ManageUserAccount from './pages/ManageUserAccount'
+import ChangeUserAccount from './pages/ChangeUserAccount'
 import AddGym from './pages/AddGym'
 import Layout from './components/Layout'
 import '../app/globals.css'
@@ -31,8 +31,8 @@ const App: React.FC = () => {
             />
             <Route path="login" element={<Login />} />
             <Route
-              path="/manage-user-account/"
-              element={<ManageUserAccount />}
+              path="/change-user-account/"
+              element={<ChangeUserAccount />}
             />
             <Route
               path="/delete-gym-accounts/"
