@@ -1,8 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
-import '@/styles/GymAccountForm.css'
-
 import { Button } from '@/components/ui/button'
 import {
   Form,
@@ -83,7 +81,10 @@ export function GymAccountForm() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="max-w-xl mx-auto p-5 border border-gray-300 rounded-md space-y-8"
+      >
         <FormField
           control={form.control}
           name="salutation"
@@ -113,7 +114,7 @@ export function GymAccountForm() {
             </FormItem>
           )}
         />
-        <div className="form-row">
+        <div className="flex">
           <FormField
             control={form.control}
             name="firstName"
@@ -160,7 +161,7 @@ export function GymAccountForm() {
             </FormItem>
           )}
         />
-        <div className="form-row">
+        <div className="flex">
           <FormField
             control={form.control}
             name="email"

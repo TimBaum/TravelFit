@@ -11,7 +11,7 @@ import GymSearchResults from './pages/GymSearchResults'
 import MyGyms from './pages/MyGyms'
 import CreateGymAccount from './pages/CreateGymAccount'
 import CreateUserAccount from './pages/CreateUserAccount'
-import ManageUserAccount from './pages/ManageUserAccount'
+import ChangeUserAccount from './pages/ChangeUserAccount'
 import AddGym from './pages/AddGym'
 import Layout from './components/Layout'
 import '../app/globals.css'
@@ -20,6 +20,7 @@ import DeleteUserAccounts from './pages/DeleteUserAccounts'
 import Login from './pages/Login'
 import AuthProvider, { useAuth } from './provider/AuthProvider'
 import { Toaster } from 'react-hot-toast'
+import DeleteGymAccounts from './pages/DeleteGymAccounts'
 
 const App: React.FC = () => {
   return (
@@ -43,10 +44,15 @@ const App: React.FC = () => {
               <Route path="login" element={<Login />} />
               <Route element={<PrivateRoute />}>
                 <Route
-                  path="/manage-user-account/"
-                  element={<ManageUserAccount />}
+                  path="/change-user-account/"
+                  element={<ChangeUserAccount />}
                 />
                 {/* DeleteUserAccounts is a page for us for testing that the user account deletion works. This option has to be removed in the final app. */}
+                <Route
+                  path="/delete-gym-accounts/"
+                  element={<DeleteGymAccounts />}
+                />
+                {/* DeleteGymAccounts is a page for us for testing that the gym account deletion works. This option has to be removed in the final app. */}
                 <Route
                   path="/delete-user-accounts/"
                   element={<DeleteUserAccounts />}
