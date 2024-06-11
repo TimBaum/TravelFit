@@ -54,8 +54,17 @@ function AddReviewDialog({ gym }: { gym: IGymWithId | undefined }) {
   })
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
+    const rating = filledStars.filter(Boolean).length
+    const reviewText = data.reviewText
+
+    const review = {
+      author: 'current User: TODO',
+      rating: rating,
+      text: reviewText,
+    }
+
     toast({
-      title: 'You submitted the following values:',
+      title: 'Thanks for reviewing!',
       description: (
         <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
           <code className="text-white">{JSON.stringify(data, null, 2)}</code>
@@ -63,6 +72,7 @@ function AddReviewDialog({ gym }: { gym: IGymWithId | undefined }) {
       ),
     })
   }
+
   return (
     <Dialog>
       <DialogTrigger asChild>
