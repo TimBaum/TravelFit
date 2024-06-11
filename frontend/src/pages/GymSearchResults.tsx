@@ -8,25 +8,52 @@ import {
   StarFilledIcon,
   StarIcon,
 } from '@radix-ui/react-icons'
-import { ArrowDown, Coins, MapIcon } from 'lucide-react'
+import { ArrowDown, Coins, ExpandIcon, MapIcon } from 'lucide-react'
 import React from 'react'
 import { useState } from 'react'
 import { IGymWithId } from '@models/gym'
+import { FilterState } from '@models/filter'
 import HighlightBadge from '@/components/HighlightBadge'
 import { useNavigate } from 'react-router-dom'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { Label } from '@radix-ui/react-label'
+import { Input } from '@/components/ui/input'
 
 function GymSearchResults() {
   const urlParams = new URLSearchParams(window.location.search)
 
   const [searchString, setSearchString] = useState(urlParams.get('search'))
 
-  const { data, error, loading } = useGymSearch(searchString)
+  const defaultFilters: FilterState = {
+    price: {
+      from: undefined,
+      to: undefined,
+    },
+    rating: {
+      from: undefined,
+      to: undefined,
+    },
+    weekday: undefined,
+    radius: undefined,
+    highlights: [],
+  }
+
+  const [filterState, setFilterState] = useState<FilterState>(defaultFilters)
+
+  const { data, error, loading } = useGymSearch(searchString, filterState)
 
   const filters = [
-    { text: 'Date', icon: <CalendarIcon /> },
-    { text: 'Rating', icon: <StarIcon /> },
-    { text: 'Price', icon: <Coins /> },
+    // { text: 'Date', icon: <CalendarIcon />, state: defaultFilters.weekday },
+    { text: 'Rating', icon: <StarIcon />, state: filterState.rating },
+    { text: 'Price', icon: <Coins />, state: filterState.price },
+    { text: 'Radius', icon: <ExpandIcon />, state: filterState.radius },
   ]
+
+  console.log(filterState)
 
   return (
     <div className="mb-10">
@@ -38,7 +65,14 @@ function GymSearchResults() {
       />
       <div className="flex gap-2 mb-2">
         {filters.map((filter) => (
-          <Filter key={filter.text} text={filter.text} icon={filter.icon} />
+          <Filter
+            key={filter.text}
+            text={filter.text}
+            icon={filter.icon}
+            state={filter.state}
+            filterState={filterState}
+            setFilterState={setFilterState}
+          />
         ))}
       </div>
       <Separator />
@@ -80,11 +114,203 @@ function GymSearchResults() {
   )
 }
 
-function Filter({ text, icon }: { text: string; icon: JSX.Element }) {
+function Filter({
+  text,
+  icon,
+  state,
+  filterState,
+  setFilterState,
+}: {
+  text: string
+  icon: JSX.Element
+  filterState: FilterState
+  state: object | string | []
+  setFilterState: (state: FilterState) => void
+}) {
+  function countActiveFilters() {
+    if (typeof state === 'object') {
+      return Object.keys(state).filter(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (key) => (state as any)[key] || (state as any)[key] === 0,
+      ).length
+    } else return state === undefined ? 0 : 1
+  }
+
+  const activeFilters = countActiveFilters()
+
+  function getFilterComponent() {
+    switch (text) {
+      case 'Price':
+        return (
+          <PriceFilter
+            icon={icon}
+            filterState={filterState}
+            setFilterState={setFilterState}
+          />
+        )
+      case 'Rating':
+        return (
+          <RatingFilter
+            icon={icon}
+            filterState={filterState}
+            setFilterState={setFilterState}
+          />
+        )
+
+      case 'Radius':
+        return (
+          <RadiusFilter
+            icon={icon}
+            filterState={filterState}
+            setFilterState={setFilterState}
+          />
+        )
+
+      default:
+        return <>Not implemented yet.</>
+    }
+  }
+
   return (
-    <Button variant={'outline'} className="gap-2">
-      {icon && React.cloneElement(icon, { className: 'w-5 h-5' })} {text}
-    </Button>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant={'outline'} className="gap-2">
+          {icon && React.cloneElement(icon, { className: 'w-5 h-5' })}
+          {text}
+          {activeFilters > 0 && (
+            <div className="px-1 rounded bg-black text-white">
+              {activeFilters}
+            </div>
+          )}
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent>{getFilterComponent()}</DropdownMenuContent>
+    </DropdownMenu>
+  )
+}
+
+interface FilterProps {
+  icon: JSX.Element
+  filterState: FilterState
+  setFilterState: (state: FilterState) => void
+}
+
+function RadiusFilter({ icon, filterState, setFilterState }: FilterProps) {
+  return (
+    <div className="p-4 box-shadow-md">
+      <div className="flex gap-2 items-center">
+        {icon && React.cloneElement(icon, { className: 'w-7 h-7' })}{' '}
+        <p className="text-3xl text-bold">Radius</p>
+      </div>
+      <div>
+        <Label>Radius in km</Label>
+        <Input
+          type="number"
+          placeholder="Number"
+          value={filterState.radius ?? ''}
+          onChange={(event) => {
+            setFilterState({
+              ...filterState,
+              radius: parseFloat(event.target.value) ?? undefined,
+            })
+          }}
+        />
+      </div>
+    </div>
+  )
+}
+
+function RatingFilter({ icon, filterState, setFilterState }: FilterProps) {
+  return (
+    <div className="p-4 box-shadow-md">
+      <div className="flex gap-2 items-center">
+        {icon && React.cloneElement(icon, { className: 'w-7 h-7' })}{' '}
+        <p className="text-3xl text-bold">Rating</p>
+      </div>
+      <div className="flex gap-2 mt-4">
+        <div>
+          <Label>From</Label>
+          <Input
+            type="number"
+            placeholder="Number"
+            value={filterState.rating.from ?? ''}
+            onChange={(event) => {
+              setFilterState({
+                ...filterState,
+                rating: {
+                  ...filterState.rating,
+                  from: parseFloat(event.target.value) ?? undefined,
+                },
+              })
+            }}
+          />
+        </div>
+        <div>
+          <Label>To</Label>
+          <Input
+            type="number"
+            placeholder="Number"
+            value={filterState.rating.to ?? ''}
+            onChange={(event) => {
+              setFilterState({
+                ...filterState,
+                rating: {
+                  ...filterState.rating,
+                  to: parseFloat(event.target.value) ?? undefined,
+                },
+              })
+            }}
+          />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function PriceFilter({ icon, filterState, setFilterState }: FilterProps) {
+  return (
+    <div className="p-4 box-shadow-md">
+      <div className="flex gap-2 items-center">
+        {icon && React.cloneElement(icon, { className: 'w-7 h-7' })}{' '}
+        <p className="text-3xl text-bold">Price</p>
+      </div>
+      <div className="flex gap-2 mt-4">
+        <div>
+          <Label>From</Label>
+          <Input
+            type="number"
+            placeholder="Number"
+            value={filterState.price.from ?? ''}
+            onChange={(event) => {
+              setFilterState({
+                ...filterState,
+                price: {
+                  ...filterState.price,
+                  from: parseFloat(event.target.value) ?? undefined,
+                },
+              })
+            }}
+          />
+        </div>
+        <div>
+          <Label>To</Label>
+          <Input
+            type="number"
+            placeholder="Number"
+            value={filterState.price.to ?? ''}
+            onChange={(event) => {
+              setFilterState({
+                ...filterState,
+                price: {
+                  ...filterState.price,
+                  to: parseFloat(event.target.value) ?? undefined,
+                },
+              })
+            }}
+          />
+        </div>
+      </div>
+    </div>
   )
 }
 

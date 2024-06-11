@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import mongoose from 'mongoose'
 import Gym from '../models/Gym'
+import { FilterState } from '@models/filter'
 
 const createGym = (req: Request, res: Response, next: NextFunction) => {
   const gymData = req.body
@@ -80,8 +81,21 @@ async function getCoordinates(
     })
 }
 
-const searchGyms = async (req: Request, res: Response, next: NextFunction) => {
-  const { searchString, pageLimit, sortBy } = req.body
+interface SearchRequestBody {
+  searchString: string
+  filters: FilterState
+  pageLimit: number
+  sortBy: string
+}
+
+const searchGyms = async (
+  req: Request<any, any, SearchRequestBody>,
+  res: Response,
+  next: NextFunction,
+) => {
+  const { searchString, filters, pageLimit, sortBy } = req.body
+
+  console.log(filters)
 
   if (!searchString) {
     return res.status(400).json({ error: 'Search string is required' })
@@ -101,7 +115,7 @@ const searchGyms = async (req: Request, res: Response, next: NextFunction) => {
           type: 'Point',
           coordinates: coordinates,
         },
-        $maxDistance: 10000, // 10 km
+        $maxDistance: filters.radius ? filters.radius * 1000 : 10000, // default 10 km
       },
     },
   })

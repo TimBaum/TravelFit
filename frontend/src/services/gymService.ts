@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { IGymWithId } from '@models/gym'
 import { fetchJSON } from './utils'
+import { FilterState } from '@models/filter'
 
 interface GymSearchResults {
   data: IGymWithId[]
@@ -8,13 +9,10 @@ interface GymSearchResults {
   loading: boolean
 }
 
-interface GymOverview {
-  data: IGymWithId | undefined
-  error: string | null
-  loading: boolean
-}
-
-function useGymSearch(searchString: string | null): GymSearchResults {
+function useGymSearch(
+  searchString: string | null,
+  filters: FilterState,
+): GymSearchResults {
   const [data, setData] = useState<IGymWithId[]>([])
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(false)
@@ -26,7 +24,7 @@ function useGymSearch(searchString: string | null): GymSearchResults {
       setError(null)
       const response = await fetchJSON(`/gyms/search`, {
         method: 'POST',
-        body: JSON.stringify({ searchString: searchString }),
+        body: JSON.stringify({ searchString: searchString, filters }),
       }).catch((error) => {
         setError(error.message)
         return []
@@ -36,7 +34,7 @@ function useGymSearch(searchString: string | null): GymSearchResults {
     }
 
     fetchData()
-  }, [searchString])
+  }, [searchString, filters])
 
   return { data, error, loading }
 }
