@@ -85,28 +85,19 @@ function useAddReview(id: string | null, review: any): GymOverview {
 
       setLoading(true)
 
-      try {
-        const response = await fetch(
-          `${config.BACKEND_URL}/gyms/${id}/reviews`,
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ review }), // Pass the review data in the body
-          },
-        )
-
-        if (!response.ok) {
-          throw new Error('Network response was not ok')
-        }
-
-        const result = await response.json()
-        setData(result)
-      } catch (error) {
-      } finally {
-        setLoading(false)
-      }
+      const response = await fetch(`${config.BACKEND_URL}/gyms/${id}/reviews`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ review }), // Pass the review data in the body
+      })
+        .then((response) => response.json())
+        .catch((error) => {
+          setError(error)
+        })
+      setData(response)
+      setLoading(false)
     }
 
     fetchData()
