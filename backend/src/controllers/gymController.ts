@@ -67,11 +67,7 @@ async function getCoordinates(
     address.toLowerCase(),
   )
 
-  console.log('CACHED', cachedCoordinates)
-
   if (cachedCoordinates !== undefined) return cachedCoordinates
-
-  console.log('Recalculating coordinates')
 
   return fetch(
     `https://nominatim.openstreetmap.org/search?q=${address}&format=json`,
@@ -121,8 +117,6 @@ const searchGyms = async (
   if (!coordinates) {
     return res.status(500).json({ error: 'LOCATION_NOT_FOUND' })
   }
-
-  console.log(coordinates)
 
   const dbFilters: FilterQuery<typeof Gym> = {} // Be careful! Typescript is not typechecking this object for some reason
 

@@ -37,7 +37,7 @@ function HighlightBadge({ name }: { name: Highlight }) {
   }
 
   return (
-    <div className="flex gap-2 items-center px-2 py-1 border rounded">
+    <div className="flex gap-2 items-center px-2 py-1 border rounded text-nowrap">
       {' '}
       {getIcon()} {name}
     </div>
