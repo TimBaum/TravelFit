@@ -9,5 +9,6 @@ router.get('/get', controller.readAll)
 router.get('/get/:id', controller.getGym)
 router.post('/search', controller.searchGyms)
 router.put('/post/:id/reviews', controller.addReview)
+router.delete('/:id', controller.deleteGym)
 
 export = router

@@ -3,6 +3,8 @@ export interface IAddress {
   postalCode: string
   city: string
   country: string
-  latitude: number
-  longitude: number
+  location: {
+    type: string
+    coordinates: [number, number]
+  }
 }

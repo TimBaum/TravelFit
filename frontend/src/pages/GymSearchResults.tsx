@@ -11,8 +11,9 @@ import {
 import { ArrowDown, Coins, MapIcon } from 'lucide-react'
 import React from 'react'
 import { useState } from 'react'
-import { IGym } from '@models/gym'
+import { IGymWithId } from '@models/gym'
 import HighlightBadge from '@/components/HighlightBadge'
+import { useNavigate } from 'react-router-dom'
 
 function GymSearchResults() {
   const urlParams = new URLSearchParams(window.location.search)
@@ -27,15 +28,13 @@ function GymSearchResults() {
     { text: 'Price', icon: <Coins /> },
   ]
 
-  if (error) return <div>Error loading gyms</div>
-
   return (
-    <div>
+    <div className="mb-10">
       <h1 className="text-5xl font-bold mb-2">Gyms in {searchString}</h1>
       <SearchBar
         searchTerm={searchString || ''}
         setSearchTerm={setSearchString}
-        className="mb-6"
+        className="mb-2"
       />
       <div className="flex gap-2 mb-2">
         {filters.map((filter) => (
@@ -53,11 +52,28 @@ function GymSearchResults() {
           <MapIcon className="w-5 h-5" />
         </Button>
       </div>
-      {!loading && (
-        <div>
+      {!loading && data?.length > 0 && (
+        <div className="flex flex-col gap-2">
           {data.map((gym) => (
-            <GymTile key={gym.name} gym={gym} />
+            <GymTile key={gym._id} gym={gym} />
           ))}
+        </div>
+      )}
+      {loading && <div>Loading...</div>}
+      {!loading && data?.length === 0 && (
+        <div className="mt-12 w-full justify-center text-center">
+          <img
+            src="src/assets/illustrations/MessyDoodle.svg"
+            alt="No results found"
+            className="w-2/5 mx-auto mb-6"
+          />
+          <div className="text-2xl font-bold">
+            {' '}
+            {error === 'LOCATION_NOT_FOUND'
+              ? "Your address wasn't found"
+              : 'No gyms found'}
+          </div>
+          <div>Try another search to find your next workout!</div>
         </div>
       )}
     </div>
@@ -72,12 +88,15 @@ function Filter({ text, icon }: { text: string; icon: JSX.Element }) {
   )
 }
 
-function GymTile({ gym }: { gym: IGym }) {
+function GymTile({ gym }: { gym: IGymWithId }) {
+  const navigate = useNavigate()
+
   return (
-    <div className="flex h-48 w-full border rounded p-2">
+    <div className="flex min-h-48 w-full border rounded p-2 items-stretch">
       {/* Section left side */}
-      <div className="w-1/3">images</div>
-      <Separator orientation="vertical" />
+      <div className="w-1/3 h-full">images</div>
+      {/* separator is behaving weirdly with the height */}
+      <Separator orientation="vertical" className="flex h-46" />
       {/* Section right side */}
       <div className="flex justify-between w-full ml-4 pr-2">
         <div className="flex flex-col h-full justify-between">
@@ -86,7 +105,7 @@ function GymTile({ gym }: { gym: IGym }) {
               {gym.name} <BookmarkIcon className="w-6 h-6" />
             </div>
             <div>{gym.address.street + ' ' + gym.address.city}</div>
-            <div className="flex gap-2">
+            <div className="flex gap-2 flex-wrap mt-2">
               {gym.highlights.map((element) => (
                 <HighlightBadge key={element} name={element} />
               ))}
@@ -94,16 +113,20 @@ function GymTile({ gym }: { gym: IGym }) {
           </div>
           <div>Open Wednesdays until 22.00</div>
         </div>
-        <div className="flex flex-col justify-between items-end">
+        <div className="flex flex-col justify-between items-end min-w-40">
           <div className="flex items-center gap-1">
             <StarFilledIcon className="text-primary h-4 w-4" />
-            {gym.averageRating.toFixed(1) +
-              ' · ' +
-              (gym.reviews.length + 3) +
-              ' Reviews'}
+            {gym.averageRating
+              ? gym.averageRating.toFixed(1)
+              : '?' + ' · ' + (gym.reviews.length + 3) + ' Reviews'}
           </div>
           <div className="text-left">from 5€</div>
-          <Button className="">Show details</Button>
+          <Button
+            className=""
+            onClick={() => navigate(`/gymoverview/${gym._id}`)}
+          >
+            Show details
+          </Button>
         </div>
       </div>
     </div>

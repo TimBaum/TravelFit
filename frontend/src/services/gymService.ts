@@ -1,7 +1,6 @@
-import { config } from '@/config'
 import { useEffect, useState } from 'react'
 import { IGymWithId } from '@models/gym'
-import { string } from 'zod'
+import { fetchJSON } from './utils'
 
 interface GymSearchResults {
   data: IGymWithId[]
@@ -24,17 +23,14 @@ function useGymSearch(searchString: string | null): GymSearchResults {
     async function fetchData() {
       if (!searchString) return
       setLoading(true)
-      const response = await fetch(`${config.BACKEND_URL}/gyms/search`, {
+      setError(null)
+      const response = await fetchJSON(`/gyms/search`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
         body: JSON.stringify({ searchString: searchString }),
+      }).catch((error) => {
+        setError(error.message)
+        return []
       })
-        .then((response) => response.json())
-        .catch((error) => {
-          setError(error)
-        })
       setData(response)
       setLoading(false)
     }

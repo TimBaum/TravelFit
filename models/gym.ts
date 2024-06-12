@@ -1,4 +1,4 @@
-import { IAddress } from './adress'
+import { IAddress } from './address'
 import { IOffer } from './offer'
 import { IReview } from './review'
 import { ITimeRange } from './timerange'
@@ -17,8 +17,16 @@ export interface IGym {
   updatedAt: Date
 }
 
-export type Highlight = 'Sauna' | 'Posing room' | 'Pool'
+export type Highlight =
+  | 'Sauna'
+  | 'Posing room'
+  | 'Pool'
+  | 'Courses'
+  | 'Personal trainings'
+  | 'Nutrition bar'
+  | 'Outdoor'
+  | 'Parking'
 
 export interface IGymWithId extends IGym {
-  id: string
+  _id: string
 }

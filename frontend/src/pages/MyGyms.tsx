@@ -1,10 +1,9 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Card } from '@/components/ui/card'
 import { FaSearch } from 'react-icons/fa'
 import { LucidePencil as Pencil } from 'lucide-react'
 import '../styles/MyGyms.css'
+import { useNavigate } from 'react-router-dom'
 
 import {
   Breadcrumb,
@@ -14,29 +13,54 @@ import {
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb'
 
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
+import { IGymWithId } from '@models/gym'
+
+import NoGyms from '@/assets/NoGyms.svg'
+
 const MyGyms: React.FC = () => {
-  const [gyms, setGyms] = useState([
-    'McFit Laim',
-    'McFit Neuhausen',
-    'McFit Pasing',
-  ])
+  const [gyms, setGyms] = useState<IGymWithId[]>([])
 
-  const handleDeleteGym = (gymToDelete: string) => {
-    // Funktion zum Löschen eines Gyms hinzufügen
-    alert(`Are you sure you want to delete ${gymToDelete}?`)
-    setGyms(gyms.filter((gym) => gym !== gymToDelete))
-  }
+  const navigate = useNavigate()
 
-  const handleAddGym = () => {
-    // Funktion zum Hinzufügen eines Gyms
-    const newGym = `Gym ${gyms.length + 1}`
-    setGyms([...gyms, newGym])
-  }
+  const handleDeleteGym = async (gymToDelete: string) => {
+    const confirmed = window.confirm(
+      `Are you sure you want to delete ${gymToDelete}?`,
+    )
+    if (!confirmed) return
+    try {
+      const response = await fetch(
+        `http://localhost:5000/gyms/${gymToDelete}`,
+        {
+          method: 'DELETE',
+        },
+      )
 
-  const handleGymClick = (gym: string) => {
-    alert(`Gym clicked: ${gym}`)
-    // Function einbauen
+      if (!response.ok) {
+        throw new Error('Network response was not ok')
+      }
+      setGyms(gyms.filter((gym) => gym._id !== gymToDelete))
+    } catch (error) {
+      console.error('Error deleting gym:', error)
+    }
   }
+  useEffect(() => {
+    // Abrufen der Gyms vom Backend
+    fetch('http://localhost:5000/gyms/get')
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data) //  Struktur der Daten überprüfen
+        setGyms(data.gyms)
+      })
+      .catch((error) => console.error('Error fetching gyms:', error))
+  }, [])
 
   return (
     <>
@@ -53,37 +77,48 @@ const MyGyms: React.FC = () => {
           </BreadcrumbList>
         </Breadcrumb>
       </div>
-      <div className="container">
-        <h1 className="title">My Gyms</h1>
-        <div className="search-bar">
-          <Input className="input" placeholder="Search gyms..." />
-          <Button className="search-button">
-            <FaSearch style={{ transform: 'scaleX(-1)', fontSize: '20px' }} />
-          </Button>
+      {gyms.length < 1 && (
+        <div className="svg-container">
+          <img src={NoGyms} alt="No Gyms Available" />
         </div>
-
-        {gyms.map((gym, index) => (
-          <Card key={index} className="card">
-            <div className="card-content">
-              <Button onClick={() => handleGymClick(gym)}> {gym} </Button>
-              <div>
-                <Button>
-                  <Pencil />
-                </Button>
-                <Button
-                  variant="destructive"
-                  onClick={() => handleDeleteGym(gym)}
-                >
-                  Delete
-                </Button>
-              </div>
-            </div>
-          </Card>
-        ))}
-        <Button className="add-gym-button" onClick={handleAddGym}>
-          + Add your gym
-        </Button>
-      </div>
+      )}
+      <h1 className="title">My Gyms</h1>
+      <input type="text" placeholder="Filter..." />
+      <Button className="search-button">
+        <FaSearch style={{ transform: 'scaleX(-1)', fontSize: '20px' }} />
+      </Button>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead className="w-[100px]">Gym name</TableHead>
+            <TableHead>Reviews</TableHead>
+            <TableHead className="text-right">Actions</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {gyms.map((gym) => (
+            <TableRow key={gym._id}>
+              <TableCell>{gym.name}</TableCell>
+              <TableCell>{gym.averageRating?.toString() ?? '?'}/5</TableCell>
+              <TableCell>
+                <div>
+                  <Button>View</Button>
+                  <Button onClick={() => navigate('/gyms/')}>
+                    <Pencil />
+                  </Button>
+                  <Button
+                    variant="destructive"
+                    onClick={() => handleDeleteGym(gym._id)}
+                  >
+                    Delete
+                  </Button>
+                </div>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+      <Button onClick={() => navigate('/add-gym')}>+ Add a Gym</Button>
     </>
   )
 }

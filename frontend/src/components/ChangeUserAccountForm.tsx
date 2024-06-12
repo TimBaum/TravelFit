@@ -21,53 +21,30 @@ import {
 import { LucidePencil } from 'lucide-react'
 import { config } from '@/config'
 
-const formSchema = z
-  .object({
-    salutation: z.enum(['Mr.', 'Ms.', 'Diverse'], {
-      required_error: 'Salutation is required.',
-    }),
-    displayName: z
-      .string()
-      .min(2, { message: 'Name must be at least 2 characters.' }),
-    email: z.string().email({ message: 'Invalid email address.' }),
-    password: z
-      .string()
-      .min(8, { message: 'Password must be at least 8 characters.' }),
-    confirmPassword: z
-      .string()
-      .min(8, { message: 'Confirm Password must be at least 8 characters.' }),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords don't match",
-    path: ['confirmPassword'],
-  })
+const formSchema = z.object({
+  salutation: z.enum(['Mr.', 'Ms.', 'Diverse'], {}),
+  displayName: z
+    .string()
+    .min(2, { message: 'Name must be at least 2 characters.' }),
+  //email,
+})
 
-export function UserAccountForm() {
+export function ChangeUserAccountForm() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      salutation: undefined,
-      displayName: '',
-      email: '',
-      password: '',
-      confirmPassword: '',
+      salutation: 'Diverse', //TODO: Fetch salutation from backend
+      displayName: 'TODO: fetch user name from backend',
+      //email: 'TODO: fetch email from backend',
     },
   })
 
-  async function onSubmit(
-    values: z.infer<typeof formSchema>,
-    accountType: string,
-  ) {
-    let hasPremiumSubscription = false
-    if (accountType === 'premium') {
-      hasPremiumSubscription = true
-    }
-
-    const userData = { ...values, hasPremiumSubscription }
+  async function onSubmitSaveChanges(values: z.infer<typeof formSchema>) {
+    const userData = { ...values }
 
     try {
       const response = await fetch(config.BACKEND_URL + '/users/create', {
-        method: 'POST',
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -85,9 +62,17 @@ export function UserAccountForm() {
     }
   }
 
+  async function onSubmitChangeEmail() {
+    return <h1>TODO: implement email change</h1>
+  }
+
+  async function onSubmitChangePassword() {
+    return <h1>TODO: implement password change</h1>
+  }
+
   return (
     <Form {...form}>
-      <form className="max-w-lg mx-auto">
+      <form>
         <div className="flex flex-col items-center mb-5">
           <LucidePencil size={20} />
           <span>Foto</span>
@@ -136,75 +121,47 @@ export function UserAccountForm() {
             </FormItem>
           )}
         />
-        <FormField
+        {/* <FormField
           control={form.control}
           name="email"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input placeholder="email" {...field} />
-              </FormControl>
-              <FormMessage>{form.formState.errors.email?.message}</FormMessage>
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="password"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Password</FormLabel>
-              <FormControl>
-                <Input type="password" placeholder="password" {...field} />
-              </FormControl>
-              <FormMessage>
-                {form.formState.errors.password?.message}
-              </FormMessage>
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="confirmPassword"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Confirm Password</FormLabel>
-              <FormControl>
                 <Input
-                  type="password"
-                  placeholder="confirm password"
+                  placeholder="TODO: fetch email from backend"
                   {...field}
                 />
               </FormControl>
-              <FormMessage>
-                {form.formState.errors.confirmPassword?.message}
-              </FormMessage>
             </FormItem>
           )}
-        />
+        />*/}
         <Button
           type="submit"
           variant="outline"
-          className="mt-4 bg-primary"
           onClick={() =>
-            form.handleSubmit((values) => onSubmit(values, 'premium'))()
+            form.handleSubmit((values) => onSubmitSaveChanges(values))()
           }
         >
-          Create premium account
+          Save changes
         </Button>
         <Button
           type="submit"
           variant="outline"
-          onClick={() =>
-            form.handleSubmit((values) => onSubmit(values, 'basic'))()
-          }
+          onClick={() => form.handleSubmit(() => onSubmitChangeEmail())()}
         >
-          Create basic account
+          Change email
+        </Button>
+        <Button
+          type="submit"
+          variant="outline"
+          onClick={() => form.handleSubmit(() => onSubmitChangePassword())()}
+        >
+          Change password
         </Button>
       </form>
     </Form>
   )
 }
 
-export default UserAccountForm
+export default ChangeUserAccountForm

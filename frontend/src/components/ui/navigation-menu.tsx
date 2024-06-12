@@ -7,6 +7,9 @@ import { PersonIcon } from '@radix-ui/react-icons'
 import '@/index.css'
 
 import { cn } from '@/lib/utils'
+import { Button } from './button'
+import { useNavigate } from 'react-router-dom'
+import { useAuth } from '@/provider/AuthProvider'
 
 const NavigationMenu = React.forwardRef<
   React.ElementRef<typeof NavigationMenuPrimitive.Root>,
@@ -117,8 +120,15 @@ NavigationMenuIndicator.displayName =
 
 function NavigationMenuManager({ className }: { className: string }) {
   // We display different menu items based on the user's role
+
+  const navigate = useNavigate()
+
+  const { user, logout } = useAuth()
+
+  let userStatus: 'GYM_USER' | 'USER' | 'NOT_LOGGED_IN' = 'NOT_LOGGED_IN'
+
   // TODO: Implement user roles
-  const isGymUser = true
+  if (user) userStatus = 'USER'
 
   return (
     <NavigationMenu
@@ -129,7 +139,7 @@ function NavigationMenuManager({ className }: { className: string }) {
           href="https://www.instagram.com/leonie_popk/"
           className="pr-8"
         >
-          <img src="/TravelFit Icon.svg" />
+          <img src="src/assets/TravelFitIcon.svg" className="w-8 h-8 " />
         </NavigationMenuLink>
         <NavigationMenuItem>
           <NavigationMenuLink className={navigationMenuTriggerStyle()} href="/">
@@ -141,7 +151,7 @@ function NavigationMenuManager({ className }: { className: string }) {
             Favourites
           </NavigationMenuLink>
         </NavigationMenuItem>
-        {isGymUser && (
+        {userStatus === 'GYM_USER' && (
           <NavigationMenuItem>
             <NavigationMenuLink
               className={navigationMenuTriggerStyle()}
@@ -152,17 +162,33 @@ function NavigationMenuManager({ className }: { className: string }) {
           </NavigationMenuItem>
         )}
       </NavigationMenuList>
-      <NavigationMenuList>
-        <NavigationMenuItem>
-          <NavigationMenuTrigger>
-            <Avatar>
-              <AvatarFallback>
-                <PersonIcon className="icon" />
-              </AvatarFallback>
-            </Avatar>
-          </NavigationMenuTrigger>
-        </NavigationMenuItem>
-      </NavigationMenuList>
+      {userStatus === 'NOT_LOGGED_IN' && (
+        <div className="flex gap-2">
+          <Button variant={'outline'}>Become a partner</Button>
+          <Button className="bg-black" onClick={() => navigate('/login')}>
+            Login
+          </Button>
+          <Button
+            className="bg-black"
+            onClick={() => navigate('/create-user-account')}
+          >
+            Signup
+          </Button>
+        </div>
+      )}
+      {userStatus !== 'NOT_LOGGED_IN' && (
+        <NavigationMenuList>
+          <NavigationMenuItem onClick={logout}>
+            <NavigationMenuTrigger>
+              <Avatar>
+                <AvatarFallback>
+                  <PersonIcon className="icon" />
+                </AvatarFallback>
+              </Avatar>
+            </NavigationMenuTrigger>
+          </NavigationMenuItem>
+        </NavigationMenuList>
+      )}
     </NavigationMenu>
   )
 }

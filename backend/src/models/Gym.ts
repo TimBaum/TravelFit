@@ -10,7 +10,21 @@ export interface IGymModel extends IGym, Document {}
 
 const GymSchema: Schema = new mongoose.Schema({
   name: { type: String, required: true },
-  highlights: [{ type: String, enum: ['Sauna', 'Posing room', 'Pool'] }],
+  highlights: [
+    {
+      type: String,
+      enum: [
+        'Sauna',
+        'Posing room',
+        'Pool',
+        'Courses',
+        'Personal trainings',
+        'Nutrition bar',
+        'Outdoor',
+        'Parking',
+      ],
+    },
+  ],
   websiteLink: { type: String, required: true },
   pictures: [String],
   averageRating: Number,
