@@ -28,7 +28,7 @@ import { z } from 'zod'
 
 import { IReview } from '@models/review'
 
-import { useUpdateReviews } from '@/services/gymService'
+import { useAddReview } from '@/services/gymService'
 
 function AddReviewDialog({ gym }: { gym: IGymWithId | undefined }) {
   const [filledStars, setFilledStars] = useState([
@@ -138,7 +138,7 @@ function ReviewTile({ review }: { review: IReview }) {
   )
 }
 
-function ReviewDialog({ reviews }: { reviews: [IReview] | undefined }) {
+function ReviewDialog({ reviews }: { reviews: IReview[] | undefined }) {
   return (
     <Dialog>
       <DialogTrigger asChild>
