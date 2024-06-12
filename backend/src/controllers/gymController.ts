@@ -29,7 +29,7 @@ const getGym = (req: Request, res: Response, next: NextFunction) => {
   const { id } = req.params
 
   return Gym.findById(id)
-    .then((gym) => res.status(200).json({ gym }))
+    .then((gym) => res.status(200).json(gym))
     .catch((error) => res.status(500).json({ error }))
 }
 
@@ -37,6 +37,24 @@ interface OpenStreetMapResponse {
   lat: string
   lon: string
   //... we dont need the other attributes
+}
+
+const addReview = (req: Request, res: Response, next: NextFunction) => {
+  const { id } = req.params
+  const { review } = req.body
+
+  // Find the gym by ID and update the reviews array
+  return Gym.findById(id)
+    .then((gym) => {
+      // Update the reviews array
+      if (!gym) throw new Error('Gym not found!')
+      gym.reviews.push(review)
+
+      // Save the updated gym document
+      return gym!.save()
+    })
+    .then((updatedGym) => res.status(200).json(updatedGym))
+    .catch((error) => res.status(500).json({ error }))
 }
 
 async function getCoordinates(
@@ -108,4 +126,4 @@ const deleteGym = (req: Request, res: Response, next: NextFunction) => {
     })
 }
 
-export default { readAll, createGym, getGym, searchGyms, deleteGym }
+export default { readAll, createGym, getGym, addReview, searchGyms, deleteGym }

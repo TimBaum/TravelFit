@@ -1,7 +1,7 @@
 import { IAddress } from './address'
 import { IOffer } from './offer'
 import { IReview } from './review'
-import { ITimeRange } from './timeRange'
+import { ITimeRange } from './timerange'
 
 export interface IGym {
   name: string

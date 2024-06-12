@@ -8,6 +8,12 @@ interface GymSearchResults {
   loading: boolean
 }
 
+interface GymOverview {
+  data: IGymWithId | undefined
+  error: string | null
+  loading: boolean
+}
+
 function useGymSearch(searchString: string | null): GymSearchResults {
   const [data, setData] = useState<IGymWithId[]>([])
   const [error, setError] = useState(null)
@@ -35,4 +41,65 @@ function useGymSearch(searchString: string | null): GymSearchResults {
   return { data, error, loading }
 }
 
-export { useGymSearch }
+function useGetGym(id: string | null): GymOverview {
+  const [data, setData] = useState<IGymWithId>()
+  const [error, setError] = useState(null)
+  const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    async function fetchData() {
+      if (!id) return
+      setLoading(true)
+      const response = await fetch(`${config.BACKEND_URL}/gyms/get/${id}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+        .then((response) => response.json())
+        .catch((error) => {
+          setError(error)
+        })
+      setData(response)
+      setLoading(false)
+    }
+
+    fetchData()
+  }, [id])
+
+  return { data, error, loading }
+}
+
+function useAddReview(id: string | null, review: any): GymOverview {
+  const [data, setData] = useState<IGymWithId>()
+  const [error, setError] = useState(null)
+  const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    async function fetchData() {
+      if (!id) return
+
+      setLoading(true)
+
+      const response = await fetch(`${config.BACKEND_URL}/gyms/${id}/reviews`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ review }), // Pass the review data in the body
+      })
+        .then((response) => response.json())
+        .catch((error) => {
+          setError(error)
+        })
+      setData(response)
+      setLoading(false)
+    }
+
+    fetchData()
+  }, [id, review]) // Add review to dependency array to trigger the effect when review changes
+
+  return { data, error, loading }
+}
+
+export { useGymSearch, useGetGym, useAddReview }
