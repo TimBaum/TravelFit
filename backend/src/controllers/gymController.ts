@@ -105,8 +105,6 @@ const searchGyms = async (
 ) => {
   const { searchString, filters, pageLimit, sortBy } = req.body
 
-  console.log(filters)
-
   if (!searchString) {
     return res.status(400).json({ error: 'Search string is required' })
   }

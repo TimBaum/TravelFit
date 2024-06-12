@@ -52,8 +52,6 @@ function GymSearchResults() {
     { text: 'Radius', icon: <ExpandIcon />, state: filterState.radius },
   ]
 
-  console.log(filterState)
-
   return (
     <div className="mb-10">
       <h1 className="text-5xl font-bold mb-2">Gyms in {searchString}</h1>
@@ -123,7 +121,8 @@ function Filter({
   text: string
   icon: JSX.Element
   filterState: FilterState
-  state: object | string | [] | undefined
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  state: any //TODO: specify type
   setFilterState: (state: FilterState) => void
 }) {
   function countActiveFilters() {
@@ -132,7 +131,7 @@ function Filter({
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (key) => (state as any)[key] || (state as any)[key] === 0,
       ).length
-    } else return state === undefined ? 0 : 1
+    } else return !state && state !== 0 ? 0 : 1
   }
 
   const activeFilters = countActiveFilters()
@@ -231,6 +230,8 @@ function RatingFilter({ icon, filterState, setFilterState }: FilterProps) {
           <Label>From</Label>
           <Input
             type="number"
+            step={0.1}
+            max={5}
             placeholder="Number"
             value={filterState.rating.from ?? ''}
             onChange={(event) => {
