@@ -8,6 +8,6 @@ router.post('/create', controller.createGym)
 router.get('/get', controller.readAll)
 router.get('/get/:id', controller.getGym)
 router.post('/search', controller.searchGyms)
-router.put('/put/:id/reviews', controller.updateReviews)
+router.put('/post/:id/reviews', controller.addReview)
 
 export = router

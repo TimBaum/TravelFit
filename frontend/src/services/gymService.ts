@@ -74,7 +74,7 @@ function useGetGym(id: string | null): GymOverview {
   return { data, error, loading }
 }
 
-function useUpdateReviews(id: string | null, review: any): GymOverview {
+function useAddReview(id: string | null, review: any): GymOverview {
   const [data, setData] = useState<IGymWithId>()
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(false)
@@ -89,7 +89,7 @@ function useUpdateReviews(id: string | null, review: any): GymOverview {
         const response = await fetch(
           `${config.BACKEND_URL}/gyms/${id}/reviews`,
           {
-            method: 'PUT',
+            method: 'POST',
             headers: {
               'Content-Type': 'application/json',
             },
@@ -115,4 +115,4 @@ function useUpdateReviews(id: string | null, review: any): GymOverview {
   return { data, error, loading }
 }
 
-export { useGymSearch, useGetGym, useUpdateReviews }
+export { useGymSearch, useGetGym, useAddReview }

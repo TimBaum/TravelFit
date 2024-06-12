@@ -1,5 +1,5 @@
 export interface IReview {
-  author: String
+  author: string
   rating: Number
   text: String
 }

@@ -39,7 +39,7 @@ const searchGyms = (req: Request, res: Response, next: NextFunction) => {
     .catch((error) => res.status(500).json({ error }))
 }
 
-const updateReviews = (req: Request, res: Response, next: NextFunction) => {
+const addReview = (req: Request, res: Response, next: NextFunction) => {
   const { id } = req.params
   const { review } = req.body
 
@@ -47,7 +47,8 @@ const updateReviews = (req: Request, res: Response, next: NextFunction) => {
   return Gym.findById(id)
     .then((gym) => {
       // Update the reviews array
-      gym!.reviews.push(review)
+      if (!gym) throw new Error('Gym not found!')
+      gym.reviews.push(review)
 
       // Save the updated gym document
       return gym!.save()
@@ -56,4 +57,4 @@ const updateReviews = (req: Request, res: Response, next: NextFunction) => {
     .catch((error) => res.status(500).json({ error }))
 }
 
-export default { readAll, createGym, getGym, searchGyms, updateReviews }
+export default { readAll, createGym, getGym, searchGyms, addReview }
