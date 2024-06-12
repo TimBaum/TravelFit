@@ -1,6 +1,8 @@
 import { NextFunction, Request, Response } from 'express'
-import mongoose from 'mongoose'
+import mongoose, { FilterQuery } from 'mongoose'
 import Gym from '../models/Gym'
+import { FilterState } from '@models/filter'
+import cache from '../cache'
 
 const createGym = (req: Request, res: Response, next: NextFunction) => {
   const gymData = req.body
@@ -60,6 +62,13 @@ const addReview = (req: Request, res: Response, next: NextFunction) => {
 async function getCoordinates(
   address: string,
 ): Promise<[number, number] | void> {
+  // Check if the coordinates are already cached to improve response time
+  const cachedCoordinates: [number, number] | undefined = cache.get(
+    address.toLowerCase(),
+  )
+
+  if (cachedCoordinates !== undefined) return cachedCoordinates
+
   return fetch(
     `https://nominatim.openstreetmap.org/search?q=${address}&format=json`,
   )
@@ -68,20 +77,33 @@ async function getCoordinates(
       if (!response || response.length === 0) {
         return undefined
       }
-      // We take the most important result, they are ranked by importance
+      // We take the first result, they are ranked by importance
       const result = response[0]
-      return [parseFloat(result.lon), parseFloat(result.lat)] as [
+      const coordinates = [parseFloat(result.lon), parseFloat(result.lat)] as [
         number,
         number,
       ]
+      cache.set(address.toLowerCase(), coordinates)
+      return coordinates
     })
     .catch((error) => {
       console.error('Error fetching coordinates:', error)
     })
 }
 
-const searchGyms = async (req: Request, res: Response, next: NextFunction) => {
-  const { searchString, pageLimit, sortBy } = req.body
+interface SearchRequestBody {
+  searchString: string
+  filters: FilterState
+  pageLimit: number
+  sortBy: string
+}
+
+const searchGyms = async (
+  req: Request<any, any, SearchRequestBody>,
+  res: Response,
+  next: NextFunction,
+) => {
+  const { searchString, filters, pageLimit, sortBy } = req.body
 
   if (!searchString) {
     return res.status(400).json({ error: 'Search string is required' })
@@ -94,6 +116,18 @@ const searchGyms = async (req: Request, res: Response, next: NextFunction) => {
     return res.status(500).json({ error: 'LOCATION_NOT_FOUND' })
   }
 
+  const dbFilters: FilterQuery<typeof Gym> = {} // Be careful! Typescript is not typechecking this object for some reason
+
+  if (filters.rating.from)
+    dbFilters.averageRating = { $gte: filters.rating.from }
+
+  if (filters.price.from || filters.price.to) {
+    dbFilters.cheapestOfferPrice = {}
+    if (filters.price.from)
+      dbFilters.cheapestOfferPrice.$gte = filters.price.from
+    if (filters.price.to) dbFilters.cheapestOfferPrice.$lte = filters.price.to
+  }
+
   return Gym.find({
     'address.location': {
       $near: {
@@ -101,9 +135,10 @@ const searchGyms = async (req: Request, res: Response, next: NextFunction) => {
           type: 'Point',
           coordinates: coordinates,
         },
-        $maxDistance: 10000, // 10 km
+        $maxDistance: filters.radius ? filters.radius * 1000 : 10000, // default 10 km
       },
     },
+    ...dbFilters,
   })
     .then((gyms) => {
       res.status(200).json(gyms)

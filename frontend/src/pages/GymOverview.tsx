@@ -20,7 +20,7 @@ import { useParams, useLocation } from 'react-router-dom'
 
 import { BookmarkIcon } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import { IAddress } from '@models/adress'
+import { IAddress } from '@models/address'
 
 import '@/index.css'
 
