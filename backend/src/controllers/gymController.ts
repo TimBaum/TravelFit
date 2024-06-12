@@ -1,7 +1,8 @@
 import { NextFunction, Request, Response } from 'express'
-import mongoose from 'mongoose'
+import mongoose, { FilterQuery } from 'mongoose'
 import Gym from '../models/Gym'
 import { FilterState } from '@models/filter'
+import cache from '../cache'
 
 const createGym = (req: Request, res: Response, next: NextFunction) => {
   const gymData = req.body
@@ -61,6 +62,17 @@ const addReview = (req: Request, res: Response, next: NextFunction) => {
 async function getCoordinates(
   address: string,
 ): Promise<[number, number] | void> {
+  // Check if the coordinates are already cached to improve response time
+  const cachedCoordinates: [number, number] | undefined = cache.get(
+    address.toLowerCase(),
+  )
+
+  console.log('CACHED', cachedCoordinates)
+
+  if (cachedCoordinates !== undefined) return cachedCoordinates
+
+  console.log('Recalculating coordinates')
+
   return fetch(
     `https://nominatim.openstreetmap.org/search?q=${address}&format=json`,
   )
@@ -69,12 +81,14 @@ async function getCoordinates(
       if (!response || response.length === 0) {
         return undefined
       }
-      // We take the most important result, they are ranked by importance
+      // We take the first result, they are ranked by importance
       const result = response[0]
-      return [parseFloat(result.lon), parseFloat(result.lat)] as [
+      const coordinates = [parseFloat(result.lon), parseFloat(result.lat)] as [
         number,
         number,
       ]
+      cache.set(address.toLowerCase(), coordinates)
+      return coordinates
     })
     .catch((error) => {
       console.error('Error fetching coordinates:', error)
@@ -108,6 +122,20 @@ const searchGyms = async (
     return res.status(500).json({ error: 'LOCATION_NOT_FOUND' })
   }
 
+  console.log(coordinates)
+
+  const dbFilters: FilterQuery<typeof Gym> = {} // Be careful! Typescript is not typechecking this object for some reason
+
+  if (filters.rating.from)
+    dbFilters.averageRating = { $gte: filters.rating.from }
+
+  if (filters.price.from || filters.price.to) {
+    dbFilters.cheapestOfferPrice = {}
+    if (filters.price.from)
+      dbFilters.cheapestOfferPrice.$gte = filters.price.from
+    if (filters.price.to) dbFilters.cheapestOfferPrice.$lte = filters.price.to
+  }
+
   return Gym.find({
     'address.location': {
       $near: {
@@ -118,6 +146,7 @@ const searchGyms = async (
         $maxDistance: filters.radius ? filters.radius * 1000 : 10000, // default 10 km
       },
     },
+    ...dbFilters,
   })
     .then((gyms) => {
       res.status(200).json(gyms)

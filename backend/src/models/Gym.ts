@@ -28,6 +28,7 @@ const GymSchema: Schema = new mongoose.Schema({
   websiteLink: { type: String, required: true },
   pictures: [String],
   averageRating: Number,
+  cheapestOfferPrice: Number,
   address: { type: Address.schema, required: true },
   openingHours: [TimeRange.schema],
   offers: [Offer.schema],

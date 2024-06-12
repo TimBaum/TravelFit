@@ -5,7 +5,6 @@ export interface FilterState {
   }
   rating: {
     from: number | undefined
-    to: number | undefined
   }
   weekday: number | undefined
   radius: number | undefined

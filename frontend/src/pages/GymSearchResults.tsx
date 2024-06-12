@@ -35,7 +35,6 @@ function GymSearchResults() {
     },
     rating: {
       from: undefined,
-      to: undefined,
     },
     weekday: undefined,
     radius: undefined,
@@ -124,7 +123,7 @@ function Filter({
   text: string
   icon: JSX.Element
   filterState: FilterState
-  state: object | string | []
+  state: object | string | [] | undefined
   setFilterState: (state: FilterState) => void
 }) {
   function countActiveFilters() {
@@ -240,23 +239,6 @@ function RatingFilter({ icon, filterState, setFilterState }: FilterProps) {
                 rating: {
                   ...filterState.rating,
                   from: parseFloat(event.target.value) ?? undefined,
-                },
-              })
-            }}
-          />
-        </div>
-        <div>
-          <Label>To</Label>
-          <Input
-            type="number"
-            placeholder="Number"
-            value={filterState.rating.to ?? ''}
-            onChange={(event) => {
-              setFilterState({
-                ...filterState,
-                rating: {
-                  ...filterState.rating,
-                  to: parseFloat(event.target.value) ?? undefined,
                 },
               })
             }}

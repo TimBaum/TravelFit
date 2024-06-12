@@ -8,7 +8,8 @@ export interface IGym {
   highlights: Highlight[]
   websiteLink: string
   pictures: string[]
-  averageRating: Number
+  averageRating: number
+  cheapestOfferPrice: number
   address: IAddress
   openingHours: ITimeRange[]
   offers: IOffer[]
