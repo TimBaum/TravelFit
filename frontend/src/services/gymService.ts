@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { IGymWithId } from '@models/gym'
 import { fetchJSON } from './utils'
 import { FilterState } from '@models/filter'
+import { config } from '@/config'
 
 interface GymSearchResults {
   data: IGymWithId[]
@@ -66,6 +67,12 @@ function useGetGym(id: string | null): GymOverview {
   }, [id])
 
   return { data, error, loading }
+}
+
+interface GymOverview {
+  data: IGymWithId | undefined
+  error: string | null
+  loading: boolean
 }
 
 function useAddReview(id: string | null, review: any): GymOverview {
