@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import mongoose, { FilterQuery } from 'mongoose'
 import Gym from '../models/Gym'
+import Review from '../models/Review'
 import { FilterState } from '@models/filter'
 import cache from '../cache'
 
@@ -41,12 +42,15 @@ interface OpenStreetMapResponse {
   //... we dont need the other attributes
 }
 
-const addReview = (req: Request, res: Response, next: NextFunction) => {
+const addReview = (req: Request, res: Response) => {
   const { id } = req.params
-  const { review } = req.body
+  const { reviewData } = req.body
 
-  // Find the gym by ID and update the reviews array
-  return Gym.findById(id)
+  const review = new Review({
+    ...reviewData,
+  })
+
+  Gym.findById(id)
     .then((gym) => {
       // Update the reviews array
       if (!gym) throw new Error('Gym not found!')

@@ -28,7 +28,7 @@ import { z } from 'zod'
 
 import { IReview } from '@models/review'
 
-import { useAddReview } from '@/services/gymService'
+import { config } from '@/config'
 
 function AddReviewDialog({ gym }: { gym: IGymWithId | undefined }) {
   const [filledStars, setFilledStars] = useState([
@@ -53,24 +53,33 @@ function AddReviewDialog({ gym }: { gym: IGymWithId | undefined }) {
     resolver: zodResolver(FormSchema),
   })
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
+  async function onSubmit(data: z.infer<typeof FormSchema>) {
+    const author = 'placeholder auther'
     const rating = filledStars.filter(Boolean).length
     const reviewText = data.reviewText
+    const review = { author, rating, reviewText }
 
-    const review = {
-      author: 'current User: TODO',
-      rating: rating,
-      text: reviewText,
+    try {
+      const response = await fetch(
+        `${config.BACKEND_URL}/${gym?._id}/reviews`,
+        {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ review }), // Pass the review data in the body
+        },
+      )
+
+      if (!response.ok) {
+        throw new Error('Failed to patch gym with new review')
+      }
+
+      const data = await response.json()
+      console.log('Succesfully added review: ', data)
+    } catch (error) {
+      console.error('Error adding new review: ', error)
     }
-
-    toast({
-      title: 'Thanks for reviewing!',
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
-    })
   }
 
   return (
