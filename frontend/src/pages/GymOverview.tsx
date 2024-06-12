@@ -16,6 +16,8 @@ import '@/styles/gym-overview.css'
 
 import { useGetGym } from '@/services/gymService'
 
+import { useParams, useLocation } from 'react-router-dom'
+
 import { BookmarkIcon } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { IAddress } from '@models/adress'
@@ -23,10 +25,14 @@ import { IAddress } from '@models/adress'
 import '@/index.css'
 
 function GymOverview() {
-  const pathname = window.location.pathname
-  const regex = /\/gymoverview\/([a-f0-9]+)/
-  const match = pathname.match(regex)
-  const id = match ? match[1] : null
+  const pathname = useLocation()
+  const { id } = useParams()
+
+  if (!id) {
+    return <div>Invalid ID</div>
+  }
+
+  console.log(id)
 
   const { data, error, loading } = useGetGym(id)
   const gymname = data?.name
@@ -53,7 +59,7 @@ function GymOverview() {
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbLink href={pathname}>{gymname}</BreadcrumbLink>
+              <BreadcrumbLink>{gymname}</BreadcrumbLink>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
