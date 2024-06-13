@@ -17,7 +17,7 @@ import { toast } from '@/components/ui/use-toast'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 
-import StarRating from './StarRating'
+import { StarRating, DisplayRating } from './StarRating'
 
 import { IGymWithId } from '@models/gym'
 
@@ -138,6 +138,7 @@ function ReviewTile({ review }: { review: IReview }) {
   return (
     <div className="flex h-46 w-full rounded p-2 relative m-2">
       <div>
+        <DisplayRating rating={Number(review.rating)} />
         {showFullText || review.text.length <= maxLength
           ? review.text
           : `${review.text.substring(0, maxLength)}...`}
