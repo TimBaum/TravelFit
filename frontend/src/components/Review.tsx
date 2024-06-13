@@ -29,6 +29,7 @@ import { z } from 'zod'
 import { IReview } from '@models/review'
 
 import { config } from '@/config'
+import { useAuth } from '@/provider/AuthProvider'
 
 function AddReviewDialog({ gym }: { gym: IGymWithId | undefined }) {
   const [filledStars, setFilledStars] = useState([
@@ -38,6 +39,8 @@ function AddReviewDialog({ gym }: { gym: IGymWithId | undefined }) {
     false,
     false,
   ])
+
+  const { user, login } = useAuth()
 
   const FormSchema = z.object({
     reviewText: z
@@ -54,20 +57,22 @@ function AddReviewDialog({ gym }: { gym: IGymWithId | undefined }) {
   })
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
-    const author = 'placeholder auther'
+    const author = user?._id
     const rating = filledStars.filter(Boolean).length
     const reviewText = data.reviewText
-    const review = { author, rating, reviewText }
+    const body = `{"review": {"author" : "${author}", "rating":${rating}, "text": "${reviewText}" }}`
+
+    console.log(body)
 
     try {
       const response = await fetch(
-        `${config.BACKEND_URL}/${gym?._id}/reviews`,
+        `${config.BACKEND_URL}/gyms/${gym?._id}/reviews`,
         {
           method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ review }), // Pass the review data in the body
+          body: JSON.stringify({ body }), // Pass the review data in the body
         },
       )
 
