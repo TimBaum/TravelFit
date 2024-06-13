@@ -23,6 +23,7 @@ import { Link } from 'react-router-dom'
 import { IAddress } from '@models/address'
 
 import '@/index.css'
+import { useAuth } from '@/provider/AuthProvider'
 
 function GymOverview() {
   const pathname = useLocation()
@@ -36,6 +37,7 @@ function GymOverview() {
 
   const { data, error, loading } = useGetGym(id)
   const gymname = data?.name
+  const { user } = useAuth()
 
   const photos = [
     { url: '/src/assets/img1.png', alt: 'Gym photo 1' },
@@ -116,7 +118,7 @@ function GymOverview() {
               </div>
             )}
             <ReviewDialog reviews={data?.reviews} />
-            <AddReviewDialog gym={data} />
+            {user && <AddReviewDialog gym={data} />}
           </div>
         </div>
       </div>
