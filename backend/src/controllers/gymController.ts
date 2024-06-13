@@ -48,11 +48,12 @@ const addReview = async (req: Request, res: Response) => {
     if (!gym) {
       return res.status(404).json({ message: 'Gym not found' })
     }
+
     gym.reviews.push(req.body.review)
     await gym.save()
     return res.status(201).json({ gym })
   } catch (err) {
-    return res.status(500).json({ message: 'did not work' })
+    return res.status(500).json(err)
   }
 }
 
