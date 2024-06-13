@@ -13,7 +13,7 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Textarea } from '@/components/ui/textarea'
-import { toast } from '@/components/ui/use-toast'
+import { useToast } from '@/components/ui/use-toast'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 
@@ -30,6 +30,7 @@ import { IReview } from '@models/review'
 
 import { config } from '@/config'
 import { useAuth } from '@/provider/AuthProvider'
+import { useReadUser } from '@/services/userService'
 
 function AddReviewDialog({ gym }: { gym: IGymWithId | undefined }) {
   const [filledStars, setFilledStars] = useState([
@@ -40,7 +41,7 @@ function AddReviewDialog({ gym }: { gym: IGymWithId | undefined }) {
     false,
   ])
 
-  const { user, login } = useAuth()
+  const { user } = useAuth()
 
   const FormSchema = z.object({
     reviewText: z
@@ -72,7 +73,7 @@ function AddReviewDialog({ gym }: { gym: IGymWithId | undefined }) {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ body }), // Pass the review data in the body
+          body: body, // Pass the review data in the body
         },
       )
 
@@ -135,9 +136,14 @@ function ReviewTile({ review }: { review: IReview }) {
   const toggleShowFullText = () => {
     setShowFullText(!showFullText)
   }
+
+  const { user } = useAuth()
+  const { data, error, loading } = useReadUser(user?._id ?? null)
+
   return (
     <div className="flex h-46 w-full rounded p-2 relative m-2">
       <div>
+        <h1>{data?.displayName}</h1>
         <DisplayRating rating={Number(review.rating)} />
         {showFullText || review.text.length <= maxLength
           ? review.text
