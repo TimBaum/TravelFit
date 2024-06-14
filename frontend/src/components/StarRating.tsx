@@ -22,9 +22,9 @@ function StarRating({
           onClick={() => handleStarClick(index)}
         >
           {filled ? (
-            <StarFilledIcon className="w-8 h-8" />
+            <StarFilledIcon className="text-primary w-8 h-8" />
           ) : (
-            <StarIcon className="w-8 h-8" />
+            <StarIcon className="text-primary w-8 h-8" />
           )}
         </div>
       ))}
@@ -42,9 +42,9 @@ const DisplayRating: React.FC<DisplayRatingProps> = ({ rating }) => {
 
   for (let i = 1; i <= maxStars; i++) {
     if (i <= rating) {
-      stars.push(<StarFilledIcon key={i} className="w-3 h-3" />)
+      stars.push(<StarFilledIcon key={i} className="text-primary w-3 h-3" />)
     } else {
-      stars.push(<StarIcon key={i} className="w-3 h-3" />)
+      stars.push(<StarIcon key={i} className="text-primary w-3 h-3" />)
     }
   }
 
