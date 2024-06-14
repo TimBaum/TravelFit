@@ -25,6 +25,7 @@ import { IAddress } from '@models/address'
 import '@/index.css'
 import { useAuth } from '@/provider/AuthProvider'
 import { StarFilledIcon } from '@radix-ui/react-icons'
+import { fetchJSON } from '@/services/utils'
 
 function GymOverview() {
   const pathname = useLocation()
@@ -38,6 +39,7 @@ function GymOverview() {
 
   const { data, error, loading } = useGetGym(id)
   const gymname = data?.name
+  const gymId = data?._id
   const { user } = useAuth()
 
   const photos = [
@@ -47,6 +49,18 @@ function GymOverview() {
     { url: '/src/assets/img4.png', alt: 'Gym photo 1' },
     { url: '/src/assets/img5.png', alt: 'Gym photo 1' },
   ]
+
+  async function addFavourite() {
+    try {
+      const response = fetchJSON(`/users/${user?._id}/favourites/add`, {
+        method: 'PATCH',
+        body: JSON.stringify({ gymId }),
+      })
+      console.log(response)
+    } catch (error) {
+      console.error('Error adding favourite: ', error)
+    }
+  }
 
   return (
     <div>
@@ -71,7 +85,12 @@ function GymOverview() {
         <h1 className="text-5xl font-bold pb-2">{gymname}</h1>
         <div className="header-icons">
           <ShareButton link={window.location.href} />
-          <Button variant="outline">
+          <Button
+            variant="outline"
+            onClick={async () => {
+              await addFavourite()
+            }}
+          >
             <BookmarkIcon className="mr-2 h-4 w-4" />
             Mark as favourite
           </Button>
