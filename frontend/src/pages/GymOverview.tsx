@@ -24,6 +24,7 @@ import { IAddress } from '@models/address'
 
 import '@/index.css'
 import { useAuth } from '@/provider/AuthProvider'
+import { StarFilledIcon } from '@radix-ui/react-icons'
 
 function GymOverview() {
   const pathname = useLocation()
@@ -109,7 +110,13 @@ function GymOverview() {
                 Visit gym website
               </Link>
             </Button>
-            <h1 className="mt-2 text-3xl font-bold">Reviews</h1>
+            <h1 className="mt-5 text-3xl font-bold flex items-center gap-1 text-nowrap">
+              <StarFilledIcon className="text-primary h-7 w-7" />
+              {(data?.averageRating ? data?.averageRating.toFixed(1) : '?') +
+                ' · ' +
+                data?.reviews.length +
+                ` Review${data?.reviews.length !== 1 ? 's' : ''}`}
+            </h1>
             {!loading && (
               <div>
                 {data?.reviews
