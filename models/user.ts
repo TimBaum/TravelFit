@@ -1,4 +1,5 @@
 import { IPayment } from './payment'
+import { IGymWithId } from './gym'
 
 export interface PublicUser {
   _id: string
@@ -17,4 +18,5 @@ export interface IUser {
   payments: IPayment[]
   createdAt: Date
   updatedAt: Date
+  favourites: IGymWithId[]
 }
