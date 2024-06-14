@@ -48,7 +48,7 @@ const DisplayRating: React.FC<DisplayRatingProps> = ({ rating }) => {
     }
   }
 
-  return <div className="inline-grid grid-cols-5 gap-2 p-4">{stars}</div>
+  return <div className="inline-grid grid-cols-5 gap-2 p-2">{stars}</div>
 }
 
 export { StarRating, DisplayRating }

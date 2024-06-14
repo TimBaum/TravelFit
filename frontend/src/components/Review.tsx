@@ -142,9 +142,11 @@ function ReviewTile({ review }: { review: IReview }) {
 
   return (
     <div className="flex h-46 w-full rounded p-2 relative m-2">
-      <div>
-        <h1>{data?.displayName}</h1>
-        <DisplayRating rating={Number(review.rating)} />
+      <div className="w-full">
+        <div className="flex justify-between items-center">
+          <h1 className="font-bold">{data?.displayName}</h1>
+          <DisplayRating rating={Number(review.rating)} />
+        </div>
         {showFullText || review.text.length <= maxLength
           ? review.text
           : `${review.text.substring(0, maxLength)}...`}
