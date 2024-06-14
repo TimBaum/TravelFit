@@ -18,5 +18,5 @@ export interface IUser {
   payments: IPayment[]
   createdAt: Date
   updatedAt: Date
-  favourites: IGymWithId[]
+  favourites: string[]
 }

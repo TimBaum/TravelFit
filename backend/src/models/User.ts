@@ -12,7 +12,7 @@ const userSchema = new mongoose.Schema({
   //payments: { type: [Payment], required: false },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
-  favourites: [Gym.schema],
+  favourites: { type: Array, ref: 'Gym' },
 })
 
 const User = mongoose.model('User', userSchema)
