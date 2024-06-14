@@ -72,6 +72,28 @@ export const updateUser = async (req: Request, res: Response) => {
   }
 }
 
+export const addFavourite = async (req: Request, res: Response) => {
+  try {
+    const user = await User.findById(req.params.id)
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' })
+    }
+
+    const publicUser: PublicUser = {
+      _id: user._id.toString() || '',
+      displayName: user.displayName || '',
+      salutation: user.salutation || '',
+      email: user.email || '',
+    }
+
+    user.favourites.push(req.body.gym)
+    await user.save()
+    return res.status(201).json({ publicUser })
+  } catch (err) {
+    return res.status(500).json(err)
+  }
+}
+
 export const deleteUser = async (req: Request, res: Response) => {
   console.log('Trying to delete a user for testing')
   try {

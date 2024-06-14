@@ -5,6 +5,7 @@ import {
   readAllUsers,
   updateUser,
   deleteUser,
+  addFavourite,
 } from '../controllers/userAccountController'
 import auth from '../middleware/auth'
 
@@ -14,6 +15,7 @@ router.post('/create', createUser)
 router.get('/get/:id', readUser)
 router.get('/get', readAllUsers)
 router.patch('/update/:id', auth.isAuthorized, updateUser)
+router.patch('/:id/favourites/add', addFavourite)
 router.delete('/delete/:id', auth.isAuthorized, deleteUser)
 
 export default router
