@@ -13,7 +13,6 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Textarea } from '@/components/ui/textarea'
-import { useToast } from '@/components/ui/use-toast'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 
@@ -27,10 +26,9 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
 import { IReview } from '@models/review'
-
-import { config } from '@/config'
 import { useAuth } from '@/provider/AuthProvider'
 import { useReadUser } from '@/services/userService'
+import { fetchJSON } from '@/services/utils'
 
 function AddReviewDialog({ gym }: { gym: IGymWithId | undefined }) {
   const [filledStars, setFilledStars] = useState([
@@ -58,31 +56,20 @@ function AddReviewDialog({ gym }: { gym: IGymWithId | undefined }) {
   })
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
-    const author = user?._id
-    const rating = filledStars.filter(Boolean).length
-    const reviewText = data.reviewText
-    const body = `{"review": {"author" : "${author}", "rating":${rating}, "text": "${reviewText}" }}`
-
-    console.log(body)
+    const review = {
+      author: user?._id,
+      rating: filledStars.filter(Boolean).length,
+      text: data.reviewText,
+    }
 
     try {
-      const response = await fetch(
-        `${config.BACKEND_URL}/gyms/${gym?._id}/reviews`,
-        {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: body, // Pass the review data in the body
-        },
-      )
+      const response = await fetchJSON(`/gyms/${gym?._id}/reviews`, {
+        method: 'PATCH',
+        body: JSON.stringify({ review }),
+      })
 
-      if (!response.ok) {
-        throw new Error('Failed to patch gym with new review')
-      }
-
-      const data = await response.json()
-      console.log('Succesfully added review: ', data)
+      //const data = await response.json()
+      console.log('Succesfully added review: ', response)
     } catch (error) {
       console.error('Error adding new review: ', error)
     }
