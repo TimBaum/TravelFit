@@ -86,7 +86,7 @@ export const addFavourite = async (req: Request, res: Response) => {
       email: user.email || '',
     }
 
-    user.favourites.push(req.body.gym)
+    user.favourites.push(req.body.gymId)
     await user.save()
     return res.status(201).json({ publicUser })
   } catch (err) {
