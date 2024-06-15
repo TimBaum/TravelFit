@@ -61,8 +61,8 @@ function GymOverview() {
   console.log('gymID: ' + gymId)
 
   useEffect(() => {
-    if (user && user.favourites) {
-      setIsFavourite(user.favourites.includes(gymId))
+    if (user && userFavourites) {
+      setIsFavourite(userFavourites.includes(gymId))
     }
   }, [user, gymId])
 
