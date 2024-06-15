@@ -91,6 +91,22 @@ function GymOverview() {
     }
   }
 
+  async function deleteFavourite() {
+    try {
+      const response = fetchJSON(
+        `/users/${user?._id}/favourites/delete/${gymId}`,
+        {
+          method: 'PATCH',
+        },
+      )
+      await response
+      window.location.reload()
+      console.log('Successfully deleted favourite: ', response)
+    } catch (error) {
+      console.error('Error deleting favourite: ', error)
+    }
+  }
+
   return (
     <div>
       <div className="breadcrumps">
@@ -119,7 +135,11 @@ function GymOverview() {
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
             onClick={async () => {
-              await addFavourite()
+              if (isFavourite) {
+                await deleteFavourite()
+              } else {
+                await addFavourite()
+              }
             }}
           >
             {isFavourite ? (
