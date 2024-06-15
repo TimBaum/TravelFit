@@ -84,7 +84,7 @@ function GymOverview() {
         method: 'PATCH',
         body: JSON.stringify({ gymId }),
       })
-      console.log(response)
+      await response
       window.location.reload()
     } catch (error) {
       console.error('Error adding favourite: ', error)
