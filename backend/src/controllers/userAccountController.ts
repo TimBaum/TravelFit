@@ -103,6 +103,29 @@ export const addFavourite = async (req: Request, res: Response) => {
   }
 }
 
+export const deleteFavourite = async (req: Request, res: Response) => {
+  try {
+    const user = await User.findById(req.params.id)
+    const favouriteId = new mongoose.Types.ObjectId(req.params.favourite)
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' })
+    }
+    const favouriteIndex = user.favourites.findIndex(
+      (favourite) => favourite._id && favourite._id.equals(favouriteId),
+    )
+    if (favouriteIndex === -1) {
+      return res.status(404).json({ message: 'Favourite not found' })
+    }
+
+    user.favourites.splice(favouriteIndex, 1)
+    await user.save()
+
+    res.status(200).json({ message: 'Favourite removed successfully' })
+  } catch (err) {
+    return res.status(500).json(err)
+  }
+}
+
 export const deleteUser = async (req: Request, res: Response) => {
   console.log('Trying to delete a user for testing')
   try {
