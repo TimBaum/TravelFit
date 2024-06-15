@@ -37,7 +37,14 @@ export const readUser = async (req: Request, res: Response) => {
     if (!user) {
       return res.status(404).json({ message: 'User not found' })
     }
-    return res.status(200).json(user)
+    const publicUser: PublicUser = {
+      _id: user._id.toString() || '',
+      displayName: user.displayName || '',
+      salutation: user.salutation || '',
+      email: user.email || '',
+      favourites: user.favourites.map((fav) => fav.toString()),
+    }
+    return res.status(200).json(publicUser)
   } catch (err) {
     return res.status(500).json({ error })
   }
@@ -63,6 +70,7 @@ export const updateUser = async (req: Request, res: Response) => {
       displayName: user.displayName || '',
       salutation: user.salutation || '',
       email: user.email || '',
+      favourites: user.favourites.map((fav) => fav.toString()),
     }
     user.set(req.body)
     await user.save()
@@ -84,6 +92,7 @@ export const addFavourite = async (req: Request, res: Response) => {
       displayName: user.displayName || '',
       salutation: user.salutation || '',
       email: user.email || '',
+      favourites: user.favourites.map((fav) => fav.toString()),
     }
 
     user.favourites.push(req.body.gymId)

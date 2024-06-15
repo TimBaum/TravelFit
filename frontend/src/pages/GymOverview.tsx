@@ -19,28 +19,34 @@ import { useGetGym } from '@/services/gymService'
 import { useParams, useLocation } from 'react-router-dom'
 
 import { BookmarkIcon } from 'lucide-react'
+import { FaBookmark, FaRegBookmark } from 'react-icons/fa'
+import { GoBookmarkSlashFill } from 'react-icons/go'
+
 import { Link } from 'react-router-dom'
-import { IAddress } from '@models/address'
 
 import '@/index.css'
 import { useAuth } from '@/provider/AuthProvider'
 import { StarFilledIcon } from '@radix-ui/react-icons'
 import { fetchJSON } from '@/services/utils'
+import { useEffect, useState } from 'react'
+import { useReadUser } from '@/services/userService'
 
 function GymOverview() {
-  const pathname = useLocation()
   const { id } = useParams()
 
   if (!id) {
     return <div>Invalid ID</div>
   }
 
-  console.log(id)
-
   const { data, error, loading } = useGetGym(id)
   const gymname = data?.name
-  const gymId = data?._id
+  const gymId = data?._id || ''
+
   const { user } = useAuth()
+  const userFavourites = useReadUser(user?._id ?? '').data?.favourites
+
+  const [isFavourite, setIsFavourite] = useState(false)
+  const [isHovered, setIsHovered] = useState(false)
 
   const photos = [
     { url: '/src/assets/img1.png', alt: 'Gym photo 1' },
@@ -49,6 +55,28 @@ function GymOverview() {
     { url: '/src/assets/img4.png', alt: 'Gym photo 1' },
     { url: '/src/assets/img5.png', alt: 'Gym photo 1' },
   ]
+
+  console.log('User: ' + user?._id)
+  console.log('Users Favourites: ' + userFavourites)
+  console.log('gymID: ' + gymId)
+
+  useEffect(() => {
+    if (user && user.favourites) {
+      setIsFavourite(user.favourites.includes(gymId))
+    }
+  }, [user, gymId])
+
+  const handleMouseEnter = () => {
+    if (isFavourite) {
+      setIsHovered(true)
+    }
+  }
+
+  const handleMouseLeave = () => {
+    if (isFavourite) {
+      setIsHovered(false)
+    }
+  }
 
   async function addFavourite() {
     try {
@@ -87,11 +115,21 @@ function GymOverview() {
           <ShareButton link={window.location.href} />
           <Button
             variant="outline"
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
             onClick={async () => {
               await addFavourite()
             }}
           >
-            <BookmarkIcon className="mr-2 h-4 w-4" />
+            {isFavourite ? (
+              isHovered ? (
+                <GoBookmarkSlashFill className="mr-2 h-4 w-4" />
+              ) : (
+                <FaBookmark className="mr-2 h-4 w-4" />
+              )
+            ) : (
+              <FaRegBookmark className="mr-2 h-4 w-4" />
+            )}
             Mark as favourite
           </Button>
         </div>
