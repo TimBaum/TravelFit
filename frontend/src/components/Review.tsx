@@ -124,14 +124,13 @@ function ReviewTile({ review }: { review: IReview }) {
     setShowFullText(!showFullText)
   }
 
-  const { user } = useAuth()
-  const { data, error, loading } = useReadUser(user?._id ?? null)
+  const author = useReadUser(review.author).data?.displayName
 
   return (
     <div className="flex h-46 w-full rounded p-2 relative m-2">
       <div className="w-full">
         <div className="flex justify-between items-center">
-          <h1 className="font-bold">{data?.displayName}</h1>
+          <h1 className="font-bold">{author}</h1>
           <DisplayRating rating={Number(review.rating)} />
         </div>
         {showFullText || review.text.length <= maxLength
