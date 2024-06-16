@@ -8,6 +8,7 @@ import {
 import PhotoGallery from '@/components/PhotoGallery'
 import ShareButton from '@/components/ShareButton'
 import { AddReviewDialog, ReviewTile, ReviewDialog } from '@/components/Review'
+import { MarkFavourite } from '@/components/MarkFavourite'
 import HighlightBadge from '@/components/HighlightBadge'
 import { Button } from '@/components/ui/button'
 import OfferTile from '@/components/Offer'
@@ -16,9 +17,7 @@ import '@/styles/gym-overview.css'
 
 import { useGetGym } from '@/services/gymService'
 
-import { useParams, useLocation } from 'react-router-dom'
-
-import { BookmarkIcon } from 'lucide-react'
+import { useParams } from 'react-router-dom'
 import { FaBookmark, FaRegBookmark } from 'react-icons/fa'
 import { GoBookmarkSlashFill } from 'react-icons/go'
 
@@ -130,29 +129,7 @@ function GymOverview() {
         <h1 className="text-5xl font-bold pb-2">{gymname}</h1>
         <div className="header-icons">
           <ShareButton link={window.location.href} />
-          <Button
-            variant="outline"
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
-            onClick={async () => {
-              if (isFavourite) {
-                await deleteFavourite()
-              } else {
-                await addFavourite()
-              }
-            }}
-          >
-            {isFavourite ? (
-              isHovered ? (
-                <GoBookmarkSlashFill className="mr-2 h-4 w-4" />
-              ) : (
-                <FaBookmark className="mr-2 h-4 w-4" />
-              )
-            ) : (
-              <FaRegBookmark className="mr-2 h-4 w-4" />
-            )}
-            Mark as favourite
-          </Button>
+          <MarkFavourite />
         </div>
       </div>
       {/* Basic structure for the rest of the page */}
