@@ -18,17 +18,12 @@ import '@/styles/gym-overview.css'
 import { useGetGym } from '@/services/gymService'
 
 import { useParams } from 'react-router-dom'
-import { FaBookmark, FaRegBookmark } from 'react-icons/fa'
-import { GoBookmarkSlashFill } from 'react-icons/go'
 
 import { Link } from 'react-router-dom'
 
 import '@/index.css'
 import { useAuth } from '@/provider/AuthProvider'
 import { StarFilledIcon } from '@radix-ui/react-icons'
-import { fetchJSON } from '@/services/utils'
-import { useEffect, useState } from 'react'
-import { useReadUser } from '@/services/userService'
 
 function GymOverview() {
   const { id } = useParams()
@@ -39,13 +34,8 @@ function GymOverview() {
 
   const { data, error, loading } = useGetGym(id)
   const gymname = data?.name
-  const gymId = data?._id || ''
 
   const { user } = useAuth()
-  const userFavourites = useReadUser(user?._id ?? '').data?.favourites
-
-  const [isFavourite, setIsFavourite] = useState(false)
-  const [isHovered, setIsHovered] = useState(false)
 
   const photos = [
     { url: '/src/assets/img1.png', alt: 'Gym photo 1' },
@@ -54,57 +44,6 @@ function GymOverview() {
     { url: '/src/assets/img4.png', alt: 'Gym photo 1' },
     { url: '/src/assets/img5.png', alt: 'Gym photo 1' },
   ]
-
-  console.log('User: ' + user?._id)
-  console.log('Users Favourites: ' + userFavourites)
-  console.log('gymID: ' + gymId)
-
-  useEffect(() => {
-    if (user && userFavourites) {
-      setIsFavourite(userFavourites.includes(gymId))
-    }
-  }, [user, gymId])
-
-  const handleMouseEnter = () => {
-    if (isFavourite) {
-      setIsHovered(true)
-    }
-  }
-
-  const handleMouseLeave = () => {
-    if (isFavourite) {
-      setIsHovered(false)
-    }
-  }
-
-  async function addFavourite() {
-    try {
-      const response = fetchJSON(`/users/${user?._id}/favourites/add`, {
-        method: 'PATCH',
-        body: JSON.stringify({ gymId }),
-      })
-      await response
-      window.location.reload()
-    } catch (error) {
-      console.error('Error adding favourite: ', error)
-    }
-  }
-
-  async function deleteFavourite() {
-    try {
-      const response = fetchJSON(
-        `/users/${user?._id}/favourites/delete/${gymId}`,
-        {
-          method: 'PATCH',
-        },
-      )
-      await response
-      window.location.reload()
-      console.log('Successfully deleted favourite: ', response)
-    } catch (error) {
-      console.error('Error deleting favourite: ', error)
-    }
-  }
 
   return (
     <div>
