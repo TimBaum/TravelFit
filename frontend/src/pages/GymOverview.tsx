@@ -8,6 +8,7 @@ import {
 import PhotoGallery from '@/components/PhotoGallery'
 import ShareButton from '@/components/ShareButton'
 import { AddReviewDialog, ReviewTile, ReviewDialog } from '@/components/Review'
+import { MarkFavourite } from '@/components/MarkFavourite'
 import HighlightBadge from '@/components/HighlightBadge'
 import { Button } from '@/components/ui/button'
 import OfferTile from '@/components/Offer'
@@ -16,29 +17,31 @@ import '@/styles/gym-overview.css'
 
 import { useGetGym } from '@/services/gymService'
 
-import { useParams, useLocation } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 
-import { BookmarkIcon } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import { IAddress } from '@models/address'
 
 import '@/index.css'
 import { useAuth } from '@/provider/AuthProvider'
 import { StarFilledIcon } from '@radix-ui/react-icons'
 
 function GymOverview() {
-  const pathname = useLocation()
   const { id } = useParams()
+  const { user } = useAuth()
+
+  // Use a valid default value for `id` to avoid `undefined`
+  const GymId = id || ''
+
+  const { data, error, loading } = useGetGym(GymId)
+  const gymname = data?.name
 
   if (!id) {
     return <div>Invalid ID</div>
   }
 
-  console.log(id)
-
-  const { data, error, loading } = useGetGym(id)
-  const gymname = data?.name
-  const { user } = useAuth()
+  if (error) {
+    return <div>Error fetching gym</div>
+  }
 
   const photos = [
     { url: '/src/assets/img1.png', alt: 'Gym photo 1' },
@@ -71,10 +74,7 @@ function GymOverview() {
         <h1 className="text-5xl font-bold pb-2">{gymname}</h1>
         <div className="header-icons">
           <ShareButton link={window.location.href} />
-          <Button variant="outline">
-            <BookmarkIcon className="mr-2 h-4 w-4" />
-            Mark as favourite
-          </Button>
+          <MarkFavourite />
         </div>
       </div>
       {/* Basic structure for the rest of the page */}
