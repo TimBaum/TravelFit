@@ -4,7 +4,7 @@ import Address from './Address'
 import TimeRange from './TimeRange'
 import Offer from './Offer'
 import Review from './Review'
-import { IGym } from '@models/Gym'
+import { IGym } from '@models/gym'
 
 export interface IGymModel extends IGym, Document {}
 
@@ -28,6 +28,7 @@ const GymSchema: Schema = new mongoose.Schema({
   websiteLink: { type: String, required: true },
   pictures: [String],
   averageRating: Number,
+  cheapestOfferPrice: Number,
   address: { type: Address.schema, required: true },
   openingHours: [TimeRange.schema],
   offers: [Offer.schema],

@@ -1,6 +1,8 @@
-import { config } from '@/config'
 import { useEffect, useState } from 'react'
 import { IGymWithId } from '@models/gym'
+import { fetchJSON } from './utils'
+import { FilterState } from '@models/filter'
+import { config } from '@/config'
 
 interface GymSearchResults {
   data: IGymWithId[]
@@ -8,7 +10,10 @@ interface GymSearchResults {
   loading: boolean
 }
 
-function useGymSearch(searchString: string | null): GymSearchResults {
+function useGymSearch(
+  searchString: string | null,
+  filters: FilterState,
+): GymSearchResults {
   const [data, setData] = useState<IGymWithId[]>([])
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(false)
@@ -18,21 +23,39 @@ function useGymSearch(searchString: string | null): GymSearchResults {
       if (!searchString) return
       setLoading(true)
       setError(null)
-      const response = await fetch(`${config.BACKEND_URL}/gyms/search`, {
+      const response = await fetchJSON(`/gyms/search`, {
         method: 'POST',
+        body: JSON.stringify({ searchString: searchString, filters }),
+      }).catch((error) => {
+        setError(error.message)
+        return []
+      })
+      setData(response)
+      setLoading(false)
+    }
+
+    fetchData()
+  }, [searchString, filters])
+
+  return { data, error, loading }
+}
+
+function useGetGym(id: string | null): GymOverview {
+  const [data, setData] = useState<IGymWithId>()
+  const [error, setError] = useState(null)
+  const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    async function fetchData() {
+      if (!id) return
+      setLoading(true)
+      const response = await fetch(`${config.BACKEND_URL}/gyms/get/${id}`, {
+        method: 'GET',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ searchString: searchString }),
       })
         .then((response) => response.json())
-        .then((response) => {
-          if (response.error) {
-            setError(response.error)
-            return []
-          }
-          return response
-        })
         .catch((error) => {
           setError(error)
         })
@@ -41,9 +64,47 @@ function useGymSearch(searchString: string | null): GymSearchResults {
     }
 
     fetchData()
-  }, [searchString])
+  }, [id])
 
   return { data, error, loading }
 }
 
-export { useGymSearch }
+interface GymOverview {
+  data: IGymWithId | undefined
+  error: string | null
+  loading: boolean
+}
+
+function useAddReview(id: string | null, review: any): GymOverview {
+  const [data, setData] = useState<IGymWithId>()
+  const [error, setError] = useState(null)
+  const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    async function fetchData() {
+      if (!id) return
+
+      setLoading(true)
+
+      const response = await fetch(`${config.BACKEND_URL}/gyms/${id}/reviews`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ review }), // Pass the review data in the body
+      })
+        .then((response) => response.json())
+        .catch((error) => {
+          setError(error)
+        })
+      setData(response)
+      setLoading(false)
+    }
+
+    fetchData()
+  }, [id, review]) // Add review to dependency array to trigger the effect when review changes
+
+  return { data, error, loading }
+}
+
+export { useGymSearch, useGetGym, useAddReview }

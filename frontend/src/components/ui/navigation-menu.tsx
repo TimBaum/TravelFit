@@ -9,6 +9,7 @@ import '@/index.css'
 import { cn } from '@/lib/utils'
 import { Button } from './button'
 import { useNavigate } from 'react-router-dom'
+import { useAuth } from '@/provider/AuthProvider'
 
 const NavigationMenu = React.forwardRef<
   React.ElementRef<typeof NavigationMenuPrimitive.Root>,
@@ -122,8 +123,12 @@ function NavigationMenuManager({ className }: { className: string }) {
 
   const navigate = useNavigate()
 
+  const { user, logout } = useAuth()
+
+  let userStatus: 'GYM_USER' | 'USER' | 'NOT_LOGGED_IN' = 'NOT_LOGGED_IN'
+
   // TODO: Implement user roles
-  const userStatus: 'GYM_USER' | 'USER' | 'NOT_LOGGED_IN' = 'NOT_LOGGED_IN'
+  if (user) userStatus = 'USER'
 
   return (
     <NavigationMenu
@@ -134,7 +139,7 @@ function NavigationMenuManager({ className }: { className: string }) {
           href="https://www.instagram.com/leonie_popk/"
           className="pr-8"
         >
-          <img src="/TravelFit Icon.svg" />
+          <img src="src/assets/TravelFitIcon.svg" className="w-8 h-8 " />
         </NavigationMenuLink>
         <NavigationMenuItem>
           <NavigationMenuLink className={navigationMenuTriggerStyle()} href="/">
@@ -173,7 +178,7 @@ function NavigationMenuManager({ className }: { className: string }) {
       )}
       {userStatus !== 'NOT_LOGGED_IN' && (
         <NavigationMenuList>
-          <NavigationMenuItem>
+          <NavigationMenuItem onClick={logout}>
             <NavigationMenuTrigger>
               <Avatar>
                 <AvatarFallback>
