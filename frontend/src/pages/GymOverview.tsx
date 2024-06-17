@@ -27,15 +27,21 @@ import { StarFilledIcon } from '@radix-ui/react-icons'
 
 function GymOverview() {
   const { id } = useParams()
+  const { user } = useAuth()
+
+  // Use a valid default value for `id` to avoid `undefined`
+  const GymId = id || ''
+
+  const { data, error, loading } = useGetGym(GymId)
+  const gymname = data?.name
 
   if (!id) {
     return <div>Invalid ID</div>
   }
 
-  const { data, error, loading } = useGetGym(id)
-  const gymname = data?.name
-
-  const { user } = useAuth()
+  if (error) {
+    return <div>Error fetching gym</div>
+  }
 
   const photos = [
     { url: '/src/assets/img1.png', alt: 'Gym photo 1' },
