@@ -13,11 +13,10 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Textarea } from '@/components/ui/textarea'
-import { toast } from '@/components/ui/use-toast'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 
-import StarRating from './StarRating'
+import { StarRating, DisplayRating } from './StarRating'
 
 import { IGymWithId } from '@models/gym'
 
@@ -27,8 +26,9 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
 import { IReview } from '@models/review'
-
-import { useUpdateReviews } from '@/services/gymService'
+import { useAuth } from '@/provider/AuthProvider'
+import { useReadUser } from '@/services/userService'
+import { fetchJSON } from '@/services/utils'
 
 function AddReviewDialog({ gym }: { gym: IGymWithId | undefined }) {
   const [filledStars, setFilledStars] = useState([
@@ -38,6 +38,8 @@ function AddReviewDialog({ gym }: { gym: IGymWithId | undefined }) {
     false,
     false,
   ])
+
+  const { user } = useAuth()
 
   const FormSchema = z.object({
     reviewText: z
@@ -53,24 +55,24 @@ function AddReviewDialog({ gym }: { gym: IGymWithId | undefined }) {
     resolver: zodResolver(FormSchema),
   })
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
-    const rating = filledStars.filter(Boolean).length
-    const reviewText = data.reviewText
-
+  async function onSubmit(data: z.infer<typeof FormSchema>) {
     const review = {
-      author: 'current User: TODO',
-      rating: rating,
-      text: reviewText,
+      author: user?._id,
+      rating: filledStars.filter(Boolean).length,
+      text: data.reviewText,
     }
 
-    toast({
-      title: 'Thanks for reviewing!',
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
-    })
+    try {
+      const response = await fetchJSON(`/gyms/${gym?._id}/reviews`, {
+        method: 'PATCH',
+        body: JSON.stringify({ review }),
+      })
+
+      //const data = await response.json()
+      console.log('Succesfully added review: ', response)
+    } catch (error) {
+      console.error('Error adding new review: ', error)
+    }
   }
 
   return (
@@ -121,9 +123,16 @@ function ReviewTile({ review }: { review: IReview }) {
   const toggleShowFullText = () => {
     setShowFullText(!showFullText)
   }
+
+  const author = useReadUser(review.author).data?.displayName
+
   return (
     <div className="flex h-46 w-full rounded p-2 relative m-2">
-      <div>
+      <div className="w-full">
+        <div className="flex justify-between items-center">
+          <h1 className="font-bold">{author}</h1>
+          <DisplayRating rating={Number(review.rating)} />
+        </div>
         {showFullText || review.text.length <= maxLength
           ? review.text
           : `${review.text.substring(0, maxLength)}...`}
@@ -138,7 +147,7 @@ function ReviewTile({ review }: { review: IReview }) {
   )
 }
 
-function ReviewDialog({ reviews }: { reviews: [IReview] | undefined }) {
+function ReviewDialog({ reviews }: { reviews: IReview[] | undefined }) {
   return (
     <Dialog>
       <DialogTrigger asChild>

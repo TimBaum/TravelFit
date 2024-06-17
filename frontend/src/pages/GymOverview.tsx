@@ -8,6 +8,7 @@ import {
 import PhotoGallery from '@/components/PhotoGallery'
 import ShareButton from '@/components/ShareButton'
 import { AddReviewDialog, ReviewTile, ReviewDialog } from '@/components/Review'
+import { MarkFavourite } from '@/components/MarkFavourite'
 import HighlightBadge from '@/components/HighlightBadge'
 import { Button } from '@/components/ui/button'
 import OfferTile from '@/components/Offer'
@@ -16,26 +17,31 @@ import '@/styles/gym-overview.css'
 
 import { useGetGym } from '@/services/gymService'
 
-import { useParams, useLocation } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 
-import { BookmarkIcon } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import { IAddress } from '@models/address'
 
 import '@/index.css'
+import { useAuth } from '@/provider/AuthProvider'
+import { StarFilledIcon } from '@radix-ui/react-icons'
 
 function GymOverview() {
-  const pathname = useLocation()
   const { id } = useParams()
+  const { user } = useAuth()
+
+  // Use a valid default value for `id` to avoid `undefined`
+  const GymId = id || ''
+
+  const { data, error, loading } = useGetGym(GymId)
+  const gymname = data?.name
 
   if (!id) {
     return <div>Invalid ID</div>
   }
 
-  console.log(id)
-
-  const { data, error, loading } = useGetGym(id)
-  const gymname = data?.name
+  if (error) {
+    return <div>Error fetching gym</div>
+  }
 
   const photos = [
     { url: '/src/assets/img1.png', alt: 'Gym photo 1' },
@@ -68,10 +74,7 @@ function GymOverview() {
         <h1 className="text-5xl font-bold pb-2">{gymname}</h1>
         <div className="header-icons">
           <ShareButton link={window.location.href} />
-          <Button variant="outline">
-            <BookmarkIcon className="mr-2 h-4 w-4" />
-            Mark as favourite
-          </Button>
+          <MarkFavourite />
         </div>
       </div>
       {/* Basic structure for the rest of the page */}
@@ -107,7 +110,13 @@ function GymOverview() {
                 Visit gym website
               </Link>
             </Button>
-            <h1 className="mt-2 text-3xl font-bold">Reviews</h1>
+            <h1 className="mt-5 text-3xl font-bold flex items-center gap-1 text-nowrap">
+              <StarFilledIcon className="text-primary h-7 w-7" />
+              {(data?.averageRating ? data?.averageRating.toFixed(1) : '?') +
+                ' · ' +
+                data?.reviews.length +
+                ` Review${data?.reviews.length !== 1 ? 's' : ''}`}
+            </h1>
             {!loading && (
               <div>
                 {data?.reviews
@@ -115,37 +124,11 @@ function GymOverview() {
                   .map((review) => <ReviewTile review={review} />)}
               </div>
             )}
-            <ReviewDialog reviews={data?.reviews} /> |{' '}
-            <AddReviewDialog gym={data} />
+            <ReviewDialog reviews={data?.reviews} />
+            {user && <AddReviewDialog gym={data} />}
           </div>
         </div>
       </div>
-    </div>
-  )
-}
-
-function MapTile({ address }: { address: IAddress }) {
-  const latitude = address.latitude
-  const longitude = address.longitude
-  const delta = 0.05
-  const left = longitude - delta
-  const right = longitude + delta
-  const bottom = latitude - delta
-  const top = latitude + delta
-
-  const mapUrl = `https://www.openstreetmap.org/export/embed.html?bbox=${left},${bottom},${right},${top}&layer=mapnik&marker=${latitude},${longitude}`
-
-  return (
-    <div>
-      <iframe src={mapUrl}></iframe>
-      <br />
-      <small>
-        <a
-          href={`https://www.openstreetmap.org/?mlat=${latitude}&mlon=${longitude}#map=14/${latitude}/${longitude}`}
-        >
-          View Larger Map
-        </a>
-      </small>
     </div>
   )
 }

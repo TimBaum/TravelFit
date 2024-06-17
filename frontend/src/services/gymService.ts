@@ -3,6 +3,7 @@ import { IGymWithId } from '@models/gym'
 import { fetchJSON } from './utils'
 import { FilterState } from '@models/filter'
 import { config } from '@/config'
+import { IReview } from '@models/review'
 
 interface GymSearchResults {
   data: IGymWithId[]
@@ -75,36 +76,4 @@ interface GymOverview {
   loading: boolean
 }
 
-function useAddReview(id: string | null, review: any): GymOverview {
-  const [data, setData] = useState<IGymWithId>()
-  const [error, setError] = useState(null)
-  const [loading, setLoading] = useState(false)
-
-  useEffect(() => {
-    async function fetchData() {
-      if (!id) return
-
-      setLoading(true)
-
-      const response = await fetch(`${config.BACKEND_URL}/gyms/${id}/reviews`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ review }), // Pass the review data in the body
-      })
-        .then((response) => response.json())
-        .catch((error) => {
-          setError(error)
-        })
-      setData(response)
-      setLoading(false)
-    }
-
-    fetchData()
-  }, [id, review]) // Add review to dependency array to trigger the effect when review changes
-
-  return { data, error, loading }
-}
-
-export { useGymSearch, useGetGym, useAddReview }
+export { useGymSearch, useGetGym }
