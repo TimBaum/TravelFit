@@ -23,6 +23,8 @@ import { Link } from 'react-router-dom'
 import { IAddress } from '@models/address'
 
 import '@/index.css'
+import { useAuth } from '@/provider/AuthProvider'
+import { StarFilledIcon } from '@radix-ui/react-icons'
 
 function GymOverview() {
   const pathname = useLocation()
@@ -36,6 +38,7 @@ function GymOverview() {
 
   const { data, error, loading } = useGetGym(id)
   const gymname = data?.name
+  const { user } = useAuth()
 
   const photos = [
     { url: '/src/assets/img1.png', alt: 'Gym photo 1' },
@@ -107,7 +110,13 @@ function GymOverview() {
                 Visit gym website
               </Link>
             </Button>
-            <h1 className="mt-2 text-3xl font-bold">Reviews</h1>
+            <h1 className="mt-5 text-3xl font-bold flex items-center gap-1 text-nowrap">
+              <StarFilledIcon className="text-primary h-7 w-7" />
+              {(data?.averageRating ? data?.averageRating.toFixed(1) : '?') +
+                ' · ' +
+                data?.reviews.length +
+                ` Review${data?.reviews.length !== 1 ? 's' : ''}`}
+            </h1>
             {!loading && (
               <div>
                 {data?.reviews
@@ -115,37 +124,11 @@ function GymOverview() {
                   .map((review) => <ReviewTile review={review} />)}
               </div>
             )}
-            <ReviewDialog reviews={data?.reviews} /> |{' '}
-            <AddReviewDialog gym={data} />
+            <ReviewDialog reviews={data?.reviews} />
+            {user && <AddReviewDialog gym={data} />}
           </div>
         </div>
       </div>
-    </div>
-  )
-}
-
-function MapTile({ address }: { address: IAddress }) {
-  const latitude = address.latitude
-  const longitude = address.longitude
-  const delta = 0.05
-  const left = longitude - delta
-  const right = longitude + delta
-  const bottom = latitude - delta
-  const top = latitude + delta
-
-  const mapUrl = `https://www.openstreetmap.org/export/embed.html?bbox=${left},${bottom},${right},${top}&layer=mapnik&marker=${latitude},${longitude}`
-
-  return (
-    <div>
-      <iframe src={mapUrl}></iframe>
-      <br />
-      <small>
-        <a
-          href={`https://www.openstreetmap.org/?mlat=${latitude}&mlon=${longitude}#map=14/${latitude}/${longitude}`}
-        >
-          View Larger Map
-        </a>
-      </small>
     </div>
   )
 }

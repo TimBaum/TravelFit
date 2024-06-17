@@ -1,6 +1,7 @@
 // the "return" statements could be left out at some places, but for clarity I added them.
 import { error } from 'console'
 import User from '../models/User'
+import { PublicUser } from '@models/user'
 import { Request, Response } from 'express'
 import mongoose from 'mongoose'
 import bcryptjs from 'bcryptjs'
@@ -36,7 +37,7 @@ export const readUser = async (req: Request, res: Response) => {
     if (!user) {
       return res.status(404).json({ message: 'User not found' })
     }
-    return res.status(200).json({ user })
+    return res.status(200).json(user)
   } catch (err) {
     return res.status(500).json({ error })
   }
@@ -57,9 +58,15 @@ export const updateUser = async (req: Request, res: Response) => {
     if (!user) {
       return res.status(404).json({ message: 'User not found' })
     }
+    const publicUser: PublicUser = {
+      _id: user._id.toString() || '',
+      displayName: user.displayName || '',
+      salutation: user.salutation || '',
+      email: user.email || '',
+    }
     user.set(req.body)
     await user.save()
-    return res.status(201).json({ user })
+    return res.status(201).json({ publicUser })
   } catch (err) {
     return res.status(500).json({ error })
   }
