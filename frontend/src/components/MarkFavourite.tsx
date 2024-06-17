@@ -10,11 +10,8 @@ import { FaBookmark, FaRegBookmark } from 'react-icons/fa'
 
 function MarkFavourite() {
   const { id } = useParams()
-  if (!id) {
-    return <div>Invalid ID</div>
-  }
-  const { data, error, loading } = useGetGym(id)
-  const gymname = data?.name
+
+  const { data, error, loading } = useGetGym(id || '')
   const gymId = data?._id || ''
 
   const { user } = useAuth()
