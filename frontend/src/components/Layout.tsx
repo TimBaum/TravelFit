@@ -23,6 +23,7 @@ function Main() {
   )
 }
 
+//TODO: Implement footer
 function Footer() {
   return <main>{/* <p>Footer</p> */}</main>
 }
