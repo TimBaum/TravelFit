@@ -12,6 +12,7 @@ import auth from '../middleware/auth'
 
 const router = express.Router()
 
+//TODO: update routes with isAuthorized middleware
 router.post('/create', createUser)
 router.get('/get/:id', readUser)
 router.get('/get', readAllUsers)
