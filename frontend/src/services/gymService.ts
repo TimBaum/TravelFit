@@ -3,7 +3,6 @@ import { IGymWithId } from '@models/gym'
 import { fetchJSON } from './utils'
 import { FilterState } from '@models/filter'
 import { config } from '@/config'
-import { IReview } from '@models/review'
 
 interface GymSearchResults {
   data: IGymWithId[]
@@ -70,10 +69,34 @@ function useGetGym(id: string | null): GymOverview {
   return { data, error, loading }
 }
 
+function useReadAll(): GymSearchResults {
+  const [data, setData] = useState<IGymWithId[]>([])
+  const [error, setError] = useState(null)
+  const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    async function fetchData() {
+      setLoading(true)
+      setError(null)
+      const response = await fetchJSON(`/gyms/get`, {
+        method: 'GET',
+      }).catch((error) => {
+        setError(error.message)
+        return []
+      })
+      setData(response)
+      setLoading(false)
+    }
+
+    fetchData()
+  }, [])
+
+  return { data, error, loading }
+}
 interface GymOverview {
   data: IGymWithId | undefined
   error: string | null
   loading: boolean
 }
 
-export { useGymSearch, useGetGym }
+export { useGymSearch, useGetGym, useReadAll }
