@@ -147,7 +147,10 @@ function NavigationMenuManager({ className }: { className: string }) {
           </NavigationMenuLink>
         </NavigationMenuItem>
         <NavigationMenuItem>
-          <NavigationMenuLink className={navigationMenuTriggerStyle()} href="/">
+          <NavigationMenuLink
+            className={navigationMenuTriggerStyle()}
+            href="/favourites"
+          >
             Favourites
           </NavigationMenuLink>
         </NavigationMenuItem>
