@@ -80,10 +80,14 @@ function useReadAll(): GymSearchResults {
       setError(null)
       const response = await fetchJSON(`/gyms/get`, {
         method: 'GET',
-      }).catch((error) => {
-        setError(error.message)
-        return []
+        headers: {
+          'Content-Type': 'application/json',
+        },
       })
+        .then((response) => response.json())
+        .catch((error) => {
+          setError(error)
+        })
       setData(response)
       setLoading(false)
     }
