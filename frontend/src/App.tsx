@@ -21,6 +21,7 @@ import Login from './pages/Login'
 import AuthProvider, { useAuth } from './provider/AuthProvider'
 import { Toaster } from 'react-hot-toast'
 import DeleteGymAccounts from './pages/DeleteGymAccounts'
+import Favourites from './pages/Favourites'
 
 const App: React.FC = () => {
   return (
@@ -60,6 +61,7 @@ const App: React.FC = () => {
               </Route>
               <Route path="/add-gym/" element={<AddGym />} />
               <Route path="/gymoverview/:id" element={<GymOverview />} />
+              <Route path="/favourites" element={<Favourites />} />
               {/* <Route path="*" element={<NoPage />} /> */}
             </Route>
           </Routes>
