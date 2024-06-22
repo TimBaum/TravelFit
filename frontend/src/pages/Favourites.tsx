@@ -15,22 +15,25 @@ import { Button } from '@/components/ui/button'
 
 import { useReadAll } from '@/services/gymService'
 import { useEffect, useState } from 'react'
+import { useReadUser } from '@/services/userService'
 
 function Favourites() {
   const { user } = useAuth()
-  const { data, error, loading } = useReadAll()
   const [favouriteGyms, setFavouriteGyms] = useState<IGymWithId[]>([])
-  const gyms = data
-  console.log('User: ' + user?.displayName)
-  console.log('Gyms: ' + gyms[0])
-  console.log('favourites: ' + Favourites)
+  const { data, error, loading } = useReadAll()
+  const userFavourites = useReadUser(user?._id ?? '').data?.favourites
 
-  useEffect(() => {
-    if (user && user.favourites && gyms) {
+  console.log('User: ' + user?.displayName)
+  console.log('Data: ' + JSON.stringify(data.gyms[0]))
+  console.log('Favourites: ' + userFavourites)
+
+  /*useEffect(() => {
+    if (user && userFavourites && gyms) {
       const favGyms = gyms.filter((gym) => user.favourites.includes(gym._id))
       setFavouriteGyms(favGyms)
+      console.log('FAV GYMS: ' + favGyms)
     }
-  }, [user, gyms])
+  }, [user, userFavourites, gyms])*/
 
   return (
     <div>
@@ -45,9 +48,13 @@ function Favourites() {
           </Breadcrumb>
         </div>
         <div className="gym-tiles">
-          {favouriteGyms.map((gym) => (
-            <GymTile key={gym._id} gym={gym} />
-          ))}
+          {!loading && data?.length > 0 && (
+            <div className="flex flex-col gap-2">
+              {data.map((gym) => (
+                <GymTile key={gym._id} gym={gym} />
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>
