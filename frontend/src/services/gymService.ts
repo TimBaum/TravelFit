@@ -90,7 +90,7 @@ function useReadAll(): GymSearchResults {
         setError(error.message)
         return []
       })
-      setData(response)
+      setData(response.gyms)
       setLoading(false)
     }
 

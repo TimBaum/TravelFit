@@ -24,16 +24,18 @@ function Favourites() {
   const userFavourites = useReadUser(user?._id ?? '').data?.favourites
 
   console.log('User: ' + user?.displayName)
-  console.log('Data: ' + JSON.stringify(data.gyms[0]))
+  console.log('Data: ' + JSON.stringify(data))
   console.log('Favourites: ' + userFavourites)
 
   /*useEffect(() => {
-    if (user && userFavourites && gyms) {
-      const favGyms = gyms.filter((gym) => user.favourites.includes(gym._id))
+    if (user && userFavourites && data) {
+      const favGyms = data.filter((gym) => user.favourites.includes(gym._id))
       setFavouriteGyms(favGyms)
       console.log('FAV GYMS: ' + favGyms)
     }
-  }, [user, userFavourites, gyms])*/
+  }, [user, userFavourites, data])*/
+
+  console.log('Favourite gyms: ' + favouriteGyms)
 
   return (
     <div>
