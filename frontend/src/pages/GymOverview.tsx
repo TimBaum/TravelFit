@@ -61,7 +61,11 @@ function GymOverview() {
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbLink href="/components">city</BreadcrumbLink>
+              <BreadcrumbLink
+                href={`/find-gyms?search=${data?.address?.city || ''}`}
+              >
+                {data?.address.city}
+              </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
