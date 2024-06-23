@@ -378,7 +378,11 @@ function GymTile({ gym }: { gym: IGymWithId }) {
           <div className="text-left">{findCheapestOffer()}</div>
           <Button
             className=""
-            onClick={() => navigate(`/gymoverview/${gym._id}`)}
+            onClick={() =>
+              navigate(`/gymoverview/${gym._id}`, {
+                state: { from: 'gymSearch' },
+              })
+            }
           >
             Show details
           </Button>

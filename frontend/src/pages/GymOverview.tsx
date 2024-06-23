@@ -17,7 +17,7 @@ import '@/styles/gym-overview.css'
 
 import { useGetGym } from '@/services/gymService'
 
-import { useParams } from 'react-router-dom'
+import { useLocation, useParams } from 'react-router-dom'
 
 import { Link } from 'react-router-dom'
 
@@ -34,6 +34,20 @@ function GymOverview() {
 
   const { data, error, loading } = useGetGym(GymId)
   const gymname = data?.name
+
+  const previousPage = useLocation().state?.from
+  const previousPagePath =
+    previousPage === 'favourites'
+      ? '/favourites'
+      : previousPage === 'gymSearch'
+        ? `/find-gyms?search=${data?.address?.city || ''}`
+        : '/'
+  const breadcrumbPrevious =
+    previousPage === 'favourites'
+      ? 'Favourites'
+      : previousPage === 'gymSearch'
+        ? `${data?.address.city}`
+        : '/'
 
   if (!id) {
     return <div>Invalid ID</div>
@@ -61,10 +75,8 @@ function GymOverview() {
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbLink
-                href={`/find-gyms?search=${data?.address?.city || ''}`}
-              >
-                {data?.address.city}
+              <BreadcrumbLink href={previousPagePath}>
+                {breadcrumbPrevious}
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
