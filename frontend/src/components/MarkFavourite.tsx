@@ -3,6 +3,7 @@ import { useGetGym } from '@/services/gymService'
 import { useReadUser } from '@/services/userService'
 import { fetchJSON } from '@/services/utils'
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useParams } from 'react-router-dom'
 import { Button } from './ui/button'
 import { GoBookmarkSlashFill } from 'react-icons/go'
@@ -19,7 +20,7 @@ import {
 
 function MarkFavourite() {
   const { id } = useParams()
-
+  const navigate = useNavigate()
   const { data, error, loading } = useGetGym(id || '')
   const gymId = data?._id || ''
 
@@ -76,26 +77,6 @@ function MarkFavourite() {
     }
   }
 
-  function SignUpDialog() {
-    return (
-      <Dialog>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Login to mark this gym as favourite</DialogTitle>
-            <DialogDescription>
-              If you want to remember this gym later, you can mark it as
-              favourite. For this, you have to login or sign up first!
-            </DialogDescription>
-          </DialogHeader>
-          <div>Content</div>
-          <DialogFooter>
-            <Button type="submit">Close</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    )
-  }
-
   return (
     <div>
       {user ? (
@@ -134,10 +115,15 @@ function MarkFavourite() {
                 <DialogTitle>Login to mark this gym as favourite</DialogTitle>
                 <DialogDescription>
                   If you want to remember this gym later, you can mark it as
-                  favourite. For this, you have to login or sign up first!
+                  favourite. Login to mark this gym as favourite.
                 </DialogDescription>
               </DialogHeader>
-              <div>Content</div>
+              <div>
+                {' '}
+                <Button className="bg-black" onClick={() => navigate('/login')}>
+                  Login
+                </Button>
+              </div>
             </DialogContent>
           </Dialog>
         </>
