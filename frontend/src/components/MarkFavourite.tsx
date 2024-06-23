@@ -70,7 +70,7 @@ function MarkFavourite() {
   return (
     <div>
       <Button
-        variant="outline"
+        variant="ghost"
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         onClick={async () => {
@@ -83,14 +83,13 @@ function MarkFavourite() {
       >
         {isFavourite ? (
           isHovered ? (
-            <GoBookmarkSlashFill className="mr-2 h-4 w-4" />
+            <GoBookmarkSlashFill className="h-6 w-6" />
           ) : (
-            <FaBookmark className="mr-2 h-4 w-4" />
+            <FaBookmark className="h-6 w-6" />
           )
         ) : (
-          <FaRegBookmark className="mr-2 h-4 w-4" />
+          <FaRegBookmark className="h-6 w-6" />
         )}
-        Mark as favourite
       </Button>
     </div>
   )

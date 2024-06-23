@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 
-import { Share1Icon, BookmarkIcon } from '@radix-ui/react-icons'
+import { Share1Icon } from '@radix-ui/react-icons'
 import { CircleCheckBig, Copy } from 'lucide-react'
 import { Label } from './ui/label'
 import { Input } from './ui/input'
@@ -30,9 +30,8 @@ function ShareButton({ link }: { link: string }) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline">
-          <Share1Icon className="mr-2 h-4 w-4" />
-          Share
+        <Button variant="ghost">
+          <Share1Icon className="h-6 w-6" />
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
