@@ -7,6 +7,15 @@ import { useParams } from 'react-router-dom'
 import { Button } from './ui/button'
 import { GoBookmarkSlashFill } from 'react-icons/go'
 import { FaBookmark, FaRegBookmark } from 'react-icons/fa'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
 
 function MarkFavourite() {
   const { id } = useParams()
@@ -67,30 +76,72 @@ function MarkFavourite() {
     }
   }
 
+  function SignUpDialog() {
+    return (
+      <Dialog>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Login to mark this gym as favourite</DialogTitle>
+            <DialogDescription>
+              If you want to remember this gym later, you can mark it as
+              favourite. For this, you have to login or sign up first!
+            </DialogDescription>
+          </DialogHeader>
+          <div>Content</div>
+          <DialogFooter>
+            <Button type="submit">Close</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    )
+  }
+
   return (
     <div>
-      <Button
-        variant="ghost"
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-        onClick={async () => {
-          if (isFavourite) {
-            await deleteFavourite()
-          } else {
-            await addFavourite()
-          }
-        }}
-      >
-        {isFavourite ? (
-          isHovered ? (
-            <GoBookmarkSlashFill className="h-6 w-6" />
+      {user ? (
+        <Button
+          variant="ghost"
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+          onClick={async () => {
+            if (isFavourite) {
+              await deleteFavourite()
+            } else {
+              await addFavourite()
+            }
+          }}
+        >
+          {isFavourite ? (
+            isHovered ? (
+              <GoBookmarkSlashFill className="h-6 w-6" />
+            ) : (
+              <FaBookmark className="h-6 w-6" />
+            )
           ) : (
-            <FaBookmark className="h-6 w-6" />
-          )
-        ) : (
-          <FaRegBookmark className="h-6 w-6" />
-        )}
-      </Button>
+            <FaRegBookmark className="h-6 w-6" />
+          )}
+        </Button>
+      ) : (
+        <>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline">
+                <FaRegBookmark className="h-6 w-6" />
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Login to mark this gym as favourite</DialogTitle>
+                <DialogDescription>
+                  If you want to remember this gym later, you can mark it as
+                  favourite. For this, you have to login or sign up first!
+                </DialogDescription>
+              </DialogHeader>
+              <div>Content</div>
+            </DialogContent>
+          </Dialog>
+        </>
+      )}
     </div>
   )
 }
