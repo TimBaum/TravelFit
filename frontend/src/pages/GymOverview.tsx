@@ -70,10 +70,14 @@ function GymOverview() {
       <div className="breadcrumps">
         <Breadcrumb>
           <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbLink href="/">Find gyms</BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
+            {previousPage === 'gymSearch' && (
+              <>
+                <BreadcrumbItem>
+                  <BreadcrumbLink href="/">Find gyms</BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator />{' '}
+              </>
+            )}
             <BreadcrumbItem>
               <BreadcrumbLink href={previousPagePath}>
                 {breadcrumbPrevious}
