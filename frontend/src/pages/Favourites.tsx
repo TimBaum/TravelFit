@@ -19,23 +19,15 @@ import { useReadUser } from '@/services/userService'
 
 function Favourites() {
   const { user } = useAuth()
-  const [favouriteGyms, setFavouriteGyms] = useState<IGymWithId[]>([])
   const { data, error, loading } = useReadAll()
   const userFavourites = useReadUser(user?._id ?? '').data?.favourites
 
-  console.log('User: ' + user?.displayName)
-  console.log('Data: ' + JSON.stringify(data))
-  console.log('Favourites: ' + userFavourites)
-
-  /*useEffect(() => {
-    if (user && userFavourites && data) {
-      const favGyms = data.filter((gym) => user.favourites.includes(gym._id))
-      setFavouriteGyms(favGyms)
-      console.log('FAV GYMS: ' + favGyms)
-    }
-  }, [user, userFavourites, data])*/
-
-  console.log('Favourite gyms: ' + favouriteGyms)
+  const filteredGyms = data?.filter(
+    (gym) =>
+      userFavourites &&
+      Array.isArray(userFavourites) &&
+      userFavourites.includes(gym._id),
+  )
 
   return (
     <div>
@@ -52,7 +44,7 @@ function Favourites() {
         <div className="gym-tiles">
           {!loading && data?.length > 0 && (
             <div className="flex flex-col gap-2">
-              {data.map((gym) => (
+              {filteredGyms.map((gym) => (
                 <GymTile key={gym._id} gym={gym} />
               ))}
             </div>
