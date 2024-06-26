@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import mongoose, { FilterQuery } from 'mongoose'
 import Gym from '../models/Gym'
+import Review from '../models/Review'
 import { FilterState } from '@models/filter'
 import cache from '../cache'
 
@@ -41,22 +42,19 @@ interface OpenStreetMapResponse {
   //... we dont need the other attributes
 }
 
-const addReview = (req: Request, res: Response, next: NextFunction) => {
-  const { id } = req.params
-  const { review } = req.body
+const addReview = async (req: Request, res: Response) => {
+  try {
+    const gym = await Gym.findById(req.params.id)
+    if (!gym) {
+      return res.status(404).json({ message: 'Gym not found' })
+    }
 
-  // Find the gym by ID and update the reviews array
-  return Gym.findById(id)
-    .then((gym) => {
-      // Update the reviews array
-      if (!gym) throw new Error('Gym not found!')
-      gym.reviews.push(review)
-
-      // Save the updated gym document
-      return gym!.save()
-    })
-    .then((updatedGym) => res.status(200).json(updatedGym))
-    .catch((error) => res.status(500).json({ error }))
+    gym.reviews.push(req.body.review)
+    await gym.save()
+    return res.status(201).json({ gym })
+  } catch (err) {
+    return res.status(500).json(err)
+  }
 }
 
 async function getCoordinates(

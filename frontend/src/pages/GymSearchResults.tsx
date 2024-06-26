@@ -22,6 +22,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Label } from '@radix-ui/react-label'
 import { Input } from '@/components/ui/input'
+import '../App.css'
 
 function GymSearchResults() {
   const urlParams = new URLSearchParams(window.location.search)
@@ -354,12 +355,10 @@ function GymTile({ gym }: { gym: IGymWithId }) {
               {gym.name} <BookmarkIcon className="w-6 h-6" />
             </div>
             <div>{gym.address.street + ' ' + gym.address.city}</div>
-            <div>
-              <div className="flex gap-2 w-full lg:flex-wrap mt-2 overflow-scroll">
-                {gym.highlights.map((element) => (
-                  <HighlightBadge key={element} name={element} />
-                ))}
-              </div>
+            <div className="flex gap-2 w-full lg:flex-wrap mt-2 no-scrollbar overflow-scroll max-h-20">
+              {gym.highlights.map((element) => (
+                <HighlightBadge key={element} name={element} />
+              ))}
             </div>
           </div>
           <div>

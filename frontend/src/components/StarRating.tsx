@@ -1,4 +1,5 @@
 import { StarIcon, StarFilledIcon } from '@radix-ui/react-icons'
+import React from 'react'
 
 function StarRating({
   filledStars,
@@ -21,9 +22,9 @@ function StarRating({
           onClick={() => handleStarClick(index)}
         >
           {filled ? (
-            <StarFilledIcon className="w-8 h-8" />
+            <StarFilledIcon className="text-primary w-8 h-8" />
           ) : (
-            <StarIcon className="w-8 h-8" />
+            <StarIcon className="text-primary w-8 h-8" />
           )}
         </div>
       ))}
@@ -31,4 +32,23 @@ function StarRating({
   )
 }
 
-export default StarRating
+interface DisplayRatingProps {
+  rating: number
+}
+
+const DisplayRating: React.FC<DisplayRatingProps> = ({ rating }) => {
+  const maxStars = 5 // Define the maximum number of stars
+  const stars = []
+
+  for (let i = 1; i <= maxStars; i++) {
+    if (i <= rating) {
+      stars.push(<StarFilledIcon key={i} className="text-primary w-3 h-3" />)
+    } else {
+      stars.push(<StarIcon key={i} className="text-primary w-3 h-3" />)
+    }
+  }
+
+  return <div className="inline-grid grid-cols-5 gap-2 p-2">{stars}</div>
+}
+
+export { StarRating, DisplayRating }
