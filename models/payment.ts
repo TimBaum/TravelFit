@@ -3,3 +3,9 @@ export interface IPayment {
   total: number
   details: string
 }
+
+export interface PayPalSubscription {
+  create_time: string
+  id: string
+  status: string
+}

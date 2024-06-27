@@ -1,7 +1,7 @@
-import { Button } from '@/components/ui/button'
 import { config } from '@/config'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import ChangeUserAccountForm from '@/components/ChangeUserAccountForm'
+import PayPalButton from '@/components/PayPalButton'
 
 async function updateUserAccount(id: string, userData: string) {
   try {
@@ -44,9 +44,7 @@ function ChangeUserAccount() {
               <p className="text-gray-500 text-2xl">free</p>
             </div>
             <p className="text-xl mb-4">Pay via PayPal:</p>
-            <Button type="submit" onClick={() => updateUserAccount('', '')}>
-              Get TravelFit Premium for 2,99€/month
-            </Button>
+            <PayPalButton />
           </div>
         </TabsContent>
       </Tabs>
