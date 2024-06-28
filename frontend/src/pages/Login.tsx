@@ -60,6 +60,7 @@ function Login() {
               className="mb-4"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              type="password"
             />
             <Button
               className={`w-full `}

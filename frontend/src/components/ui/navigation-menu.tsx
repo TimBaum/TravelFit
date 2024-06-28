@@ -139,7 +139,7 @@ function NavigationMenuManager({ className }: { className: string }) {
           href="https://www.instagram.com/leonie_popk/"
           className="pr-8"
         >
-          <img src="src/assets/TravelFitIcon.svg" className="w-8 h-8 " />
+          <img src="/src/assets/TravelFitIcon.svg" className="w-8 h-8 " />
         </NavigationMenuLink>
         <NavigationMenuItem>
           <NavigationMenuLink className={navigationMenuTriggerStyle()} href="/">
