@@ -10,11 +10,17 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
-
 import { Share1Icon } from '@radix-ui/react-icons'
 import { CircleCheckBig, Copy } from 'lucide-react'
 import { Label } from './ui/label'
 import { Input } from './ui/input'
+import {
+  FacebookShareButton,
+  TwitterShareButton,
+  WhatsappShareButton,
+  EmailShareButton,
+} from 'react-share'
+import { FaFacebook, FaTwitter, FaWhatsapp, FaEnvelope } from 'react-icons/fa'
 
 function ShareButton({ link }: { link: string }) {
   const [copied, setCopied] = useState(false)
@@ -24,7 +30,7 @@ function ShareButton({ link }: { link: string }) {
       setCopied(true)
       setTimeout(() => {
         setCopied(false)
-      }, 3000) // Reset the icon back after 2 seconds
+      }, 3000) // Reset the icon back after 3 seconds
     })
   }
   return (
@@ -61,6 +67,20 @@ function ShareButton({ link }: { link: string }) {
               <Copy className="h-4 w-4" />
             )}
           </Button>
+        </div>
+        <div className="flex justify-around mt-4">
+          <FacebookShareButton url={link}>
+            <FaFacebook className="h-6 w-6 text-blue-600" />
+          </FacebookShareButton>
+          <TwitterShareButton url={link}>
+            <FaTwitter className="h-6 w-6 text-blue-400" />
+          </TwitterShareButton>
+          <WhatsappShareButton url={link}>
+            <FaWhatsapp className="h-6 w-6 text-green-500" />
+          </WhatsappShareButton>
+          <EmailShareButton url={link}>
+            <FaEnvelope className="h-6 w-6 text-gray-600" />
+          </EmailShareButton>
         </div>
         <DialogFooter className="sm:justify-start">
           <DialogClose asChild>
