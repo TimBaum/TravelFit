@@ -22,6 +22,7 @@ import { FaFacebook, FaTwitter, FaWhatsapp, FaEnvelope } from 'react-icons/fa'
 
 function ShareButton({ link }: { link: string }) {
   const [copied, setCopied] = useState(false)
+  const shareText = 'Check out this amazing gym!'
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(link).then(() => {
@@ -67,16 +68,20 @@ function ShareButton({ link }: { link: string }) {
           </Button>
         </div>
         <div className="flex justify-around mt-4">
-          <FacebookShareButton url={link}>
+          <FacebookShareButton url={link} hashtag="#TravelFit">
             <FaFacebook className="h-6 w-6 text-blue-600" />
           </FacebookShareButton>
-          <TwitterShareButton url={link}>
+          <TwitterShareButton
+            url={link}
+            title={shareText}
+            hashtags={['TravelFit']}
+          >
             <FaTwitter className="h-6 w-6 text-blue-400" />
           </TwitterShareButton>
-          <WhatsappShareButton url={link}>
+          <WhatsappShareButton url={link} title={shareText} separator="">
             <FaWhatsapp className="h-6 w-6 text-green-500" />
           </WhatsappShareButton>
-          <EmailShareButton url={link}>
+          <EmailShareButton url={link} subject={shareText}>
             <FaEnvelope className="h-6 w-6 text-gray-600" />
           </EmailShareButton>
         </div>
