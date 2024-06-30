@@ -1,10 +1,8 @@
 import { useState } from 'react'
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -82,13 +80,6 @@ function ShareButton({ link }: { link: string }) {
             <FaEnvelope className="h-6 w-6 text-gray-600" />
           </EmailShareButton>
         </div>
-        <DialogFooter className="sm:justify-start">
-          <DialogClose asChild>
-            <Button type="button" variant="secondary">
-              Close
-            </Button>
-          </DialogClose>
-        </DialogFooter>
       </DialogContent>
     </Dialog>
   )
