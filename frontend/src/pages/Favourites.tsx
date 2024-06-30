@@ -8,13 +8,11 @@ import {
 import { IGymWithId } from '@models/gym'
 import { useNavigate } from 'react-router-dom'
 import { Separator } from '@radix-ui/react-separator'
-import { BookmarkIcon } from 'lucide-react'
 import HighlightBadge from '@/components/HighlightBadge'
 import { StarFilledIcon } from '@radix-ui/react-icons'
 import { Button } from '@/components/ui/button'
 
 import { useReadAll } from '@/services/gymService'
-import { useEffect, useState } from 'react'
 import { useReadUser } from '@/services/userService'
 import { MarkFavourite } from '@/components/MarkFavourite'
 
@@ -114,7 +112,7 @@ function GymTile({ gym }: { gym: IGymWithId }) {
         <div className="flex flex-col h-full justify-between w-2/3">
           <div className="">
             <div className="text-2xl text-bold flex gap-2 items-center">
-              {gym.name} <MarkFavourite />
+              {gym.name} <MarkFavourite gym={gym} />
             </div>
             <div>{gym.address.street + ' ' + gym.address.city}</div>
             <div className="flex gap-2 w-full lg:flex-wrap mt-2 no-scrollbar overflow-scroll max-h-20">
