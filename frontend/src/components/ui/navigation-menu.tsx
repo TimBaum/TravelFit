@@ -167,7 +167,13 @@ function NavigationMenuManager({ className }: { className: string }) {
       </NavigationMenuList>
       {userStatus === 'NOT_LOGGED_IN' && (
         <div className="flex gap-2">
-          <Button variant={'outline'}>Become a partner</Button>
+          <Button
+            variant={'outline'}
+            className="text-white bg-emerald-500 hover:text-white hover:bg-emerald-600"
+            onClick={() => navigate('/create-gym-account')}
+          >
+            Become a partner
+          </Button>
           <Button className="bg-black" onClick={() => navigate('/login')}>
             Login
           </Button>
