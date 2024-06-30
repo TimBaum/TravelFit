@@ -99,7 +99,7 @@ function GymOverview() {
                   ))}
                 </div>
               )}
-              More infors about offers
+              More infos about offers
             </div>
           </div>
 

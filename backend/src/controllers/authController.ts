@@ -2,9 +2,11 @@ import User from '../models/User'
 import { Request, Response } from 'express'
 import jwt from 'jsonwebtoken'
 import { config } from '../config/config'
-import bcryptjs from 'bcryptjs'
 import { PublicUser } from '@models/user'
+// library to hash passwords
+import bcryptjs from 'bcryptjs'
 
+// check if user exists and password is correct
 export const login = async (req: Request, res: Response) => {
   const { email, password } = req.body
   User.findOne({ email: email })
@@ -22,7 +24,7 @@ export const login = async (req: Request, res: Response) => {
       if (!arePasswordsMatching) {
         return res.status(401).json({ error: 'Auth failed' })
       }
-
+      // create a public user object to sign a token
       const userBody: PublicUser = {
         _id: user._id.toString(),
         email: user.email,
