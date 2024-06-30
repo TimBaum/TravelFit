@@ -122,7 +122,6 @@ function GymOverview() {
                   ))}
                 </div>
               )}
-              More infors about offers
             </div>
           </div>
 
