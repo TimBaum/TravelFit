@@ -67,19 +67,7 @@ const App: React.FC = () => {
           </Routes>
         </AuthProvider>
       </BrowserRouter>
-      <Toaster
-        toastOptions={{
-          position: 'bottom-right',
-          error: {
-            style: {
-              background: 'red',
-              color: 'white',
-              borderRadius: '0.25rem',
-            },
-            icon: '🤕',
-          },
-        }}
-      />
+      <Toaster />
     </>
   )
 }

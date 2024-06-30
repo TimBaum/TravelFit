@@ -15,6 +15,7 @@ import {
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
+import { toast } from 'sonner'
 
 import { StarRating, DisplayRating } from './StarRating'
 
@@ -29,6 +30,8 @@ import { IReview } from '@models/review'
 import { useAuth } from '@/provider/AuthProvider'
 import { useReadUser } from '@/services/userService'
 import { fetchJSON } from '@/services/utils'
+
+//TODO: show prompt when review is scussessfully created
 
 function AddReviewDialog({ gym }: { gym: IGymWithId | undefined }) {
   const [filledStars, setFilledStars] = useState([
@@ -67,8 +70,8 @@ function AddReviewDialog({ gym }: { gym: IGymWithId | undefined }) {
         method: 'PATCH',
         body: JSON.stringify({ review }),
       })
-
       //const data = await response.json()
+      toast.success('Review added successfully')
       console.log('Succesfully added review: ', response)
     } catch (error) {
       console.error('Error adding new review: ', error)
