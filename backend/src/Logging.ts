@@ -1,3 +1,4 @@
+// for colored logging messages
 import chalk from 'chalk';
 
 export default class Logging {
