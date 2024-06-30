@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { LucidePencil as Pencil } from 'lucide-react'
-import '../styles/MyGyms.css'
 import { useNavigate } from 'react-router-dom'
 
 import {
@@ -131,14 +130,24 @@ const MyGyms: React.FC = () => {
                     {gym.averageRating?.toString() ?? '?'}/5
                   </TableCell>
                   <TableCell>
-                    <div className="button-group">
-                      <Button>View</Button>
-                      <Button onClick={() => navigate('/gyms/')}>
+                    <div className="flex justify-end items-center gap-2">
+                      <Button
+                        className="px-2.5"
+                        onClick={() => navigate(`/gyms/${gym._id}`)}
+                      >
+                        View
+                      </Button>
+                      <Button
+                        className="px-2.5"
+                        onClick={() => navigate('/gyms/')}
+                      >
                         <Pencil className="h-5 w-6" />
                       </Button>
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
-                          <Button variant="destructive">Delete</Button>
+                          <Button className="px-2.5" variant="destructive">
+                            Delete
+                          </Button>
                         </AlertDialogTrigger>
                         <AlertDialogContent>
                           <AlertDialogHeader>

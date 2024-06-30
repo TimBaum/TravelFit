@@ -6,7 +6,7 @@ import { PublicUser } from '@models/user'
 // library to hash passwords
 import bcryptjs from 'bcryptjs'
 
-// check if user exists and password is correct
+/**  check if user exists and password is correct */
 export const login = async (req: Request, res: Response) => {
   const { email, password } = req.body
   User.findOne({ email: email })
