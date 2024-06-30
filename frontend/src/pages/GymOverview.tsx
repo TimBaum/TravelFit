@@ -94,7 +94,7 @@ function GymOverview() {
         <h1 className="text-5xl font-bold pb-2">{gymname}</h1>
         <div className="header-icons">
           <ShareButton link={window.location.href} />
-          <MarkFavourite />
+          <MarkFavourite gym={data} />
         </div>
       </div>
       {/* Basic structure for the rest of the page */}
