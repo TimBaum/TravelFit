@@ -83,10 +83,7 @@ export function GymTile({ gym }: { gym: IGymWithId }) {
               ` Review${gym.reviews.length !== 1 ? 's' : ''}`}
           </div>
           <div className="text-left">{findCheapestOffer()}</div>
-          <Button
-            className=""
-            onClick={() => navigate(`/gymoverview/${gym._id}`)}
-          >
+          <Button className="" onClick={() => navigate(`/gyms/${gym._id}`)}>
             Show details
           </Button>
         </div>
