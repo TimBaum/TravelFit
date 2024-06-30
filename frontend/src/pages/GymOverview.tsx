@@ -12,6 +12,7 @@ import { MarkFavourite } from '@/components/MarkFavourite'
 import HighlightBadge from '@/components/HighlightBadge'
 import { Button } from '@/components/ui/button'
 import OfferTile from '@/components/Offer'
+import Map from '@/components/map'
 
 import '@/styles/gym-overview.css'
 
@@ -26,6 +27,8 @@ import { useAuth } from '@/provider/AuthProvider'
 import { StarFilledIcon } from '@radix-ui/react-icons'
 
 function GymOverview() {
+  const latitude = 48.1351 // Example latitude
+  const longitude = 11.582 // Example longitude
   const { id } = useParams()
   const { user } = useAuth()
 
@@ -148,6 +151,7 @@ function GymOverview() {
             {user && <AddReviewDialog gym={data} />}
           </div>
         </div>
+        <Map lat={latitude} lng={longitude} />
       </div>
     </div>
   )
