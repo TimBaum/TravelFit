@@ -1,5 +1,4 @@
 import React from 'react'
-
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -55,21 +54,54 @@ import { Label } from '@/components/ui/label'
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
+// URL check
 const simpleUrlRegex =
   /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/
 
 const formSchema = z.object({
-  gymname: z.string().min(2).max(50),
+  gymname: z
+    .string()
+    .min(2, { message: 'Invalid name' })
+    .max(50, { message: 'Invalid name' }),
   url: z.string().refine((value) => simpleUrlRegex.test(value), {
-    message: 'Invalid URL',
+    message: 'Invalid input',
   }),
-  address: z.string().min(5).max(100),
-  highlights: z.string().optional(),
+  street: z
+    .string()
+    .min(2, { message: 'Invalid street' })
+    .max(100, { message: 'Invalid street' }),
+  postalCode: z
+    .string()
+    .regex(/^\d+$/, { message: 'Please enter a number' })
+    .min(2, { message: 'Invalid code' })
+    .max(20, { message: 'Invalid code' }),
+  city: z
+    .string()
+    .min(2, { message: 'Invalid city' })
+    .max(50, { message: 'Invalid city' }),
+  country: z
+    .string()
+    .min(2, { message: 'Invalid country' })
+    .max(50, { message: 'Invalid country' }),
+  highlights: z.array(z.string()).optional(),
   offers: z.string().optional(),
   specialOffers: z.string().optional(),
 })
 
+const highlightOptions = [
+  'Sauna',
+  'Posing room',
+  'Pool',
+  'Courses',
+  'Personal trainings',
+  'Nutrition bar',
+  'Outdoor',
+  'Parking',
+]
+
 export function AddGym() {
+  //state for "next"/"back" button for switching tabs
+  const [currentTab, setCurrentTab] = React.useState('keyInfo')
   const [date, setDate] = React.useState<Date>()
   const navigate = useNavigate()
   const form = useForm<z.infer<typeof formSchema>>({
@@ -77,12 +109,16 @@ export function AddGym() {
     defaultValues: {
       gymname: '',
       url: '',
-      address: '',
-      highlights: '',
+      street: '',
+      postalCode: '',
+      city: '',
+      country: 'Germany',
+      highlights: [],
       offers: '',
       specialOffers: '',
     },
   })
+
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
@@ -96,10 +132,11 @@ export function AddGym() {
           name: values.gymname,
           websiteLink: values.url,
           address: {
-            street: values.address,
-            postalCode: '12345', // example; replace
-            city: 'Sample City',
-            country: 'Sample Country',
+            street: values.street,
+            postalCode: values.postalCode,
+            city: values.city,
+            country: values.country,
+            // TODO: lookup lat and lng
             latitude: 40.7128,
             longitude: -74.006,
           },
@@ -136,16 +173,27 @@ export function AddGym() {
           </BreadcrumbList>
         </Breadcrumb>
       </div>
+
       <div>
         <h1 className="text-5xl font-bold mb-2">Add Gym</h1>
       </div>
-      <Tabs defaultValue="account" className="">
+
+      {/* The three tabs. Contains all page content */}
+
+      <Tabs
+        defaultValue={currentTab}
+        value={currentTab}
+        onValueChange={setCurrentTab}
+      >
         <TabsList>
-          <TabsTrigger value="account">Key information</TabsTrigger>
+          <TabsTrigger value="keyInfo">Key information</TabsTrigger>
           <TabsTrigger value="openingHours">Opening hours</TabsTrigger>
           <TabsTrigger value="offers">Offers</TabsTrigger>
         </TabsList>
-        <TabsContent value="account">
+
+        {/* Tab one: Gym name, URL, Street+Number, Postal Code, City, Country, Highlights */}
+
+        <TabsContent value="keyInfo">
           <div className="mt-8">
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -154,7 +202,7 @@ export function AddGym() {
                   name="gymname"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Gym name</FormLabel>
+                      <FormLabel>Gym name *</FormLabel>
                       <FormControl>
                         <Input placeholder="Awesome gym" {...field} />
                       </FormControl>
@@ -165,7 +213,7 @@ export function AddGym() {
                     </FormItem>
                   )}
                 />
-                <div className="mt-4">
+                <div className="mt-3">
                   <FormField
                     control={form.control}
                     name="url"
@@ -183,45 +231,110 @@ export function AddGym() {
                     )}
                   />
                 </div>
+                <div className="mt-3">
+                  <FormField
+                    control={form.control}
+                    name="street"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Street and Number *</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Awesome street 12" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div className="mt-3">
+                  <FormField
+                    control={form.control}
+                    name="postalCode"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Postal Code *</FormLabel>
+                        <FormControl>
+                          <Input placeholder="12345" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
                 <FormField
                   control={form.control}
-                  name="address"
+                  name="city"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Address</FormLabel>
+                      <FormLabel>City *</FormLabel>
                       <FormControl>
-                        <Input placeholder="Awesome street 12" {...field} />
+                        <Input placeholder="Awesometown" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-                <FormField
-                  control={form.control}
-                  name="highlights"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Highlights</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Select your highlights"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                <div className="mt-3">
+                  <FormField
+                    control={form.control}
+                    name="country"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Country *</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Germany" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                /** TODO: fix highlights */
+                <div className="mt-3">
+                  <FormField
+                    control={form.control}
+                    name="highlights"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Highlights</FormLabel>
+                        <FormControl>
+                          <Select
+                            onValueChange={(value) => field.onChange(value)}
+                            defaultValue=""
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="+ Add highlight" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {highlightOptions.map((highlight) => (
+                                <SelectItem key={highlight} value={highlight}>
+                                  {highlight}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
                 <div className="flex justify-end">
-                  <Button variant={'outline'} className="mt-4 mr-2">
-                    Back
+                  <Button
+                    className="mt-4"
+                    onClick={() => {
+                      setCurrentTab('openingHours')
+                    }}
+                  >
+                    Next
                   </Button>
-                  <Button className="mt-4">Next</Button>
                 </div>
               </form>
             </Form>
           </div>
         </TabsContent>
+
+        {/* Tab two: opening hours */}
 
         <TabsContent value="openingHours">
           <div className="mt-8">
@@ -232,7 +345,7 @@ export function AddGym() {
                   name="offers"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Opening hours</FormLabel>
+                      <FormLabel>Opening hours *</FormLabel>
                       <FormControl>
                         <Input placeholder="+" {...field} />
                       </FormControl>
@@ -254,13 +367,29 @@ export function AddGym() {
                   )}
                 />
                 <div className="flex justify-end">
-                  <Button className="mt-4 mr-2">Back</Button>
-                  <Button className="mt-4">Next</Button>{' '}
+                  <Button
+                    className="mt-4 mr-2"
+                    onClick={() => {
+                      setCurrentTab('keyInfo')
+                    }}
+                  >
+                    Back
+                  </Button>
+                  <Button
+                    className="mt-4"
+                    onClick={() => {
+                      setCurrentTab('offers')
+                    }}
+                  >
+                    Next
+                  </Button>{' '}
                 </div>
               </form>
             </Form>
           </div>
         </TabsContent>
+
+        {/* Tab three: Offers, Special Offers */}
 
         <TabsContent value="offers">
           <div className="mt-8">
@@ -269,13 +398,17 @@ export function AddGym() {
                 <FormField
                   control={form.control}
                   name="offers"
-                  render={({ field }) => (
+                  render={() => (
                     <FormItem>
                       <FormLabel>Offers</FormLabel>
                       <FormControl>
+                        {/* */}
+
                         <Dialog>
                           <DialogTrigger asChild>
-                            <Button variant="outline">+Add Offer</Button>
+                            <div className="grid gap-4 w-[100px]">
+                              <Button variant="outline">+Add Offer</Button>
+                            </div>
                           </DialogTrigger>
                           <DialogContent className="">
                             <DialogHeader>
@@ -308,9 +441,30 @@ export function AddGym() {
                                   </SelectContent>
                                 </Select>
                               </div>
-                              <div>
+                              <div className="grid grid-cols-2">
                                 <Label htmlFor="price">Price (€)</Label>
-                                <Input id="price" className="w-[100px] ml-5" />
+                                <Label htmlFor="price">Payment frequency</Label>
+                                <Input
+                                  id="price"
+                                  defaultValue="10"
+                                  className="w-[100px] ml-5  mt-4"
+                                />
+                                <Select>
+                                  <SelectTrigger className="w-[180px]  mt-4">
+                                    <SelectValue placeholder="monthly" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="Weekly">
+                                      weekly
+                                    </SelectItem>
+                                    <SelectItem value="monthly">
+                                      monthly
+                                    </SelectItem>
+                                    <SelectItem value="yearly">
+                                      yearly
+                                    </SelectItem>
+                                  </SelectContent>
+                                </Select>
                               </div>
                               <div>
                                 <Label htmlFor="minTerm">Description</Label>
@@ -330,15 +484,17 @@ export function AddGym() {
                 <FormField
                   control={form.control}
                   name="specialOffers"
-                  render={({ field }) => (
+                  render={() => (
                     <FormItem>
                       <FormLabel>Special Offers</FormLabel>
                       <FormControl>
                         <Dialog>
                           <DialogTrigger asChild>
-                            <Button variant="outline">
-                              +Add Special Offer
-                            </Button>
+                            <div className="grid gap-4 w-[100px] ">
+                              <Button variant="outline">
+                                +Add Special Offer
+                              </Button>
+                            </div>
                           </DialogTrigger>
                           <DialogContent>
                             <DialogHeader>
@@ -355,7 +511,7 @@ export function AddGym() {
                                 <Input
                                   id="name"
                                   defaultValue="12"
-                                  className="w-[100px]"
+                                  className="w-[100px] "
                                 />
                                 <Select>
                                   <SelectTrigger className="w-[180px]">
@@ -371,10 +527,33 @@ export function AddGym() {
                                   </SelectContent>
                                 </Select>
                               </div>
-                              <div className="grid grid-cols-2">
+                              <div className="grid grid-cols-2 ">
                                 <Label htmlFor="price">Price (€)</Label>
+                                <Label htmlFor="price">Payment frequency</Label>
+                                <Input
+                                  id="price"
+                                  defaultValue="10"
+                                  className="w-[100px] mt-4"
+                                />
+                                <Select>
+                                  <SelectTrigger className="w-[180px] mt-4">
+                                    <SelectValue placeholder="monthly" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="Weekly">
+                                      weekly
+                                    </SelectItem>
+                                    <SelectItem value="monthly">
+                                      monthly
+                                    </SelectItem>
+                                    <SelectItem value="yearly">
+                                      yearly
+                                    </SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              </div>
+                              <div className="grid gap-4">
                                 <Label htmlFor="price">End date</Label>
-                                <Input id="price" className="w-[100px]" />
                                 <Popover>
                                   <PopoverTrigger asChild>
                                     <Button
@@ -400,7 +579,7 @@ export function AddGym() {
                                       initialFocus
                                     />
                                   </PopoverContent>
-                                </Popover>{' '}
+                                </Popover>
                               </div>
                               <div>
                                 <Label htmlFor="minTerm">Description</Label>
@@ -418,7 +597,14 @@ export function AddGym() {
                   )}
                 />
                 <div className="flex justify-end">
-                  <Button className="mt-4 mr-2">Back</Button>
+                  <Button
+                    className="mt-4 mr-2"
+                    onClick={() => {
+                      setCurrentTab('openingHours')
+                    }}
+                  >
+                    Back
+                  </Button>
                   <Button className="mt-4" type="submit">
                     Submit
                   </Button>
