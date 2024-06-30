@@ -27,8 +27,6 @@ import { useAuth } from '@/provider/AuthProvider'
 import { StarFilledIcon } from '@radix-ui/react-icons'
 
 function GymOverview() {
-  const latitude = 48.1351 // Example latitude
-  const longitude = 11.582 // Example longitude
   const { id } = useParams()
   const { user } = useAuth()
 
@@ -37,6 +35,9 @@ function GymOverview() {
 
   const { data, error, loading } = useGetGym(GymId)
   const gymname = data?.name
+
+  const longitude = data?.address.location.coordinates[0]
+  const latitude = data?.address.location.coordinates[1]
 
   if (!id) {
     return <div>Invalid ID</div>
@@ -131,7 +132,11 @@ function GymOverview() {
             {user && <AddReviewDialog gym={data} />}
           </div>
         </div>
-        <Map lat={latitude} lng={longitude} />
+        {data?.address?.location?.coordinates ? (
+          <Map lat={latitude ?? 0} lng={longitude ?? 0} />
+        ) : (
+          <p>No coordinates available for this gym.</p>
+        )}
       </div>
     </div>
   )
