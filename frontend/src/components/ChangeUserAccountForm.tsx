@@ -20,6 +20,9 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { LucidePencil } from 'lucide-react'
 import { config } from '@/config'
+import { useAuth } from '@/provider/AuthProvider'
+import { useReadUser } from '@/services/userService'
+import { useEffect } from 'react'
 
 const formSchema = z.object({
   salutation: z.enum(['Mr.', 'Ms.', 'Diverse'], {}),
@@ -30,14 +33,30 @@ const formSchema = z.object({
 })
 
 export function ChangeUserAccountForm() {
+  const { user } = useAuth()
+  const oldSalutation = useReadUser(user?._id ?? '').data?.salutation as
+    | 'Mr.'
+    | 'Ms.'
+    | 'Diverse'
+    | undefined
+  const oldDisplayName = useReadUser(user?._id ?? '').data?.displayName
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      salutation: 'Diverse', //TODO: Fetch salutation from backend
-      displayName: 'TODO: fetch user name from backend',
-      //email: 'TODO: fetch email from backend',
+      salutation: oldSalutation,
+      displayName: oldDisplayName,
+      //email: 'TODO: should email be changeable?',
     },
   })
+
+  //useEffect is necessary because the default values are not available when rendering the form and are thus not displayed without useEffect
+  useEffect(() => {
+    form.reset({
+      salutation: oldSalutation,
+      displayName: oldDisplayName,
+    })
+  }, [oldSalutation, oldDisplayName, form.reset])
 
   async function onSubmitSaveChanges(values: z.infer<typeof formSchema>) {
     const userData = { ...values }
