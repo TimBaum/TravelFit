@@ -136,7 +136,7 @@ export function ChangeUserAccountForm() {
             <FormItem>
               <FormLabel>Name</FormLabel>
               <FormControl>
-                <Input placeholder="name" {...field} />
+                <Input {...field} />
               </FormControl>
               <FormMessage>
                 {form.formState.errors.displayName?.message}
