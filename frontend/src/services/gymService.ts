@@ -10,6 +10,12 @@ interface GymSearchResults {
   loading: boolean
 }
 
+interface GymOverview {
+  data: IGymWithId | undefined
+  error: string | null
+  loading: boolean
+}
+
 function useGymSearch(
   searchString: string | null,
   filters: FilterState,
@@ -78,10 +84,29 @@ function useGetGym(id: string | null): GymOverview {
   return { data, error, loading }
 }
 
-interface GymOverview {
-  data: IGymWithId | undefined
-  error: string | null
-  loading: boolean
+function useReadAll(): GymSearchResults {
+  const [data, setData] = useState<IGymWithId[]>([])
+  const [error, setError] = useState(null)
+  const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    async function fetchData() {
+      setLoading(true)
+      setError(null)
+      const response = await fetchJSON(`/gyms/get/`, {
+        method: 'GET',
+      }).catch((error) => {
+        setError(error.message)
+        return []
+      })
+      setData(response.gyms)
+      setLoading(false)
+    }
+
+    fetchData()
+  }, [])
+
+  return { data, error, loading }
 }
 
-export { useGymSearch, useGetGym }
+export { useGymSearch, useGetGym, useReadAll }

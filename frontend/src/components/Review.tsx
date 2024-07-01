@@ -15,6 +15,7 @@ import {
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
+import { toast } from 'sonner'
 
 import { StarRating, DisplayRating } from './StarRating'
 
@@ -29,6 +30,8 @@ import { IReview } from '@models/review'
 import { useAuth } from '@/provider/AuthProvider'
 import { useReadUser } from '@/services/userService'
 import { fetchJSON } from '@/services/utils'
+
+//TODO: show prompt when review is scussessfully created
 
 function AddReviewDialog({ gym }: { gym: IGymWithId | undefined }) {
   const [filledStars, setFilledStars] = useState([
@@ -67,10 +70,10 @@ function AddReviewDialog({ gym }: { gym: IGymWithId | undefined }) {
         method: 'PATCH',
         body: JSON.stringify({ review }),
       })
-
-      //const data = await response.json()
+      toast.success('Review added successfully')
       console.log('Succesfully added review: ', response)
     } catch (error) {
+      toast.error('Error adding review')
       console.error('Error adding new review: ', error)
     }
   }
@@ -153,7 +156,7 @@ function ReviewDialog({ reviews }: { reviews: IReview[] | undefined }) {
       <DialogTrigger asChild>
         <Button variant="ghost">View more</Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] max-h-[80vh] overflow-auto">
         <DialogHeader>
           <DialogTitle>View all reviews</DialogTitle>
         </DialogHeader>

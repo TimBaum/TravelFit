@@ -1,38 +1,42 @@
 import { useState } from 'react'
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
-
-import { Share1Icon, BookmarkIcon } from '@radix-ui/react-icons'
+import { Share1Icon } from '@radix-ui/react-icons'
 import { CircleCheckBig, Copy } from 'lucide-react'
 import { Label } from './ui/label'
 import { Input } from './ui/input'
+import {
+  FacebookShareButton,
+  TwitterShareButton,
+  WhatsappShareButton,
+  EmailShareButton,
+} from 'react-share'
+import { FaFacebook, FaTwitter, FaWhatsapp, FaEnvelope } from 'react-icons/fa'
 
 function ShareButton({ link }: { link: string }) {
   const [copied, setCopied] = useState(false)
+  const shareText = 'Check out this amazing gym!'
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(link).then(() => {
       setCopied(true)
       setTimeout(() => {
         setCopied(false)
-      }, 3000) // Reset the icon back after 2 seconds
+      }, 3000) // Reset the icon back after 3 seconds
     })
   }
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline">
-          <Share1Icon className="mr-2 h-4 w-4" />
-          Share
+        <Button variant="ghost">
+          <Share1Icon className="h-6 w-6" />
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
@@ -63,13 +67,24 @@ function ShareButton({ link }: { link: string }) {
             )}
           </Button>
         </div>
-        <DialogFooter className="sm:justify-start">
-          <DialogClose asChild>
-            <Button type="button" variant="secondary">
-              Close
-            </Button>
-          </DialogClose>
-        </DialogFooter>
+        <div className="flex justify-around mt-4">
+          <FacebookShareButton url={link} hashtag="#TravelFit">
+            <FaFacebook className="h-6 w-6 text-blue-600" />
+          </FacebookShareButton>
+          <TwitterShareButton
+            url={link}
+            title={shareText}
+            hashtags={['TravelFit']}
+          >
+            <FaTwitter className="h-6 w-6 text-blue-400" />
+          </TwitterShareButton>
+          <WhatsappShareButton url={link} title={shareText} separator="">
+            <FaWhatsapp className="h-6 w-6 text-green-500" />
+          </WhatsappShareButton>
+          <EmailShareButton url={link} subject={shareText}>
+            <FaEnvelope className="h-6 w-6 text-gray-600" />
+          </EmailShareButton>
+        </div>
       </DialogContent>
     </Dialog>
   )
