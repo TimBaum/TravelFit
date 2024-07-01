@@ -165,4 +165,11 @@ const deleteGym = (req: Request, res: Response, next: NextFunction) => {
     })
 }
 
-export default { readAll, createGym, getGym, addReview, searchGyms, deleteGym }
+export default {
+  readAll,
+  createGym,
+  getGym,
+  addReview,
+  searchGyms,
+  deleteGym,
+}

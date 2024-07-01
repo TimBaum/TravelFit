@@ -15,6 +15,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog'
 import { IGymWithId } from '@models/gym' // Import the type definition
+import { toast } from 'sonner'
 
 function MarkFavourite({ gym }: { gym: IGymWithId | undefined }) {
   const navigate = useNavigate()
@@ -47,12 +48,13 @@ function MarkFavourite({ gym }: { gym: IGymWithId | undefined }) {
 
   async function addFavourite() {
     try {
-      const response = await fetchJSON(`/users/${user?._id}/favourites/add`, {
+      await fetchJSON(`/users/${user?._id}/favourites/add`, {
         method: 'PATCH',
         body: JSON.stringify({ gymId }),
       })
-      await response
-      window.location.reload()
+      setIsFavourite(true)
+      // Directly update the local state without reloading or refetching
+      console.log('Added favourite')
     } catch (error) {
       console.error('Error adding favourite: ', error)
     }
@@ -60,15 +62,18 @@ function MarkFavourite({ gym }: { gym: IGymWithId | undefined }) {
 
   async function deleteFavourite() {
     try {
-      const response = await fetchJSON(
-        `/users/${user?._id}/favourites/delete/${gymId}`,
-        {
-          method: 'PATCH',
+      await fetchJSON(`/users/${user?._id}/favourites/delete/${gymId}`, {
+        method: 'PATCH',
+      })
+      setIsFavourite(false)
+      toast('Favourite removed', {
+        action: {
+          label: 'Undo',
+          onClick: () => addFavourite(),
         },
-      )
-      await response
-      window.location.reload()
-      console.log('Successfully deleted favourite: ', response)
+      })
+      // Directly update the local state without reloading or refetching
+      console.log('Successfully deleted favourite')
     } catch (error) {
       console.error('Error deleting favourite: ', error)
     }
@@ -116,7 +121,6 @@ function MarkFavourite({ gym }: { gym: IGymWithId | undefined }) {
                 </DialogDescription>
               </DialogHeader>
               <div>
-                {' '}
                 <Button className="bg-black" onClick={() => navigate('/login')}>
                   Login
                 </Button>
