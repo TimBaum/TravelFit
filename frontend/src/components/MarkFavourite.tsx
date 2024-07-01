@@ -1,21 +1,28 @@
 import { useAuth } from '@/provider/AuthProvider'
-import { useGetGym } from '@/services/gymService'
 import { useReadUser } from '@/services/userService'
 import { fetchJSON } from '@/services/utils'
 import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { Button } from './ui/button'
 import { GoBookmarkSlashFill } from 'react-icons/go'
 import { FaBookmark, FaRegBookmark } from 'react-icons/fa'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
+import { IGymWithId } from '@models/gym' // Import the type definition
 
-function MarkFavourite() {
-  const { id } = useParams()
-
-  const { data, error, loading } = useGetGym(id || '')
-  const gymId = data?._id || ''
+function MarkFavourite({ gym }: { gym: IGymWithId | undefined }) {
+  const navigate = useNavigate()
+  const gymId = gym?._id || ''
 
   const { user } = useAuth()
-  const userFavourites = useReadUser(user?._id ?? '').data?.favourites
+  const { data: userData } = useReadUser(user?._id ?? '')
+  const userFavourites = userData?.favourites
 
   const [isFavourite, setIsFavourite] = useState(false)
   const [isHovered, setIsHovered] = useState(false)
@@ -24,7 +31,7 @@ function MarkFavourite() {
     if (user && userFavourites) {
       setIsFavourite(userFavourites.includes(gymId))
     }
-  }, [user, gymId])
+  }, [user, gymId, userFavourites])
 
   const handleMouseEnter = () => {
     if (isFavourite) {
@@ -40,7 +47,7 @@ function MarkFavourite() {
 
   async function addFavourite() {
     try {
-      const response = fetchJSON(`/users/${user?._id}/favourites/add`, {
+      const response = await fetchJSON(`/users/${user?._id}/favourites/add`, {
         method: 'PATCH',
         body: JSON.stringify({ gymId }),
       })
@@ -53,7 +60,7 @@ function MarkFavourite() {
 
   async function deleteFavourite() {
     try {
-      const response = fetchJSON(
+      const response = await fetchJSON(
         `/users/${user?._id}/favourites/delete/${gymId}`,
         {
           method: 'PATCH',
@@ -69,28 +76,55 @@ function MarkFavourite() {
 
   return (
     <div>
-      <Button
-        variant="ghost"
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-        onClick={async () => {
-          if (isFavourite) {
-            await deleteFavourite()
-          } else {
-            await addFavourite()
-          }
-        }}
-      >
-        {isFavourite ? (
-          isHovered ? (
-            <GoBookmarkSlashFill className="h-6 w-6" />
+      {user ? (
+        <Button
+          variant="ghost"
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+          onClick={async () => {
+            if (isFavourite) {
+              await deleteFavourite()
+            } else {
+              await addFavourite()
+            }
+          }}
+        >
+          {isFavourite ? (
+            isHovered ? (
+              <GoBookmarkSlashFill className="h-6 w-6" />
+            ) : (
+              <FaBookmark className="h-6 w-6" />
+            )
           ) : (
-            <FaBookmark className="h-6 w-6" />
-          )
-        ) : (
-          <FaRegBookmark className="h-6 w-6" />
-        )}
-      </Button>
+            <FaRegBookmark className="h-6 w-6" />
+          )}
+        </Button>
+      ) : (
+        <>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline">
+                <FaRegBookmark className="h-6 w-6" />
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Login to mark this gym as favourite</DialogTitle>
+                <DialogDescription>
+                  If you want to remember this gym later, you can mark it as
+                  favourite. Login to mark this gym as favourite.
+                </DialogDescription>
+              </DialogHeader>
+              <div>
+                {' '}
+                <Button className="bg-black" onClick={() => navigate('/login')}>
+                  Login
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+        </>
+      )}
     </div>
   )
 }

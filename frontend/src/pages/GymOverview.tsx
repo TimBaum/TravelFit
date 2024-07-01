@@ -18,7 +18,7 @@ import '@/styles/gym-overview.css'
 
 import { useGetGym } from '@/services/gymService'
 
-import { useParams } from 'react-router-dom'
+import { useLocation, useParams } from 'react-router-dom'
 
 import { Link } from 'react-router-dom'
 
@@ -38,6 +38,19 @@ function GymOverview() {
 
   const longitude = data?.address.location.coordinates[0]
   const latitude = data?.address.location.coordinates[1]
+  const previousPage = useLocation().state?.from
+  const previousPagePath =
+    previousPage === 'favourites'
+      ? '/favourites'
+      : previousPage === 'gymSearch'
+        ? `/find-gyms?search=${data?.address?.city || ''}`
+        : '/'
+  const breadcrumbPrevious =
+    previousPage === 'favourites'
+      ? 'Favourites'
+      : previousPage === 'gymSearch'
+        ? `${data?.address.city}`
+        : '/'
 
   if (!id) {
     return <div>Invalid ID</div>
@@ -60,12 +73,18 @@ function GymOverview() {
       <div className="breadcrumps">
         <Breadcrumb>
           <BreadcrumbList>
+            {previousPage === 'gymSearch' && (
+              <>
+                <BreadcrumbItem>
+                  <BreadcrumbLink href="/">Find gyms</BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator />{' '}
+              </>
+            )}
             <BreadcrumbItem>
-              <BreadcrumbLink href="/">Find gyms</BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbLink href="/components">city</BreadcrumbLink>
+              <BreadcrumbLink href={previousPagePath}>
+                {breadcrumbPrevious}
+              </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
@@ -78,7 +97,7 @@ function GymOverview() {
         <h1 className="text-5xl font-bold pb-2">{gymname}</h1>
         <div className="header-icons">
           <ShareButton link={window.location.href} />
-          <MarkFavourite />
+          <MarkFavourite gym={data} />
         </div>
       </div>
       {/* Basic structure for the rest of the page */}
@@ -103,7 +122,7 @@ function GymOverview() {
                   ))}
                 </div>
               )}
-              More infors about offers
+              More infos about offers
             </div>
           </div>
 
