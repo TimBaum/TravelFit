@@ -1,10 +1,12 @@
 import React from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
 import { z } from 'zod'
+import { useForm } from 'react-hook-form'
+import { useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
-import { useNavigate } from 'react-router-dom'
+import { Label } from '@/components/ui/label'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
   Form,
   FormControl,
@@ -25,6 +27,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
+
 import {
   Select,
   SelectContent,
@@ -50,9 +53,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
-import { Label } from '@/components/ui/label'
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+// import { IOffer } from '../../../models/offer'
 
 // URL check
 const simpleUrlRegex =
@@ -64,7 +66,7 @@ const formSchema = z.object({
     .min(2, { message: 'Invalid name' })
     .max(50, { message: 'Invalid name' }),
   url: z.string().refine((value) => simpleUrlRegex.test(value), {
-    message: 'Invalid input',
+    message: 'Invalid URL',
   }),
   street: z
     .string()
@@ -402,14 +404,15 @@ export function AddGym() {
                     <FormItem>
                       <FormLabel>Offers</FormLabel>
                       <FormControl>
-                        {/* */}
-
                         <Dialog>
                           <DialogTrigger asChild>
                             <div className="grid gap-4 w-[100px]">
                               <Button variant="outline">+Add Offer</Button>
                             </div>
                           </DialogTrigger>
+
+                          {/* Popup window one for Offers*/}
+
                           <DialogContent className="">
                             <DialogHeader>
                               <DialogTitle className="flex">
@@ -419,6 +422,12 @@ export function AddGym() {
                                 Add permanent price offers to your gym page.
                               </DialogDescription>
                             </DialogHeader>
+                            <div className="w-[300px]">
+                              <Label>Title</Label>
+                              <div className="mt-2 ml-5">
+                                <Input placeholder="Awesome offer" />
+                              </div>
+                            </div>
                             <div className="grid gap-4">
                               <Label htmlFor="minTerm">Minimum term</Label>
                               <div className="grid grid-cols-2">
@@ -496,6 +505,9 @@ export function AddGym() {
                               </Button>
                             </div>
                           </DialogTrigger>
+
+                          {/* Popup window two for Special Offers*/}
+
                           <DialogContent>
                             <DialogHeader>
                               <DialogTitle className="flex">
@@ -505,6 +517,12 @@ export function AddGym() {
                                 Add temporary price offers to your gym page.
                               </DialogDescription>
                             </DialogHeader>
+                            <div className="w-[300px]">
+                              <Label>Title</Label>
+                              <div className="mt-2 ml-5">
+                                <Input placeholder="Awesome offer" />
+                              </div>
+                            </div>
                             <div className="grid gap-4">
                               <Label htmlFor="minTerm">Minimum term</Label>
                               <div className="grid grid-cols-2">
