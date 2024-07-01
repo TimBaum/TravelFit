@@ -20,7 +20,6 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { LucidePencil } from 'lucide-react'
 import { config } from '@/config'
-import { fetchJSON } from './utils'
 
 const formSchema = z.object({
   salutation: z.enum(['Mr.', 'Ms.', 'Diverse'], {}),
