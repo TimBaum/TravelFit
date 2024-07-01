@@ -13,7 +13,6 @@ function PayPalButton() {
   const { checkSubscriptionStatus } = useAuth()
 
   const initialOptions: ReactPayPalScriptOptions = {
-    // clientId: 'P-3FG08195X0496734AMZ63IOY',
     clientId:
       'Adbt4h3JnCf1oIYv4VfOITWXa78GBDcWpWCwgAA9eB6vqTcpeWXGLuGVNYX_wEhpZRqZJ1qQq0Bt0txM',
     intent: 'subscription',
