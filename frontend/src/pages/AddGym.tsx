@@ -191,6 +191,7 @@ export function AddGym() {
           <TabsTrigger value="keyInfo">Key information</TabsTrigger>
           <TabsTrigger value="openingHours">Opening hours</TabsTrigger>
           <TabsTrigger value="offers">Offers</TabsTrigger>
+          <TabsTrigger value="photos">Photos</TabsTrigger>
         </TabsList>
 
         {/* Tab one: Gym name, URL, Street+Number, Postal Code, City, Country, Highlights */}
@@ -631,6 +632,10 @@ export function AddGym() {
             </Form>
           </div>
         </TabsContent>
+
+        {/* Tab four: photos */}
+
+        <TabsContent value="photos"></TabsContent>
       </Tabs>
     </>
   )
