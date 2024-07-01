@@ -3,7 +3,7 @@ import { Clock9 } from 'lucide-react'
 
 function OfferTile({ offer }: { offer: IOffer }) {
   return (
-    <div className="flex h-46 w-full border rounded p-2 relative m-2">
+    <div>
       {/* Section left side */}
       <div className="w-2/3">
         {offer.type === 'Special' && <SpecialOfferTile />}

@@ -35,9 +35,6 @@ function GymOverview() {
 
   const { data, error, loading } = useGetGym(GymId)
   const gymname = data?.name
-
-  const longitude = data?.address.location.coordinates[0]
-  const latitude = data?.address.location.coordinates[1]
   const previousPage = useLocation().state?.from
   const previousPagePath =
     previousPage === 'favourites'
@@ -51,6 +48,9 @@ function GymOverview() {
       : previousPage === 'gymSearch'
         ? `${data?.address.city}`
         : '/'
+
+  const longitude = data?.address.location.coordinates[0]
+  const latitude = data?.address.location.coordinates[1]
 
   if (!id) {
     return <div>Invalid ID</div>
@@ -122,7 +122,6 @@ function GymOverview() {
                   ))}
                 </div>
               )}
-              More infos about offers
             </div>
           </div>
 

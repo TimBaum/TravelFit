@@ -1,5 +1,5 @@
 import { config } from '@/config'
-import toast from 'react-hot-toast'
+import { toast } from 'sonner'
 
 export async function fetchJSON(url: string, options?: RequestInit) {
   const authToken = localStorage.getItem('token')

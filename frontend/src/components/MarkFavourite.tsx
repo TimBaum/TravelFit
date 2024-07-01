@@ -15,6 +15,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog'
 import { IGymWithId } from '@models/gym' // Import the type definition
+import { toast } from 'sonner'
 
 function MarkFavourite({ gym }: { gym: IGymWithId | undefined }) {
   const navigate = useNavigate()
@@ -67,7 +68,16 @@ function MarkFavourite({ gym }: { gym: IGymWithId | undefined }) {
         },
       )
       await response
-      window.location.reload()
+      toast('Favourite removed', {
+        action: {
+          label: 'Undo',
+          onClick: () => console.log('Undo'),
+        },
+      })
+
+      setTimeout(() => {
+        window.location.reload()
+      }, 10000) // 5000 milliseconds = 5 seconds
       console.log('Successfully deleted favourite: ', response)
     } catch (error) {
       console.error('Error deleting favourite: ', error)
