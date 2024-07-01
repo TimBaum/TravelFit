@@ -3,11 +3,14 @@ import { Separator } from '@/components/ui/separator'
 import { StarFilledIcon } from '@radix-ui/react-icons'
 import { IGymWithId } from '@models/gym'
 import HighlightBadge from '@/components/HighlightBadge'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { MarkFavourite } from '@/components/MarkFavourite'
 
 export function GymTile({ gym }: { gym: IGymWithId }) {
   const navigate = useNavigate()
+  const location = useLocation()
+
+  console.log(location.pathname)
 
   function getMaxOpeningHourToday() {
     const today = new Date().getDay()
@@ -84,7 +87,14 @@ export function GymTile({ gym }: { gym: IGymWithId }) {
               ` Review${gym.reviews.length !== 1 ? 's' : ''}`}
           </div>
           <div className="text-left">{findCheapestOffer()}</div>
-          <Button className="" onClick={() => navigate(`/gyms/${gym._id}`)}>
+          <Button
+            className=""
+            onClick={() =>
+              navigate(`/gyms/${gym._id}`, {
+                state: { from: location.pathname },
+              })
+            }
+          >
             Show details
           </Button>
         </div>

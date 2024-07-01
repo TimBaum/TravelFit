@@ -37,15 +37,15 @@ function GymOverview() {
   const gymname = data?.name
   const previousPage = useLocation().state?.from
   const previousPagePath =
-    previousPage === 'favourites'
+    previousPage === '/favourites'
       ? '/favourites'
-      : previousPage === 'gymSearch'
+      : previousPage === '/find-gyms'
         ? `/find-gyms?search=${data?.address?.city || ''}`
         : '/'
   const breadcrumbPrevious =
-    previousPage === 'favourites'
+    previousPage === '/favourites'
       ? 'Favourites'
-      : previousPage === 'gymSearch'
+      : previousPage === '/find-gyms'
         ? `${data?.address.city}`
         : '/'
 
