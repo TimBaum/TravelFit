@@ -1,3 +1,4 @@
+/* Imports */
 import React from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -6,6 +7,7 @@ import { useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import { Label } from '@/components/ui/label'
+import { Checkbox } from '@/components/ui/checkbox'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
   Form,
@@ -56,7 +58,7 @@ import {
 
 // import { IOffer } from '../../../models/offer'
 
-// URL check
+/* Form checks */
 const simpleUrlRegex =
   /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/
 
@@ -86,10 +88,12 @@ const formSchema = z.object({
     .min(2, { message: 'Invalid country' })
     .max(50, { message: 'Invalid country' }),
   highlights: z.array(z.string()).optional(),
+  openingHours: z.string().optional(),
   offers: z.string().optional(),
   specialOffers: z.string().optional(),
 })
 
+/* Highlights options */
 const highlightOptions = [
   'Sauna',
   'Posing room',
@@ -101,9 +105,12 @@ const highlightOptions = [
   'Parking',
 ]
 
+/* Component */
 export function AddGym() {
-  //state for "next"/"back" button for switching tabs
+  //state for the "next"/"back" buttons for switching tabs
   const [currentTab, setCurrentTab] = React.useState('keyInfo')
+  // State for the special offer checkbox
+  const [isSpecialOffer, setIsSpecialOffer] = React.useState(false)
   const [date, setDate] = React.useState<Date>()
   const navigate = useNavigate()
   const form = useForm<z.infer<typeof formSchema>>({
@@ -116,12 +123,13 @@ export function AddGym() {
       city: '',
       country: 'Germany',
       highlights: [],
+      openingHours: '',
       offers: '',
       specialOffers: '',
     },
   })
 
-  // 2. Define a submit handler.
+  /* Form submission */
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
       console.log(values)
@@ -156,6 +164,7 @@ export function AddGym() {
     }
   }
 
+  /* Render */
   return (
     <>
       <div className="breadcrumps">
@@ -180,7 +189,7 @@ export function AddGym() {
         <h1 className="text-5xl font-bold mb-2">Add Gym</h1>
       </div>
 
-      {/* The three tabs. Contains all page content */}
+      {/* The three tabs "Key Information", "Opening Hours", "Offers". Contains all page content */}
 
       <Tabs
         defaultValue={currentTab}
@@ -344,23 +353,10 @@ export function AddGym() {
               <form onSubmit={form.handleSubmit(onSubmit)}>
                 <FormField
                   control={form.control}
-                  name="offers"
+                  name="openingHours"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Opening hours *</FormLabel>
-                      <FormControl>
-                        <Input placeholder="+" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="specialOffers"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Diverging hours</FormLabel>
                       <FormControl>
                         <Input placeholder="+" {...field} />
                       </FormControl>
@@ -411,25 +407,42 @@ export function AddGym() {
                             </div>
                           </DialogTrigger>
 
-                          {/* Popup window one for Offers*/}
+                          {/* Popup window for adding Offers*/}
 
-                          <DialogContent className="">
+                          <DialogContent>
                             <DialogHeader>
-                              <DialogTitle className="flex">
-                                Add Offer
-                              </DialogTitle>
+                              <DialogTitle>Add Offer</DialogTitle>
                               <DialogDescription>
-                                Add permanent price offers to your gym page.
+                                Add price offers to your gym page.
                               </DialogDescription>
                             </DialogHeader>
                             <div className="w-[300px]">
+                              <div className="mt-2 ml-5"></div>
+                            </div>
+                            <div className="grid grid-cols-2">
                               <Label>Title</Label>
-                              <div className="mt-2 ml-5">
-                                <Input placeholder="Awesome offer" />
-                              </div>
+                              <Label>Offer type</Label>
+                              <Input
+                                className="w-[150px] ml-5 mt-4"
+                                placeholder="Awesome offer"
+                              />
+                              <Select>
+                                <SelectTrigger className="w-[180px] mt-4">
+                                  <SelectValue placeholder="Subscription" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="Days">
+                                    Subscription{' '}
+                                  </SelectItem>
+                                  <SelectItem value="Weeks">OneTime</SelectItem>
+                                  <SelectItem value="Months">
+                                    FreeTrial
+                                  </SelectItem>
+                                </SelectContent>
+                              </Select>
                             </div>
                             <div className="grid gap-4">
-                              <Label htmlFor="minTerm">Minimum term</Label>
+                              <Label>Minimum term</Label>
                               <div className="grid grid-cols-2">
                                 <Input
                                   id="name"
@@ -451,8 +464,8 @@ export function AddGym() {
                                 </Select>
                               </div>
                               <div className="grid grid-cols-2">
-                                <Label htmlFor="price">Price (€)</Label>
-                                <Label htmlFor="price">Payment frequency</Label>
+                                <Label>Price (€)</Label>
+                                <Label>Payment frequency</Label>
                                 <Input
                                   id="price"
                                   defaultValue="10"
@@ -475,103 +488,18 @@ export function AddGym() {
                                   </SelectContent>
                                 </Select>
                               </div>
-                              <div>
-                                <Label htmlFor="minTerm">Description</Label>
-                                <Textarea placeholder="Type your offer description here." />
-                              </div>
-                            </div>
-                            <DialogFooter>
-                              <Button type="submit">Save changes</Button>
-                            </DialogFooter>
-                          </DialogContent>
-                        </Dialog>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="specialOffers"
-                  render={() => (
-                    <FormItem>
-                      <FormLabel>Special Offers</FormLabel>
-                      <FormControl>
-                        <Dialog>
-                          <DialogTrigger asChild>
-                            <div className="grid gap-4 w-[100px] ">
-                              <Button variant="outline">
-                                +Add Special Offer
-                              </Button>
-                            </div>
-                          </DialogTrigger>
-
-                          {/* Popup window two for Special Offers*/}
-
-                          <DialogContent>
-                            <DialogHeader>
-                              <DialogTitle className="flex">
-                                Add special offer
-                              </DialogTitle>
-                              <DialogDescription>
-                                Add temporary price offers to your gym page.
-                              </DialogDescription>
-                            </DialogHeader>
-                            <div className="w-[300px]">
-                              <Label>Title</Label>
-                              <div className="mt-2 ml-5">
-                                <Input placeholder="Awesome offer" />
-                              </div>
-                            </div>
-                            <div className="grid gap-4">
-                              <Label htmlFor="minTerm">Minimum term</Label>
                               <div className="grid grid-cols-2">
-                                <Input
-                                  id="name"
-                                  defaultValue="12"
-                                  className="w-[100px] "
+                                <Label htmlFor="specialCheck">
+                                  Special (limited) offer?
+                                </Label>
+                                <Label>End date</Label>
+                                <Checkbox
+                                  checked={isSpecialOffer}
+                                  onChange={() =>
+                                    setIsSpecialOffer((prevState) => !prevState)
+                                  }
+                                  className="ml-5 mt-4"
                                 />
-                                <Select>
-                                  <SelectTrigger className="w-[180px]">
-                                    <SelectValue placeholder="Months" />
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    <SelectItem value="Days">Days</SelectItem>
-                                    <SelectItem value="Weeks">Weeks</SelectItem>
-                                    <SelectItem value="Months">
-                                      Months
-                                    </SelectItem>
-                                    <SelectItem value="Years">Years</SelectItem>
-                                  </SelectContent>
-                                </Select>
-                              </div>
-                              <div className="grid grid-cols-2 ">
-                                <Label htmlFor="price">Price (€)</Label>
-                                <Label htmlFor="price">Payment frequency</Label>
-                                <Input
-                                  id="price"
-                                  defaultValue="10"
-                                  className="w-[100px] mt-4"
-                                />
-                                <Select>
-                                  <SelectTrigger className="w-[180px] mt-4">
-                                    <SelectValue placeholder="monthly" />
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    <SelectItem value="Weekly">
-                                      weekly
-                                    </SelectItem>
-                                    <SelectItem value="monthly">
-                                      monthly
-                                    </SelectItem>
-                                    <SelectItem value="yearly">
-                                      yearly
-                                    </SelectItem>
-                                  </SelectContent>
-                                </Select>
-                              </div>
-                              <div className="grid gap-4">
-                                <Label htmlFor="price">End date</Label>
                                 <Popover>
                                   <PopoverTrigger asChild>
                                     <Button
@@ -599,6 +527,9 @@ export function AddGym() {
                                   </PopoverContent>
                                 </Popover>
                               </div>
+
+                              {/* description field */}
+
                               <div>
                                 <Label htmlFor="minTerm">Description</Label>
                                 <Textarea placeholder="Type your offer description here." />
