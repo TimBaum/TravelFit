@@ -201,7 +201,6 @@ export function GymAccountForm() {
           type="submit"
           variant="outline"
           className="mt-4 bg-emerald-500 text-white"
-          onClick={() => form.handleSubmit((values) => onSubmit(values))()}
         >
           Create partner account
         </Button>
