@@ -1,9 +1,10 @@
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
-import { BookmarkIcon, StarFilledIcon } from '@radix-ui/react-icons'
+import { StarFilledIcon } from '@radix-ui/react-icons'
 import { IGymWithId } from '@models/gym'
 import HighlightBadge from '@/components/HighlightBadge'
 import { useNavigate } from 'react-router-dom'
+import { MarkFavourite } from '@/components/MarkFavourite'
 
 export function GymTile({ gym }: { gym: IGymWithId }) {
   const navigate = useNavigate()
@@ -59,7 +60,7 @@ export function GymTile({ gym }: { gym: IGymWithId }) {
         <div className="flex flex-col h-full justify-between w-2/3">
           <div className="">
             <div className="text-2xl text-bold flex gap-2 items-center">
-              {gym.name} <BookmarkIcon className="w-6 h-6" />
+              {gym.name} <MarkFavourite gym={gym} />
             </div>
             <div>{gym.address.street + ' ' + gym.address.city}</div>
             <div className="flex gap-2 w-full lg:flex-wrap mt-2 no-scrollbar overflow-scroll max-h-20">
