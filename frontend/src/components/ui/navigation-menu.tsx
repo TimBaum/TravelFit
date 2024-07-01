@@ -146,14 +146,16 @@ function NavigationMenuManager({ className }: { className: string }) {
             Find gyms
           </NavigationMenuLink>
         </NavigationMenuItem>
-        <NavigationMenuItem>
-          <NavigationMenuLink
-            className={navigationMenuTriggerStyle()}
-            href="/favourites"
-          >
-            Favourites
-          </NavigationMenuLink>
-        </NavigationMenuItem>
+        {user && (
+          <NavigationMenuItem>
+            <NavigationMenuLink
+              className={navigationMenuTriggerStyle()}
+              href="/favourites"
+            >
+              Favourites
+            </NavigationMenuLink>
+          </NavigationMenuItem>
+        )}
         {userStatus === 'GYM_USER' && (
           <NavigationMenuItem>
             <NavigationMenuLink
