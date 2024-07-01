@@ -156,7 +156,7 @@ function ReviewDialog({ reviews }: { reviews: IReview[] | undefined }) {
       <DialogTrigger asChild>
         <Button variant="ghost">View more</Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] max-h-[80vh] overflow-auto">
         <DialogHeader>
           <DialogTitle>View all reviews</DialogTitle>
         </DialogHeader>
