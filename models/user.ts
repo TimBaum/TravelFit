@@ -1,6 +1,5 @@
 import { IPayment } from './payment'
-import { IGymWithId } from './gym'
-import { ObjectId } from 'mongoose'
+//import { ObjectId } from 'mongoose' //can be deleted?
 
 export interface PublicUser {
   _id: string
