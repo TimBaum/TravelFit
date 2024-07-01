@@ -94,6 +94,7 @@ interface SearchRequestBody {
   filters: FilterState
   pageLimit: number
   sortBy: string
+  page: number
 }
 
 const searchGyms = async (
@@ -101,7 +102,7 @@ const searchGyms = async (
   res: Response,
   next: NextFunction,
 ) => {
-  const { searchString, filters, pageLimit, sortBy } = req.body
+  const { searchString, filters, pageLimit, sortBy, page } = req.body
 
   if (!searchString) {
     return res.status(400).json({ error: 'Search string is required' })
@@ -126,6 +127,8 @@ const searchGyms = async (
     if (filters.price.to) dbFilters.cheapestOfferPrice.$lte = filters.price.to
   }
 
+  console.log('dbFilters', dbFilters)
+
   return Gym.find({
     'address.location': {
       $near: {
@@ -138,6 +141,9 @@ const searchGyms = async (
     },
     ...dbFilters,
   })
+    .sort(sortBy)
+    .skip(page * pageLimit)
+    .limit(pageLimit)
     .then((gyms) => {
       res.status(200).json(gyms)
     })

@@ -60,7 +60,7 @@ const App: React.FC = () => {
                 />
               </Route>
               <Route path="/add-gym/" element={<AddGym />} />
-              <Route path="/gymoverview/:id" element={<GymOverview />} />
+              <Route path="/gyms/:id" element={<GymOverview />} />
               <Route path="/favourites" element={<Favourites />} />
               {/* <Route path="*" element={<NoPage />} /> */}
             </Route>

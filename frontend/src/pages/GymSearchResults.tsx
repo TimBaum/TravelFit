@@ -2,19 +2,11 @@ import SearchBar from '@/components/SearchBar'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { useGymSearch } from '@/services/gymService'
-import {
-  BookmarkIcon,
-  CalendarIcon,
-  StarFilledIcon,
-  StarIcon,
-} from '@radix-ui/react-icons'
-import { ArrowDown, Coins, ExpandIcon, MapIcon } from 'lucide-react'
+import { StarIcon } from '@radix-ui/react-icons'
+import { Coins, ExpandIcon, MapIcon } from 'lucide-react'
 import React from 'react'
 import { useState } from 'react'
-import { IGymWithId } from '@models/gym'
 import { FilterState } from '@models/filter'
-import HighlightBadge from '@/components/HighlightBadge'
-import { useNavigate } from 'react-router-dom'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -23,12 +15,31 @@ import {
 import { Label } from '@radix-ui/react-label'
 import { Input } from '@/components/ui/input'
 import '../App.css'
-import { MarkFavourite } from '@/components/MarkFavourite'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { GymTile } from './GymTile'
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationPrevious,
+  PaginationLink,
+  PaginationEllipsis,
+  PaginationNext,
+} from '@/components/ui/pagination'
 
 function GymSearchResults() {
   const urlParams = new URLSearchParams(window.location.search)
 
   const [searchString, setSearchString] = useState(urlParams.get('search'))
+
+  const [sortBy, setSortBy] = useState('-averageRating')
+  const [page, setPage] = useState(1)
 
   const defaultFilters: FilterState = {
     price: {
@@ -45,13 +56,38 @@ function GymSearchResults() {
 
   const [filterState, setFilterState] = useState<FilterState>(defaultFilters)
 
-  const { data, error, loading } = useGymSearch(searchString, filterState)
+  const { data, error, loading } = useGymSearch(
+    searchString,
+    filterState,
+    sortBy,
+    10,
+    page,
+  )
 
   const filters = [
     // { text: 'Date', icon: <CalendarIcon />, state: defaultFilters.weekday },
     { text: 'Rating', icon: <StarIcon />, state: filterState.rating },
     { text: 'Price', icon: <Coins />, state: filterState.price },
     { text: 'Radius', icon: <ExpandIcon />, state: filterState.radius },
+  ]
+
+  const sortOptions = [
+    {
+      text: 'Highest rating',
+      value: '-averageRating',
+    },
+    {
+      text: 'Lowest price',
+      value: 'cheapestOfferPrice',
+    },
+    {
+      text: 'Highest price',
+      value: '-cheapestOfferPrice',
+    },
+    {
+      text: 'Name',
+      value: 'name',
+    },
   ]
 
   return (
@@ -76,10 +112,27 @@ function GymSearchResults() {
       </div>
       <Separator />
       <div className="flex items-center gap-2 mt-2 mb-4">
-        <Button variant={'outline'} size={'sm'} className="flex gap-2">
-          Sort by <div className="font-bold">lowest price</div>
-          <ArrowDown className="w-5 h-5" />
-        </Button>
+        <Select
+          onValueChange={(event) => setSortBy(event)}
+          defaultValue={
+            sortOptions.find((option) => option.value === sortBy)?.text ||
+            'Sort by'
+          }
+        >
+          <SelectTrigger size="sm" className="w-[180px]">
+            <SelectValue placeholder="Sort by">
+              {sortOptions.find((option) => option.value === sortBy)?.text ||
+                'Sort by'}
+            </SelectValue>
+          </SelectTrigger>
+          <SelectContent>
+            {sortOptions.map((option) => (
+              <SelectItem key={option.text} value={option.value}>
+                {option.text}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
         <Button variant={'outline'} size={'sm'} className="flex gap-2">
           Toggle map view
           <MapIcon className="w-5 h-5" />
@@ -109,9 +162,13 @@ function GymSearchResults() {
           <div>Try another search to find your next workout!</div>
         </div>
       )}
+      <PaginationDemo />
     </div>
   )
 }
+
+//TODO: add values inside the filter
+//TODO: add
 
 function Filter({
   text,
@@ -127,16 +184,17 @@ function Filter({
   state: any //TODO: specify type
   setFilterState: (state: FilterState) => void
 }) {
-  function countActiveFilters() {
+  function getActiveFilters(): string | undefined {
     if (typeof state === 'object') {
-      return Object.keys(state).filter(
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (key) => (state as any)[key] || (state as any)[key] === 0,
-      ).length
-    } else return !state && state !== 0 ? 0 : 1
+      const entries = Object.entries(state)
+      const activeEntries = entries
+        .map(([, value]) => value)
+        .filter((value) => !!value || value === 0)
+      return activeEntries.join(' - ')
+    } else if (!!state || state === 0) return state
   }
 
-  const activeFilters = countActiveFilters()
+  const activeFilters = getActiveFilters()
 
   function getFilterComponent() {
     switch (text) {
@@ -177,7 +235,7 @@ function Filter({
         <Button variant={'outline'} className="gap-2">
           {icon && React.cloneElement(icon, { className: 'w-5 h-5' })}
           {text}
-          {activeFilters > 0 && (
+          {activeFilters && (
             <div className="px-1 rounded bg-black text-white">
               {activeFilters}
             </div>
@@ -299,97 +357,32 @@ function PriceFilter({ icon, filterState, setFilterState }: FilterProps) {
   )
 }
 
-function GymTile({ gym }: { gym: IGymWithId }) {
-  const navigate = useNavigate()
-
-  function getMaxOpeningHourToday() {
-    const today = new Date().getDay()
-    const openingHoursToday = gym.openingHours.filter(
-      (openingHour) => openingHour.weekday === today,
-    )
-    if (openingHoursToday.length === 0) {
-      return 'Closed'
-    }
-    return openingHoursToday.slice(-1)[0].closingTime
-  }
-
-  function findCheapestOffer() {
-    const offers = gym.offers
-    if (offers.length === 0) {
-      return 'Contact gym for prices'
-    }
-    const cheapestOffer = offers.reduce((prev, current) =>
-      prev.priceEuro < current.priceEuro ? prev : current,
-    )
-    return 'from ' + cheapestOffer.priceEuro + '€'
-  }
-
-  const maxOpeningHourToday = getMaxOpeningHourToday()
-
+export function PaginationDemo() {
   return (
-    <div className="flex h-48 w-full border rounded p-2 items-stretch">
-      {/* Section left side */}
-      {/* TODO: exchange pictures */}
-      <div className="h-full flex gap-2 pr-2">
-        <img
-          className="h-full shrink object-cover aspect-square rounded"
-          src={`src/assets/img${Math.floor(Math.random() * 4) + 1}.png`}
-        />
-        <div className="h-full shrink grid grid-cols-1 grid-rows-2 gap-2">
-          <img
-            className="h-full aspect-square object-cover rounded"
-            src={`src/assets/img${Math.floor(Math.random() * 4) + 1}.png`}
-          />
-          <img
-            className="h-full aspect-square object-cover rounded"
-            src={`src/assets/img${Math.floor(Math.random() * 4) + 1}.png`}
-          />
-        </div>
-      </div>
-      {/* separator is behaving weirdly with the height */}
-      <Separator orientation="vertical" className="flex h-full" />
-      {/* Section right side */}
-      <div className="flex justify-between grow w-2/3 ml-4 pr-2">
-        <div className="flex flex-col h-full justify-between w-2/3">
-          <div className="">
-            <div className="text-2xl text-bold flex gap-2 items-center">
-              {gym.name} <MarkFavourite gym={gym} />
-            </div>
-            <div>{gym.address.street + ' ' + gym.address.city}</div>
-            <div className="flex gap-2 w-full lg:flex-wrap mt-2 no-scrollbar overflow-scroll max-h-20">
-              {gym.highlights.map((element) => (
-                <HighlightBadge key={element} name={element} />
-              ))}
-            </div>
-          </div>
-          <div>
-            {maxOpeningHourToday === 'Closed'
-              ? 'Closed today'
-              : `Open today until ${maxOpeningHourToday.hour}:${maxOpeningHourToday.minute.toString().padStart(2, '0')}`}
-          </div>
-        </div>
-        <div className="flex flex-col justify-between items-end w-1/3">
-          <div className="flex items-center gap-1 text-nowrap">
-            <StarFilledIcon className="text-primary h-4 w-4" />
-            {(gym.averageRating ? gym.averageRating.toFixed(1) : '?') +
-              ' · ' +
-              gym.reviews.length +
-              ` Review${gym.reviews.length !== 1 ? 's' : ''}`}
-          </div>
-          <div className="text-left">{findCheapestOffer()}</div>
-          <Button
-            className=""
-            onClick={() =>
-              navigate(`/gymoverview/${gym._id}`, {
-                state: { from: 'gymSearch' },
-              })
-            }
-          >
-            Show details
-          </Button>
-        </div>
-      </div>
-    </div>
+    <Pagination className="mt-4">
+      <PaginationContent>
+        <PaginationItem>
+          <PaginationPrevious href="#" />
+        </PaginationItem>
+        <PaginationItem>
+          <PaginationLink href="#">1</PaginationLink>
+        </PaginationItem>
+        <PaginationItem>
+          <PaginationLink href="#" isActive>
+            2
+          </PaginationLink>
+        </PaginationItem>
+        <PaginationItem>
+          <PaginationLink href="#">3</PaginationLink>
+        </PaginationItem>
+        <PaginationItem>
+          <PaginationEllipsis />
+        </PaginationItem>
+        <PaginationItem>
+          <PaginationNext href="#" />
+        </PaginationItem>
+      </PaginationContent>
+    </Pagination>
   )
 }
 
