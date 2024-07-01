@@ -74,6 +74,7 @@ export function GymAccountForm() {
 
       const data = await response.json()
       console.log('Gym account created successfully:', data)
+      form.control._reset()
     } catch (error) {
       console.error('Error creating gym account:', error)
     }
@@ -94,7 +95,11 @@ export function GymAccountForm() {
               <FormControl>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="outline">{field.value || 'Select'}</Button>
+                    <Button variant="outline" className="justify-between">
+                      {field.value || 'Select'}
+                      <span className="ml-2">&#x25BC;</span>{' '}
+                      {/* Down arrow symbol */}
+                    </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>
                     {['Mr.', 'Ms.', 'Diverse'].map((option) => (
@@ -196,8 +201,7 @@ export function GymAccountForm() {
         <Button
           type="submit"
           variant="outline"
-          className="mt-4 bg-primary"
-          onClick={() => form.handleSubmit((values) => onSubmit(values))()}
+          className="mt-4 bg-emerald-500 text-white"
         >
           Create partner account
         </Button>

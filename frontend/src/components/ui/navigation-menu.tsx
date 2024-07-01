@@ -189,7 +189,8 @@ function NavigationMenuManager({ className }: { className: string }) {
       )}
       {userStatus !== 'NOT_LOGGED_IN' && (
         <NavigationMenuList>
-          <NavigationMenuItem onClick={logout}>
+          <Button onClick={() => logout()}>Logout</Button>
+          <NavigationMenuItem onClick={() => navigate('/change-user-account')}>
             <NavigationMenuTrigger>
               <Avatar>
                 <AvatarFallback>

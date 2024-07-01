@@ -12,11 +12,10 @@ export const createUser = async (req: Request, res: Response) => {
 
   const hashedPassword = await bcryptjs.hash(password, 10)
 
-  // TODO: check if email already exists
-
   try {
     const newUser = new User({
       _id: new mongoose.Types.ObjectId(),
+      // TODO: check if email already exists
       email,
       displayName,
       salutation,

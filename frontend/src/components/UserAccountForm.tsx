@@ -101,7 +101,11 @@ export function UserAccountForm() {
               <FormControl>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="outline">{field.value || 'Select'}</Button>
+                    <Button variant="outline" className="justify-between">
+                      {field.value || 'Select'}
+                      <span className="ml-2">&#x25BC;</span>{' '}
+                      {/* Down arrow symbol */}
+                    </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>
                     {['Mr.', 'Ms.', 'Diverse'].map((option) => (
@@ -186,7 +190,7 @@ export function UserAccountForm() {
         <Button
           type="submit"
           variant="outline"
-          className="mt-4 bg-primary"
+          className="mt-4 bg-emerald-500 text-white"
           onClick={() =>
             form.handleSubmit((values) => onSubmit(values, 'premium'))()
           }
