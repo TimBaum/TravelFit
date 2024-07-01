@@ -24,7 +24,10 @@ function GymSearch() {
       <p className="">
         Find your gym or{' '}
         <u>
-          <i onClick={() => navigate('/create-gym-account/')}>
+          <i
+            className="cursor-pointer"
+            onClick={() => navigate('/create-gym-account/')}
+          >
             become a partner
           </i>
         </u>

@@ -53,7 +53,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         {variant === 'loading' ? (
           <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
         ) : (
-          props.children // Stellen Sie sicher, dass Kinder weitergegeben werden, wenn nicht 'loading'
+          props.children
         )}
       </Comp>
     )
