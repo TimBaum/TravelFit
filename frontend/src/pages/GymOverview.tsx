@@ -12,6 +12,7 @@ import { MarkFavourite } from '@/components/MarkFavourite'
 import HighlightBadge from '@/components/HighlightBadge'
 import { Button } from '@/components/ui/button'
 import OfferTile from '@/components/Offer'
+import Map from '@/components/map'
 
 import '@/styles/gym-overview.css'
 
@@ -35,6 +36,8 @@ function GymOverview() {
   const { data, error, loading } = useGetGym(GymId)
   const gymname = data?.name
 
+  const longitude = data?.address.location.coordinates[0]
+  const latitude = data?.address.location.coordinates[1]
   const previousPage = useLocation().state?.from
   const previousPagePath =
     previousPage === 'favourites'
@@ -148,6 +151,11 @@ function GymOverview() {
             {user && <AddReviewDialog gym={data} />}
           </div>
         </div>
+        {data?.address?.location?.coordinates ? (
+          <Map lat={latitude ?? 0} lng={longitude ?? 0} />
+        ) : (
+          <p>No coordinates available for this gym.</p>
+        )}
       </div>
     </div>
   )
