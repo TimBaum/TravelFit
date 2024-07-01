@@ -19,6 +19,9 @@ interface GymOverview {
 function useGymSearch(
   searchString: string | null,
   filters: FilterState,
+  sortBy: string,
+  pageLimit: number,
+  page: number,
 ): GymSearchResults {
   const [data, setData] = useState<IGymWithId[]>([])
   const [error, setError] = useState(null)
@@ -31,7 +34,13 @@ function useGymSearch(
       setError(null)
       const response = await fetchJSON(`/gyms/search`, {
         method: 'POST',
-        body: JSON.stringify({ searchString: searchString, filters }),
+        body: JSON.stringify({
+          searchString,
+          pageLimit,
+          sortBy,
+          filters,
+          page: page - 1,
+        }),
       }).catch((error) => {
         setError(error.message)
         return []
@@ -41,7 +50,7 @@ function useGymSearch(
     }
 
     fetchData()
-  }, [searchString, filters])
+  }, [searchString, filters, pageLimit, sortBy])
 
   return { data, error, loading }
 }

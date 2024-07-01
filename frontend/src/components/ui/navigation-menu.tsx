@@ -139,7 +139,7 @@ function NavigationMenuManager({ className }: { className: string }) {
           href="https://www.instagram.com/leonie_popk/"
           className="pr-8"
         >
-          <img src="src/assets/TravelFitIcon.svg" className="w-8 h-8 " />
+          <img src="/src/assets/TravelFitIcon.svg" className="w-8 h-8 " />
         </NavigationMenuLink>
         <NavigationMenuItem>
           <NavigationMenuLink className={navigationMenuTriggerStyle()} href="/">
@@ -169,7 +169,13 @@ function NavigationMenuManager({ className }: { className: string }) {
       </NavigationMenuList>
       {userStatus === 'NOT_LOGGED_IN' && (
         <div className="flex gap-2">
-          <Button variant={'outline'}>Become a partner</Button>
+          <Button
+            variant={'outline'}
+            className="text-white bg-emerald-500 hover:text-white hover:bg-emerald-600"
+            onClick={() => navigate('/create-gym-account')}
+          >
+            Become a partner
+          </Button>
           <Button className="bg-black" onClick={() => navigate('/login')}>
             Login
           </Button>
