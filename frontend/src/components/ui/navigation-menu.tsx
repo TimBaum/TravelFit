@@ -123,7 +123,9 @@ function NavigationMenuManager({ className }: { className: string }) {
 
   const navigate = useNavigate()
 
-  const { user, logout } = useAuth()
+  const { user, hasActiveSubscription, logout } = useAuth()
+
+  console.log('User has active subscription: ', hasActiveSubscription)
 
   let userStatus: 'GYM_USER' | 'USER' | 'NOT_LOGGED_IN' = 'NOT_LOGGED_IN'
 

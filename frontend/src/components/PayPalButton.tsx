@@ -1,3 +1,4 @@
+import { useAuth } from '@/provider/AuthProvider'
 import { createSubscription } from '@/services/subscriptionService'
 import { PayPalSubscription } from '@models/payment'
 import {
@@ -9,6 +10,8 @@ import {
 import toast from 'react-hot-toast'
 
 function PayPalButton() {
+  const { checkSubscriptionStatus } = useAuth()
+
   const initialOptions: ReactPayPalScriptOptions = {
     // clientId: 'P-3FG08195X0496734AMZ63IOY',
     clientId:
@@ -32,6 +35,7 @@ function PayPalButton() {
           details.status === 'ACTIVE'
         ) {
           await createSubscription(details as PayPalSubscription) // weird typescript behavior requires explicit cast
+          checkSubscriptionStatus()
           toast.success('Subscription created')
         } else throw new Error('Subscription not active')
       })
@@ -45,9 +49,18 @@ function PayPalButton() {
       <PayPalButtons
         className="mt-6"
         createSubscription={(_data, actions) => {
-          return actions.subscription.create({
-            plan_id: 'P-5NT356891H3510226MZ64P4I',
-          })
+          return actions.subscription
+            .create({
+              plan_id: 'P-5NT356891H3510226MZ64P4I',
+            })
+            .then(async (res) => {
+              await checkSubscriptionStatus()
+              return res
+            })
+            .catch(async (error) => {
+              await checkSubscriptionStatus()
+              return error
+            })
         }}
         onApprove={onApprove}
         style={{

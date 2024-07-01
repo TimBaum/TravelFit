@@ -1,18 +1,23 @@
 import { config } from '@/config'
+import { fetchJSON } from '@/services/utils'
 import { PublicUser } from '@models/user'
 import { useContext, createContext, ReactNode, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 interface AuthContextType {
   user: PublicUser | null
+  hasActiveSubscription: boolean | null
   login: (email: string, password: string) => Promise<void>
   logout: () => void
+  checkSubscriptionStatus: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
+  hasActiveSubscription: false,
   login: async () => {},
   logout: () => {},
+  checkSubscriptionStatus: async () => {},
 })
 
 const AuthProvider = ({ children }: { children: ReactNode }) => {
@@ -21,6 +26,12 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       ? decodeToken(localStorage.getItem('token')!)
       : null,
   )
+
+  const [hasActiveSubscription, setHasActiveSubscription] = useState<
+    boolean | null
+  >(null)
+
+  checkSubscriptionStatus()
 
   const navigate = useNavigate()
 
@@ -47,8 +58,27 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     navigate('/login')
   }
 
+  async function checkSubscriptionStatus() {
+    return fetchJSON('/subscriptions/active')
+      .then((data) => {
+        setHasActiveSubscription(data.hasPremiumSubscription)
+      })
+      .catch((error) => {
+        console.error('Failed to check subscription status:', error)
+        setHasActiveSubscription(false)
+      })
+  }
+
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        login,
+        logout,
+        hasActiveSubscription,
+        checkSubscriptionStatus,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   )

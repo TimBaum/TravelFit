@@ -9,3 +9,9 @@ export async function createSubscription(
     body: JSON.stringify(subscription),
   })
 }
+
+export async function cancelSubscription(): Promise<void> {
+  return await fetchJSON('/subscriptions/cancel', {
+    method: 'GET',
+  })
+}

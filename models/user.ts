@@ -1,5 +1,4 @@
 import { IPayment } from './payment'
-//import { ObjectId } from 'mongoose' //can be deleted?
 
 export interface PublicUser {
   _id: string
@@ -20,4 +19,8 @@ export interface IUser {
   createdAt: Date
   updatedAt: Date
   favourites: string[]
+}
+
+export interface IUserWithId extends IUser {
+  _id: string
 }

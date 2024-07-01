@@ -1,6 +1,40 @@
 import { Request, Response } from 'express'
 import Payment from '../models/Payment'
 import { PayPalSubscription } from '@models/payment'
+import { config } from '../config/config'
+import User from '../models/User'
+
+async function hasActiveSubscription(req: Request, res: Response) {
+  const ctx = req.ctx
+  if (!ctx) {
+    return res.status(401).json({ message: 'Unauthorized' })
+  }
+
+  const hasPremiumSubscription = ctx.payments.some((subscription) => {
+    if (subscription.status === 'ACTIVE') return true
+
+    const gracePeriod = false
+
+    if (
+      gracePeriod &&
+      subscription.status === 'CANCELLED' &&
+      subscription.cancelledAt
+    ) {
+      const cancelledDate = new Date(subscription.cancelledAt)
+      const thirtyDaysAfterCancellation = new Date(
+        cancelledDate.setDate(cancelledDate.getDate() + 30),
+      )
+
+      if (thirtyDaysAfterCancellation > new Date()) {
+        return true
+      }
+    }
+
+    return false
+  })
+
+  return res.status(200).json({ hasPremiumSubscription })
+}
 
 async function assertActiveSubscription(id: string): Promise<boolean> {
   return Promise.resolve(true)
@@ -12,31 +46,46 @@ async function createSubscription(req: Request, res: Response) {
     return res.status(401).json({ message: 'Unauthorized' })
   }
 
-  const { create_time, id, status } = req.body as PayPalSubscription
+  const { id, status } = req.body as PayPalSubscription
 
   if (status !== 'ACTIVE')
     return res.status(400).json({ message: 'Subscription not active' })
 
   const subscription = new Payment({
     payPalId: id,
-    created: new Date(create_time),
+    createdAt: new Date(),
     status: 'CREATED',
   })
 
   try {
-    await subscription.save()
+    const result = await User.updateOne(
+      { _id: ctx._id },
+      { $push: { payments: subscription } },
+    )
     // validate with paypal that the subscription has actually been created
     const isActive = await assertActiveSubscription(id)
 
     // update the status of the subscription
     if (isActive) {
-      await Payment.updateOne({ payPalId: id }, { status: 'ACTIVE' })
-      return res.status(201)
+      await User.updateOne(
+        { _id: ctx._id, 'payments.payPalId': id },
+        { $set: { 'payments.$.status': 'ACTIVE' } },
+      )
+      return res.status(201).json({ message: 'Subscription created' })
     } else {
-      await Payment.updateOne({ payPalId: id }, { status: 'CANCELLED' })
+      await User.updateOne(
+        { _id: ctx._id, 'payments.payPalId': id },
+        {
+          $set: {
+            'payments.$.status': 'CANCELLED',
+            'payments.$.cancelledAt': new Date(),
+          },
+        },
+      )
       throw new Error("Subscription wasn't created")
     }
   } catch (error) {
+    console.error(error)
     return res.status(500).json({ error })
   }
 }
@@ -47,15 +96,31 @@ async function cancelSubscription(req: Request, res: Response) {
     return res.status(401).json({ message: 'Unauthorized' })
   }
 
-  // update the status of the subscription
-  // TODO: handle differtly with ID
-  await Payment.updateOne({ payPalId: req.body.id }, { status: 'CANCELLED' })
-    .then(() => {
-      return res.status(204)
-    })
-    .catch((error) => {
-      return res.status(500).json({ error })
-    })
+  // Get the active subscription
+  const payPalId = ctx.payments.find(
+    (subscription) => subscription.status == 'ACTIVE',
+  )?.payPalId
+
+  if (!payPalId) {
+    return res.status(404).json({ message: 'No active subscription found' })
+  }
+
+  try {
+    await cancelPayPalSubscription(payPalId)
+    await User.updateOne(
+      { _id: ctx._id, 'payments.payPalId': payPalId },
+      {
+        $set: {
+          'payments.$.status': 'CANCELLED',
+          'payments.$.cancelledAt': new Date(),
+        },
+      },
+    )
+    return res.status(200).json({ message: 'Subscription cancelled' })
+  } catch (error) {
+    console.error('Failed to cancel subscription:', error)
+    return res.status(500).json({ error })
+  }
 }
 
 /**
@@ -65,8 +130,28 @@ async function getSubscriptionUpdates(req: Request, res: Response) {
   throw new Error('Not implemented')
 }
 
+async function cancelPayPalSubscription(planId: string) {
+  const client_secret_base64 = Buffer.from(
+    `${config.PAYPAL.CLIENT_ID}:${config.PAYPAL.CLIENT_SECRET}`,
+  ).toString('base64')
+  fetch(
+    `https://api-m.sandbox.paypal.com/v1/billing/subscriptions/${planId}/cancel`,
+    {
+      method: 'POST',
+      headers: {
+        Authorization: `Basic ${client_secret_base64}`,
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+    },
+  ).then((res) => {
+    if (!res.ok) throw new Error('Failed to cancel subscription' + planId)
+  })
+}
+
 export default {
   createSubscription,
   cancelSubscription,
   getSubscriptionUpdates,
+  hasActiveSubscription,
 }

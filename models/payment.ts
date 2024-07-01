@@ -1,11 +1,12 @@
 export interface IPayment {
-  date: Date
-  total: number
-  details: string
+  payPalId: string
+  createdAt: Date
+  status: 'ACTIVE' | 'CREATED' | 'CANCELLED'
+  cancelledAt: Date
 }
 
 export interface PayPalSubscription {
-  create_time: string
   id: string
+  create_time: string
   status: string
 }
