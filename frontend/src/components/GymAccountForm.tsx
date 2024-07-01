@@ -74,6 +74,7 @@ export function GymAccountForm() {
 
       const data = await response.json()
       console.log('Gym account created successfully:', data)
+      form.control._reset()
     } catch (error) {
       console.error('Error creating gym account:', error)
     }
