@@ -1,15 +1,9 @@
 import { IOffer } from '@models/offer'
 import { Clock9 } from 'lucide-react'
-import { useState } from 'react'
 
 function OfferTile({ offer }: { offer: IOffer }) {
-  const [isHovered, setIsHovered] = useState(false)
   return (
-    <div
-      className={`flex h-46 w-full border rounded p-2 relative m-2 ${isHovered ? 'border-green-500' : 'border-gray-300'}`}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
+    <div>
       {/* Section left side */}
       <div className="w-2/3">
         {offer.type === 'Special' && <SpecialOfferTile />}
