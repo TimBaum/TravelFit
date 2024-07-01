@@ -9,6 +9,7 @@ import { Calendar } from '@/components/ui/calendar'
 import { Label } from '@/components/ui/label'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { useDropzone } from 'react-dropzone'
 import {
   Form,
   FormControl,
@@ -200,6 +201,7 @@ export function AddGym() {
           <TabsTrigger value="keyInfo">Key information</TabsTrigger>
           <TabsTrigger value="openingHours">Opening hours</TabsTrigger>
           <TabsTrigger value="offers">Offers</TabsTrigger>
+          <TabsTrigger value="photos">Photos</TabsTrigger>
         </TabsList>
 
         {/* Tab one: Gym name, URL, Street+Number, Postal Code, City, Country, Highlights */}
@@ -562,9 +564,38 @@ export function AddGym() {
             </Form>
           </div>
         </TabsContent>
+
+        {/* Tab four: photos */}
+
+        <TabsContent value="photos">
+          <Basic />
+        </TabsContent>
       </Tabs>
     </>
   )
+
+  function Basic() {
+    const { acceptedFiles, getRootProps, getInputProps } = useDropzone()
+
+    const files = acceptedFiles.map((file) => (
+      <li key={file.name}>
+        {file.name} - {file.size} bytes
+      </li>
+    ))
+
+    return (
+      <section className="container">
+        <div {...getRootProps({ className: 'dropzone' })}>
+          <input {...getInputProps()} />
+          <p>Drag 'n' drop some files here, or click to select files</p>
+        </div>
+        <aside>
+          <h4>Files</h4>
+          <ul>{files}</ul>
+        </aside>
+      </section>
+    )
+  }
 }
 
 export default AddGym
