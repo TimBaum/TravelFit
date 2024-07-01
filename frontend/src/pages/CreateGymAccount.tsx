@@ -7,13 +7,21 @@ function CreateGymAccount() {
     <>
       <h1 className="mb-2 font-bold text-5xl">Create your partner account</h1>
       <div className="flex m-5">
-        <div className="flex flex-col items-center justify-center bg-gray-300 mr-5 flex-1">
+        <div className="flex flex-col items-center">
           <Users size={80} />
-          <p>Attract a broad audience</p>
+          <p className="text-center">Attract a broad audience</p>
+        </div>
+        <div className="flex flex-col items-center mt-4">
           <Megaphone size={80} />
-          <p>Spread information about offers and subscriptions</p>
+          <p className="text-center">
+            Spread information about offers and subscriptions
+          </p>
+        </div>
+        <div className="flex flex-col items-center mt-4">
           <Star size={80} />
-          <p>Stand out with fitting offers for travellers</p>
+          <p className="text-center">
+            Stand out with fitting offers for travellers
+          </p>
         </div>
         <div className="flex-1 ml-5">
           <GymAccountForm />
