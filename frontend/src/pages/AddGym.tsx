@@ -9,7 +9,7 @@ import { Calendar } from '@/components/ui/calendar'
 import { Label } from '@/components/ui/label'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { useDropzone } from 'react-dropzone'
+// import { useDropzone } from 'react-dropzone'
 import {
   Form,
   FormControl,

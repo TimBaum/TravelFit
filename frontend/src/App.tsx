@@ -13,6 +13,7 @@ import CreateGymAccount from './pages/CreateGymAccount'
 import CreateUserAccount from './pages/CreateUserAccount'
 import ChangeUserAccount from './pages/ChangeUserAccount'
 import AddGym from './pages/AddGym'
+import AddGymOffer from './pages/AddGymOffer'
 import Layout from './components/Layout'
 import '../app/globals.css'
 import GymOverview from './pages/GymOverview'
@@ -60,6 +61,8 @@ const App: React.FC = () => {
                 />
               </Route>
               <Route path="/add-gym/" element={<AddGym />} />
+              {/* for outsourcing form problem */}
+              <Route path="/add-gym2/" element={<AddGymOffer />} />
               <Route path="/gyms/:id" element={<GymOverview />} />
               <Route path="/favourites" element={<Favourites />} />
               {/* <Route path="*" element={<NoPage />} /> */}
