@@ -29,14 +29,16 @@ import {
   PaginationItem,
   PaginationPrevious,
   PaginationLink,
-  PaginationEllipsis,
   PaginationNext,
 } from '@/components/ui/pagination'
+import Map from '@/components/map'
 
 function GymSearchResults() {
   const urlParams = new URLSearchParams(window.location.search)
 
   const [searchString, setSearchString] = useState(urlParams.get('search'))
+
+  const [showMapView, setShowMapView] = useState(false)
 
   const [sortBy, setSortBy] = useState('-averageRating')
   const [page, setPage] = useState(1)
@@ -56,7 +58,7 @@ function GymSearchResults() {
 
   const [filterState, setFilterState] = useState<FilterState>(defaultFilters)
 
-  const { data, pages, error, loading } = useGymSearch(
+  const { data, pages, coordinates, error, loading } = useGymSearch(
     searchString,
     filterState,
     sortBy,
@@ -90,7 +92,7 @@ function GymSearchResults() {
     },
   ]
 
-  if (!searchString) return
+  if (!searchString || !coordinates) return
 
   return (
     <div className="mb-10">
@@ -137,17 +139,35 @@ function GymSearchResults() {
             ))}
           </SelectContent>
         </Select>
-        <Button variant={'outline'} size={'sm'} className="flex gap-2">
+        <Button
+          variant={'outline'}
+          size={'sm'}
+          className="flex gap-2"
+          onClick={() => setShowMapView(!showMapView)}
+        >
           Toggle map view
           <MapIcon className="w-5 h-5" />
         </Button>
       </div>
-      {!loading && data?.length > 0 && (
+      {!loading && data?.length > 0 && !showMapView && (
         <div className="flex flex-col gap-2">
           {data.map((gym) => (
             <GymTile key={gym._id} gym={gym} />
           ))}
         </div>
+      )}
+      {!loading && data?.length > 0 && showMapView && (
+        <Map
+          markers={data.map((gym) => ({
+            id: gym._id,
+            lat: gym.address.location.coordinates[1],
+            lng: gym.address.location.coordinates[0],
+            gymName: gym.name,
+            averageRating: gym.averageRating,
+          }))}
+          enablePopups={true}
+          center={coordinates}
+        />
       )}
       {loading && <div>Loading...</div>}
       {!loading && data?.length === 0 && (
