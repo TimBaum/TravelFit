@@ -8,7 +8,7 @@ const gymAccountSchema = new mongoose.Schema({
   lastName: { type: String, required: true },
   phone: { type: String, required: true },
   salutation: { type: String, required: true, enum: ['Mr.', 'Ms.', 'Diverse'] },
-  //password: { type: String, required: true },
+  password: { type: String, required: true },
   //address: { type: Address.schema, required: true },
   //gyms: { type: [Gym.schema], required: true },
   createdAt: { type: Date, default: Date.now },
