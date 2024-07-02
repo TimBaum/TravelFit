@@ -1,5 +1,5 @@
 import User from '../models/User'
-import { IUser } from '@models/user'
+import { IUser, IUserWithId } from '@models/user'
 import { Request, Response, NextFunction } from 'express'
 import jwt from 'jsonwebtoken'
 import { config } from '../config/config'
@@ -8,7 +8,7 @@ import { PublicUser } from '@models/user'
 declare global {
   namespace Express {
     interface Request {
-      ctx?: IUser
+      ctx?: IUserWithId
     }
   }
 }

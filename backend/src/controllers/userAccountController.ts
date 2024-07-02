@@ -7,8 +7,7 @@ import mongoose from 'mongoose'
 import bcryptjs from 'bcryptjs'
 
 export const createUser = async (req: Request, res: Response) => {
-  const { email, displayName, salutation, password, hasPremiumSubscription } =
-    req.body
+  const { email, displayName, salutation, password } = req.body
 
   const hashedPassword = await bcryptjs.hash(password, 10)
 
@@ -20,7 +19,6 @@ export const createUser = async (req: Request, res: Response) => {
       displayName,
       salutation,
       password: hashedPassword,
-      hasPremiumSubscription,
     })
     await newUser.save()
     return res.status(201).json({ newUser })

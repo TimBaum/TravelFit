@@ -4,6 +4,8 @@ export interface IOffer {
   description: string
   validityDays: number
   priceEuro: number
+
+  // Special Offer
   startDate: Date
   endDate: Date
 }

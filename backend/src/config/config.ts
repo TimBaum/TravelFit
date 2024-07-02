@@ -9,6 +9,9 @@ const SERVER_PORT = process.env.SERVER_PORT
   ? Number(process.env.SERVER_PORT)
   : 5000
 
+const PAYPAL_CLIENT_ID = process.env.PAYPAL_CLIENT_ID || ''
+const PAYPAL_CLIENT_SECRET = process.env.PAYPAL_CLIENT_SECRET || ''
+
 const JWT_SECRET = process.env.JWT_SECRET
 
 if (!JWT_SECRET) throw new Error('JWT_KEY is not set')
@@ -22,4 +25,8 @@ export const config = {
     port: SERVER_PORT,
   },
   JWT_SECRET: JWT_SECRET,
+  PAYPAL: {
+    CLIENT_ID: PAYPAL_CLIENT_ID,
+    CLIENT_SECRET: PAYPAL_CLIENT_SECRET,
+  },
 }

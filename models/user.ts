@@ -1,6 +1,4 @@
 import { IPayment } from './payment'
-import { IGymWithId } from './gym'
-import { ObjectId } from 'mongoose'
 
 export interface PublicUser {
   _id: string
@@ -21,4 +19,8 @@ export interface IUser {
   createdAt: Date
   updatedAt: Date
   favourites: string[]
+}
+
+export interface IUserWithId extends IUser {
+  _id: string
 }
