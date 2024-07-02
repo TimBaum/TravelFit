@@ -496,15 +496,23 @@ export function AddGym() {
                                 </Label>
                                 <Label>End date</Label>
                                 <Checkbox
-                                  checked={isSpecialOffer}
-                                  onChange={() =>
-                                    setIsSpecialOffer((prevState) => !prevState)
+                                  onChange={() => {
+
+                                    if (isSpecialOffer) {
+                                      setIsSpecialOffer(!isSpecialOffer)
+                                    } else {
+                                      setIsSpecialOffer(isSpecialOffer)
+                                    }
+                                  }
                                   }
                                   className="ml-5 mt-4"
                                 />
+
+
                                 <Popover>
                                   <PopoverTrigger asChild>
                                     <Button
+                                      disabled={isSpecialOffer}
                                       variant={'outline'}
                                       className={cn(
                                         ' justify-start text-left font-normal',
@@ -570,7 +578,7 @@ export function AddGym() {
         <TabsContent value="photos">
           <Basic />
         </TabsContent>
-      </Tabs>
+      </Tabs >
     </>
   )
 
