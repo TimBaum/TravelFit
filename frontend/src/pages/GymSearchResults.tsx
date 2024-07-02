@@ -56,7 +56,7 @@ function GymSearchResults() {
 
   const [filterState, setFilterState] = useState<FilterState>(defaultFilters)
 
-  const { data, error, loading } = useGymSearch(
+  const { data, pages, error, loading } = useGymSearch(
     searchString,
     filterState,
     sortBy,
@@ -90,9 +90,13 @@ function GymSearchResults() {
     },
   ]
 
+  if (!searchString) return
+
   return (
     <div className="mb-10">
-      <h1 className="text-5xl font-bold mb-2">Gyms in {searchString}</h1>
+      <h1 className="text-5xl font-bold mb-2">
+        Gyms in {searchString.slice(0, 1).toUpperCase() + searchString.slice(1)}
+      </h1>
       <SearchBar
         searchTerm={searchString || ''}
         setSearchTerm={setSearchString}
@@ -162,13 +166,16 @@ function GymSearchResults() {
           <div>Try another search to find your next workout!</div>
         </div>
       )}
-      <PaginationDemo />
+      {pages && (
+        <PaginationWrapper
+          pages={pages}
+          activePage={page}
+          setActivePage={setPage}
+        />
+      )}
     </div>
   )
 }
-
-//TODO: add values inside the filter
-//TODO: add
 
 function Filter({
   text,
@@ -357,30 +364,36 @@ function PriceFilter({ icon, filterState, setFilterState }: FilterProps) {
   )
 }
 
-export function PaginationDemo() {
+export function PaginationWrapper({
+  pages,
+  activePage,
+  setActivePage,
+}: {
+  pages: number
+  activePage: number
+  setActivePage: (newPage: number) => void
+}) {
+  const pagesArray = Array.from({ length: pages }, (_, i) => i + 1)
   return (
-    <Pagination className="mt-4">
+    <Pagination className="mt-8">
       <PaginationContent>
-        <PaginationItem>
-          <PaginationPrevious href="#" />
-        </PaginationItem>
-        <PaginationItem>
-          <PaginationLink href="#">1</PaginationLink>
-        </PaginationItem>
-        <PaginationItem>
-          <PaginationLink href="#" isActive>
-            2
-          </PaginationLink>
-        </PaginationItem>
-        <PaginationItem>
-          <PaginationLink href="#">3</PaginationLink>
-        </PaginationItem>
-        <PaginationItem>
-          <PaginationEllipsis />
-        </PaginationItem>
-        <PaginationItem>
-          <PaginationNext href="#" />
-        </PaginationItem>
+        {activePage > 1 && (
+          <PaginationItem>
+            <PaginationPrevious onClick={() => setActivePage(activePage - 1)} />
+          </PaginationItem>
+        )}
+        {pagesArray.map((page) => (
+          <PaginationItem key={page}>
+            <PaginationLink onClick={() => setActivePage(page)}>
+              {page}
+            </PaginationLink>
+          </PaginationItem>
+        ))}
+        {activePage < pages && (
+          <PaginationItem>
+            <PaginationNext onClick={() => setActivePage(activePage + 1)} />
+          </PaginationItem>
+        )}
       </PaginationContent>
     </Pagination>
   )

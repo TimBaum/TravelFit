@@ -102,52 +102,78 @@ const searchGyms = async (
   res: Response,
   next: NextFunction,
 ) => {
-  const { searchString, filters, pageLimit, sortBy, page } = req.body
+  try {
+    const { searchString, filters, pageLimit, sortBy, page } = req.body
 
-  if (!searchString) {
-    return res.status(400).json({ error: 'Search string is required' })
+    if (!searchString) {
+      return res.status(400).json({ error: 'Search string is required' })
+    }
+
+    // Get coordinates of gym
+    const coordinates = await getCoordinates(searchString)
+
+    if (!coordinates) {
+      return res.status(500).json({ error: 'LOCATION_NOT_FOUND' })
+    }
+
+    const dbFilters: FilterQuery<typeof Gym> = {} // Be careful! Typescript is not typechecking this object for some reason
+
+    if (filters.rating.from)
+      dbFilters.averageRating = { $gte: filters.rating.from }
+
+    if (filters.price.from || filters.price.to) {
+      dbFilters.cheapestOfferPrice = {}
+      if (filters.price.from)
+        dbFilters.cheapestOfferPrice.$gte = filters.price.from
+      if (filters.price.to) dbFilters.cheapestOfferPrice.$lte = filters.price.to
+    }
+
+    const maxDistance = filters.radius ? filters.radius * 1000 : 10000 // default 10 km
+
+    function queryBuilder(type: 'FETCH' | 'COUNT') {
+      // Two queries are required since Mongo DB doesn't allow for the $near operator, when sorting isnt required (for the count)
+      // But sorting IS required for the
+
+      const query: any = {
+        'address.location': {},
+        ...dbFilters,
+      }
+
+      if (type === 'FETCH') {
+        query['address.location'].$near = {
+          $geometry: {
+            type: 'Point',
+            coordinates: coordinates,
+          },
+          $maxDistance: maxDistance,
+        }
+      }
+
+      if (type === 'COUNT') {
+        query['address.location'].$geoWithin = {
+          $centerSphere: [coordinates, maxDistance],
+        }
+      }
+
+      return query
+    }
+
+    const gymsPromise = Gym.find(queryBuilder('FETCH'))
+      .sort(sortBy)
+      .skip(page * pageLimit)
+      .limit(pageLimit)
+
+    const countPromise = Gym.countDocuments(queryBuilder('COUNT'))
+
+    const [gyms, count] = await Promise.all([gymsPromise, countPromise])
+
+    return res
+      .status(200)
+      .json({ pages: Math.floor(count / pageLimit) + 1, gyms })
+  } catch (error) {
+    console.log(error)
+    return res.status(500).json({ error })
   }
-
-  // Get coordinates of gym
-  const coordinates = await getCoordinates(searchString)
-
-  if (!coordinates) {
-    return res.status(500).json({ error: 'LOCATION_NOT_FOUND' })
-  }
-
-  const dbFilters: FilterQuery<typeof Gym> = {} // Be careful! Typescript is not typechecking this object for some reason
-
-  if (filters.rating.from)
-    dbFilters.averageRating = { $gte: filters.rating.from }
-
-  if (filters.price.from || filters.price.to) {
-    dbFilters.cheapestOfferPrice = {}
-    if (filters.price.from)
-      dbFilters.cheapestOfferPrice.$gte = filters.price.from
-    if (filters.price.to) dbFilters.cheapestOfferPrice.$lte = filters.price.to
-  }
-
-  console.log('dbFilters', dbFilters)
-
-  return Gym.find({
-    'address.location': {
-      $near: {
-        $geometry: {
-          type: 'Point',
-          coordinates: coordinates,
-        },
-        $maxDistance: filters.radius ? filters.radius * 1000 : 10000, // default 10 km
-      },
-    },
-    ...dbFilters,
-  })
-    .sort(sortBy)
-    .skip(page * pageLimit)
-    .limit(pageLimit)
-    .then((gyms) => {
-      res.status(200).json(gyms)
-    })
-    .catch((error) => res.status(500).json({ error }))
 }
 const deleteGym = (req: Request, res: Response, next: NextFunction) => {
   const { id } = req.params
