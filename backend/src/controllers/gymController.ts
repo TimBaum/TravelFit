@@ -167,9 +167,11 @@ const searchGyms = async (
 
     const [gyms, count] = await Promise.all([gymsPromise, countPromise])
 
-    return res
-      .status(200)
-      .json({ pages: Math.floor(count / pageLimit) + 1, gyms })
+    return res.status(200).json({
+      gyms,
+      pages: Math.floor(count / pageLimit) + 1,
+      coordinates: [coordinates[1], coordinates[0]],
+    })
   } catch (error) {
     console.log(error)
     return res.status(500).json({ error })
