@@ -92,7 +92,7 @@ function GymSearchResults() {
     },
   ]
 
-  if (!searchString || !coordinates) return
+  if (!searchString) return
 
   return (
     <div className="mb-10">
@@ -156,7 +156,7 @@ function GymSearchResults() {
           ))}
         </div>
       )}
-      {!loading && data?.length > 0 && showMapView && (
+      {!loading && data?.length > 0 && coordinates && showMapView && (
         <Map
           markers={data.map((gym) => ({
             id: gym._id,
