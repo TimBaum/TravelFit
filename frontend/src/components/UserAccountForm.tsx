@@ -87,7 +87,7 @@ export function UserAccountForm() {
 
   return (
     <Form {...form}>
-      <form className="max-w-lg mx-auto">
+      <form className="mx-auto">
         <div className="flex flex-col items-center mb-5">
           <LucidePencil size={20} />
           <span>Foto</span>

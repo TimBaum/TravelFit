@@ -95,10 +95,7 @@ export function GymAccountForm() {
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="max-w-xl mx-auto p-5 border border-gray-300 rounded-md space-y-8"
-      >
+      <form onSubmit={form.handleSubmit(onSubmit)} className="mx-auto">
         <FormField
           control={form.control}
           name="salutation"
