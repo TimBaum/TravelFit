@@ -79,7 +79,17 @@ function Login() {
                 variant={'outline'}
                 onClick={() => navigate('/create-user-account')}
               >
-                Signup
+                Sign up
+              </Button>
+            </div>
+            <div className="flex justify-between items-center">
+              <i>Or </i>
+
+              <Button
+                variant={'outline'}
+                onClick={() => navigate('/create-gym-account')}
+              >
+                Become a partner
               </Button>
             </div>
           </div>

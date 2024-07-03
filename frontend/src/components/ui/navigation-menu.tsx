@@ -185,7 +185,7 @@ function NavigationMenuManager({ className }: { className: string }) {
             className="bg-black"
             onClick={() => navigate('/create-user-account')}
           >
-            Signup
+            Sign up
           </Button>
         </div>
       )}
