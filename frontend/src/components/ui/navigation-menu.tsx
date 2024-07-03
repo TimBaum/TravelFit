@@ -197,6 +197,15 @@ function NavigationMenuManager({ className }: { className: string }) {
           >
             Logout
           </Button>
+          <NavigationMenuItem onClick={() => navigate('/change-gym-account')}>
+            <NavigationMenuTrigger>
+              <Avatar>
+                <AvatarFallback>
+                  <PersonIcon className="icon" />
+                </AvatarFallback>
+              </Avatar>
+            </NavigationMenuTrigger>
+          </NavigationMenuItem>
           <NavigationMenuItem onClick={() => navigate('/change-user-account')}>
             <NavigationMenuTrigger>
               <Avatar>
