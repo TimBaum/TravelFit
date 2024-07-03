@@ -1,8 +1,10 @@
 import GymAccountForm from '@/components/GymAccountForm'
 import { Button } from '@/components/ui/button'
 import { Megaphone, Star, Users } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 
 function CreateGymAccount() {
+  const navigate = useNavigate()
   return (
     <>
       <h1 className="mb-2 font-bold text-5xl">Create your partner account</h1>
@@ -29,7 +31,7 @@ function CreateGymAccount() {
           <GymAccountForm />
           <div className="flex justify-between items-center mt-5">
             <p>Already a partner?</p>
-            <Button type="submit" variant="outline">
+            <Button variant="outline" onClick={() => navigate('/login')}>
               Log in as partner
             </Button>
           </div>
