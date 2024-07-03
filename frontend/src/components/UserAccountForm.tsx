@@ -190,21 +190,22 @@ export function UserAccountForm() {
         <Button
           type="submit"
           variant="outline"
-          className="mt-4 bg-emerald-500 text-white"
-          onClick={() =>
-            form.handleSubmit((values) => onSubmit(values, 'premium'))()
-          }
-        >
-          Create premium account
-        </Button>
-        <Button
-          type="submit"
-          variant="outline"
+          className="mt-4"
           onClick={() =>
             form.handleSubmit((values) => onSubmit(values, 'basic'))()
           }
         >
           Create basic account
+        </Button>
+        <Button
+          type="submit"
+          variant="outline"
+          className="bg-emerald-500 text-white"
+          onClick={() =>
+            form.handleSubmit((values) => onSubmit(values, 'premium'))()
+          }
+        >
+          Create premium account
         </Button>
       </form>
     </Form>

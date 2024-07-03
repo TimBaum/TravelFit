@@ -1,6 +1,10 @@
 import UserAccountForm from '@/components/UserAccountForm'
+import { useNavigate } from 'react-router-dom'
+import { Separator } from '@/components/ui/separator'
+import { Button } from '@/components/ui/button'
 
 function CreateUserAccount() {
+  const navigate = useNavigate()
   return (
     <div>
       <h1 className="text-5xl font-bold mb-6 text-center">
@@ -16,6 +20,15 @@ function CreateUserAccount() {
         </div>
         <div className="w-full flex flex-col justify-between">
           <UserAccountForm />
+          <div>
+            <Separator className="my-4" />
+            <div className="flex justify-between items-center">
+              <i>Already have an account?</i>
+              <Button variant={'outline'} onClick={() => navigate('/login')}>
+                Log in
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
