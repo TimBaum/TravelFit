@@ -4,6 +4,8 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
+
+/* UI imports */
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
@@ -15,27 +17,37 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
-import { Dialog, DialogContent } from '@/components/ui/dialog' // Import für Dialogfenster
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogTrigger,
+} from '@/components/ui/dialog'
 
-/* Component */
-export function AddGymOffer() {
+/* Form checks */
+const formSchema = z.object({
+  gymname: z
+    .string()
+    .min(2, { message: 'Invalid name' })
+    .max(50, { message: 'Invalid name' }),
+})
+
+/* Dialog form checks */
+const dialogFormSchema = z.object({
+  dialogField: z.string().min(2, {
+    message: 'Field is required.',
+  }),
+})
+
+/* Component content */
+export function CreateGym() {
+  //constants
   const navigate = useNavigate()
-  const formSchema = z.object({
-    gymname: z.string().min(2, {
-      message: 'Error.',
-    }),
-  })
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
       gymname: '',
     },
-  })
-
-  const dialogFormSchema = z.object({
-    dialogField: z.string().min(2, {
-      message: 'Field is required.',
-    }),
   })
 
   const dialogForm = useForm({
@@ -53,6 +65,7 @@ export function AddGymOffer() {
     navigate('/my-gyms')
   }
 
+  /* Dialog submission */
   async function onDialogSubmit(values: z.infer<typeof dialogFormSchema>) {
     console.log(values)
     setIsDialogOpen(false)
@@ -60,54 +73,70 @@ export function AddGymOffer() {
 
   /* Render */
   return (
-    <>
-      <h1 className="text-5xl font-bold mb-2">Add Gym Offer</h1>
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
-          <FormField
-            control={form.control}
-            name="gymname"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Gym Name</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormDescription>Enter the name of the gym.</FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <Button className="mt-4" type="submit">
-            Submit
-          </Button>
-        </form>
-      </Form>
-      {/* Dialogfenster button fehlt noch!!!*/}
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent>
-          <Form {...dialogForm}>
-            <form onSubmit={dialogForm.handleSubmit(onDialogSubmit)}>
-              <FormField
-                control={dialogForm.control}
-                name="dialogField"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Dialog Field</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <Button type="submit">Submit</Button>
-            </form>
-          </Form>
-        </DialogContent>
-      </Dialog>
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)}>
+        <FormField
+          control={form.control}
+          name="gymname"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Gym Name</FormLabel>
+              <FormControl>
+                <Input {...field} />
+              </FormControl>
+              <FormDescription>Enter the name of the gym.</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
-      {/* <Dialog>
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogTrigger asChild>
+            <Button
+              type="button"
+              onClick={() => setIsDialogOpen(true)}
+              className="mt-4"
+            >
+              Open Dialog
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <Form {...dialogForm}>
+              <form onSubmit={dialogForm.handleSubmit(onDialogSubmit)}>
+                <FormField
+                  control={dialogForm.control}
+                  name="dialogField"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Dialog Field</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <DialogFooter>
+                  <Button type="button" onClick={() => setIsDialogOpen(false)}>
+                    Cancel
+                  </Button>
+                  <Button type="submit">Submit</Button>
+                </DialogFooter>
+              </form>
+            </Form>
+          </DialogContent>
+        </Dialog>
+
+        {/* Submit Button form */}
+
+        <Button className="mt-4" type="submit">
+          Submit
+        </Button>
+      </form>
+    </Form>
+  )
+  {
+    /* <Dialog>
         <DialogTrigger asChild>
           <div className="grid gap-4 w-[100px]">
             <Button variant="outline">+Add Offer</Button>
@@ -216,9 +245,8 @@ export function AddGymOffer() {
             <Button type="submit">Save changes</Button>
           </DialogFooter>
         </DialogContent>
-      </Dialog> */}
-    </>
-  )
+      </Dialog> */
+  }
 }
 
-export default AddGymOffer
+export default CreateGym

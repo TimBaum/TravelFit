@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
+import { config } from '@/config'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import { Label } from '@/components/ui/label'
@@ -134,7 +135,7 @@ export function AddGym() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
       console.log(values)
-      const response = await fetch('http://localhost:5000/gyms/create', {
+      const response = await fetch(config.BACKEND_URL + '/gyms/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -497,17 +498,14 @@ export function AddGym() {
                                 <Label>End date</Label>
                                 <Checkbox
                                   onChange={() => {
-
                                     if (isSpecialOffer) {
                                       setIsSpecialOffer(!isSpecialOffer)
                                     } else {
                                       setIsSpecialOffer(isSpecialOffer)
                                     }
-                                  }
-                                  }
+                                  }}
                                   className="ml-5 mt-4"
                                 />
-
 
                                 <Popover>
                                   <PopoverTrigger asChild>
@@ -578,7 +576,7 @@ export function AddGym() {
         <TabsContent value="photos">
           <Basic />
         </TabsContent>
-      </Tabs >
+      </Tabs>
     </>
   )
 
