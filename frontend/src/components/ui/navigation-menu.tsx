@@ -185,14 +185,13 @@ function NavigationMenuManager({ className }: { className: string }) {
             className="bg-black"
             onClick={() => navigate('/create-user-account')}
           >
-            Sign up
+            Signup
           </Button>
         </div>
       )}
       {userStatus !== 'NOT_LOGGED_IN' && (
         <NavigationMenuList>
           <Button
-            variant={'outline'}
             className="text-white bg-emerald-500 hover:text-white hover:bg-emerald-600"
             onClick={() => logout()}
           >
