@@ -87,7 +87,7 @@ export function UserAccountForm() {
 
   return (
     <Form {...form}>
-      <form className="max-w-lg mx-auto">
+      <form className="mx-auto">
         <div className="flex flex-col items-center mb-5">
           <LucidePencil size={20} />
           <span>Foto</span>
@@ -190,21 +190,22 @@ export function UserAccountForm() {
         <Button
           type="submit"
           variant="outline"
-          className="mt-4 bg-emerald-500 text-white"
-          onClick={() =>
-            form.handleSubmit((values) => onSubmit(values, 'premium'))()
-          }
-        >
-          Create premium account
-        </Button>
-        <Button
-          type="submit"
-          variant="outline"
+          className="mt-4"
           onClick={() =>
             form.handleSubmit((values) => onSubmit(values, 'basic'))()
           }
         >
           Create basic account
+        </Button>
+        <Button
+          type="submit"
+          variant="outline"
+          className="bg-emerald-500 text-white"
+          onClick={() =>
+            form.handleSubmit((values) => onSubmit(values, 'premium'))()
+          }
+        >
+          Create premium account
         </Button>
       </form>
     </Form>
