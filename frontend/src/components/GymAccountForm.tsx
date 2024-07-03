@@ -21,27 +21,38 @@ import { config } from '@/config'
 
 const phoneValidationRegex = /^\+?[1-9]\d{1,14}$/ // E.164 international phone number format
 
-const formSchema = z.object({
-  salutation: z.enum(['Mr.', 'Ms.', 'Diverse'], {
-    required_error: 'Salutation is required.',
-  }),
-  firstName: z
-    .string()
-    .min(2, { message: 'First name must be at least 2 characters.' }),
-  lastName: z
-    .string()
-    .min(2, { message: 'Last name must be at least 2 characters.' }),
-  email: z.string().email({ message: 'Invalid email address.' }),
-  phone: z
-    .string()
-    .min(10, { message: 'Phone number must be at least 10 characters.' })
-    .regex(phoneValidationRegex, {
-      message: 'Please enter a valid phone number.',
+const formSchema = z
+  .object({
+    salutation: z.enum(['Mr.', 'Ms.', 'Diverse'], {
+      required_error: 'Salutation is required.',
     }),
-  address: z
-    .string()
-    .min(5, { message: 'Address must be at least 5 characters.' }),
-})
+    firstName: z
+      .string()
+      .min(2, { message: 'First name must be at least 2 characters.' }),
+    lastName: z
+      .string()
+      .min(2, { message: 'Last name must be at least 2 characters.' }),
+    email: z.string().email({ message: 'Invalid email address.' }),
+    phone: z
+      .string()
+      .min(10, { message: 'Phone number must be at least 10 characters.' })
+      .regex(phoneValidationRegex, {
+        message: 'Please enter a valid phone number.',
+      }),
+    address: z
+      .string()
+      .min(5, { message: 'Address must be at least 5 characters.' }),
+    password: z
+      .string()
+      .min(8, { message: 'Password must be at least 8 characters.' }),
+    confirmPassword: z
+      .string()
+      .min(8, { message: 'Confirm Password must be at least 8 characters.' }),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ['confirmPassword'],
+  })
 
 export function GymAccountForm() {
   const form = useForm<z.infer<typeof formSchema>>({
@@ -53,6 +64,8 @@ export function GymAccountForm() {
       email: '',
       phone: '',
       address: '',
+      password: '',
+      confirmPassword: '',
     },
   })
 
@@ -74,6 +87,7 @@ export function GymAccountForm() {
 
       const data = await response.json()
       console.log('Gym account created successfully:', data)
+      form.control._reset()
     } catch (error) {
       console.error('Error creating gym account:', error)
     }
@@ -81,10 +95,7 @@ export function GymAccountForm() {
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="max-w-xl mx-auto p-5 border border-gray-300 rounded-md space-y-8"
-      >
+      <form onSubmit={form.handleSubmit(onSubmit)} className="mx-auto">
         <FormField
           control={form.control}
           name="salutation"
@@ -94,7 +105,11 @@ export function GymAccountForm() {
               <FormControl>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="outline">{field.value || 'Select'}</Button>
+                    <Button variant="outline" className="justify-between">
+                      {field.value || 'Select'}
+                      <span className="ml-2">&#x25BC;</span>{' '}
+                      {/* Down arrow symbol */}
+                    </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>
                     {['Mr.', 'Ms.', 'Diverse'].map((option) => (
@@ -193,11 +208,44 @@ export function GymAccountForm() {
             )}
           />
         </div>
+        <FormField
+          control={form.control}
+          name="password"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Password</FormLabel>
+              <FormControl>
+                <Input type="password" placeholder="password" {...field} />
+              </FormControl>
+              <FormMessage>
+                {form.formState.errors.password?.message}
+              </FormMessage>
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="confirmPassword"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Confirm Password</FormLabel>
+              <FormControl>
+                <Input
+                  type="password"
+                  placeholder="confirm password"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage>
+                {form.formState.errors.confirmPassword?.message}
+              </FormMessage>
+            </FormItem>
+          )}
+        />
         <Button
           type="submit"
           variant="outline"
-          className="mt-4 bg-primary"
-          onClick={() => form.handleSubmit((values) => onSubmit(values))()}
+          className="mt-4 bg-emerald-500 text-white"
         >
           Create partner account
         </Button>

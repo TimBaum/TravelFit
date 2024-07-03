@@ -30,6 +30,7 @@ export const login = async (req: Request, res: Response) => {
         email: user.email,
         displayName: user.displayName,
         salutation: user.salutation,
+        favourites: [], //TODO: implement favorites if they should be inside the token @leonie
       }
 
       const token = jwt.sign(userBody, config.JWT_SECRET, {

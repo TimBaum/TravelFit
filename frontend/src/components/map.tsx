@@ -1,7 +1,9 @@
-import React from 'react'
-import { MapContainer, TileLayer, Marker } from 'react-leaflet'
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css' // Required for the map to display correctly
+import { StarFilledIcon } from '@radix-ui/react-icons'
+import { Button } from './ui/button'
+import { useNavigate } from 'react-router-dom'
 
 // Custom icon (optional)
 const customIcon = new L.Icon({
@@ -12,11 +14,27 @@ const customIcon = new L.Icon({
   shadowSize: [41, 41],
 })
 
-const Map = ({ lat, lng }: { lat: number; lng: number }) => {
+const Map = ({
+  markers,
+  center,
+  enablePopups = false,
+}: {
+  markers: {
+    id: string
+    lat: number
+    lng: number
+    gymName: string
+    averageRating: number
+  }[]
+  center: [number, number]
+  enablePopups?: boolean
+}) => {
+  const navigate = useNavigate()
+
   return (
-    <div className="flex h-96 w-full border rounded p-2 relative m-2 z-0">
+    <div className="flex h-96 w-full border rounded p-2 relative mt-2 z-0">
       <MapContainer
-        center={[lat, lng]}
+        center={center}
         zoom={13}
         style={{ height: '100%', width: '100%' }}
         scrollWheelZoom={false}
@@ -25,7 +43,33 @@ const Map = ({ lat, lng }: { lat: number; lng: number }) => {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
-        <Marker position={[lat, lng]} icon={customIcon}></Marker>
+
+        {markers.map((marker) => (
+          <Marker
+            key={marker.id}
+            position={[marker.lat, marker.lng]}
+            icon={customIcon}
+          >
+            {enablePopups && (
+              <Popup className="">
+                <div className="flex gap-2 items-center">
+                  <div>{marker.gymName}</div>
+                  <div className="flex gap-1 items-center">
+                    <StarFilledIcon />
+                    {marker.averageRating.toFixed(1)}
+                  </div>
+                </div>
+                <Button
+                  size={'sm'}
+                  className="w-full mt-2"
+                  onClick={() => navigate(`/gyms/${marker.id}`)}
+                >
+                  Show details
+                </Button>
+              </Popup>
+            )}
+          </Marker>
+        ))}
       </MapContainer>
     </div>
   )

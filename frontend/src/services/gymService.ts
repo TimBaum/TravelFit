@@ -6,6 +6,8 @@ import { config } from '@/config'
 
 interface GymSearchResults {
   data: IGymWithId[]
+  pages: number | undefined
+  coordinates: [number, number] | undefined
   error: string | null
   loading: boolean
 }
@@ -24,6 +26,10 @@ function useGymSearch(
   page: number,
 ): GymSearchResults {
   const [data, setData] = useState<IGymWithId[]>([])
+  const [pages, setPages] = useState<number | undefined>(undefined)
+  const [coordinates, setCoordinates] = useState<[number, number] | undefined>(
+    undefined,
+  )
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(false)
 
@@ -45,14 +51,16 @@ function useGymSearch(
         setError(error.message)
         return []
       })
-      setData(response)
+      setData(response.gyms)
+      setPages(response.pages)
+      setCoordinates(response.coordinates)
       setLoading(false)
     }
 
     fetchData()
-  }, [searchString, filters, pageLimit, sortBy])
+  }, [searchString, filters, pageLimit, sortBy, page])
 
-  return { data, error, loading }
+  return { data, pages, coordinates, error, loading }
 }
 
 function useGetGym(id: string | null): GymOverview {
@@ -84,7 +92,11 @@ function useGetGym(id: string | null): GymOverview {
   return { data, error, loading }
 }
 
-function useReadAll(): GymSearchResults {
+function useReadAll(): {
+  data: IGymWithId[]
+  error: string | null
+  loading: boolean
+} {
   const [data, setData] = useState<IGymWithId[]>([])
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(false)

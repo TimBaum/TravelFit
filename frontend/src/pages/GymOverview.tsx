@@ -49,9 +49,6 @@ function GymOverview() {
         ? `${data?.address.city}`
         : '/'
 
-  const longitude = data?.address.location.coordinates[0]
-  const latitude = data?.address.location.coordinates[1]
-
   if (!id) {
     return <div>Invalid ID</div>
   }
@@ -67,6 +64,9 @@ function GymOverview() {
     { url: '/src/assets/img4.png', alt: 'Gym photo 1' },
     { url: '/src/assets/img5.png', alt: 'Gym photo 1' },
   ]
+
+  const lat = data?.address.location.coordinates[1]
+  const lng = data?.address.location.coordinates[0]
 
   return (
     <div>
@@ -151,7 +151,18 @@ function GymOverview() {
           </div>
         </div>
         {data?.address?.location?.coordinates ? (
-          <Map lat={latitude ?? 0} lng={longitude ?? 0} />
+          <Map
+            markers={[
+              {
+                id: data._id,
+                lat: lat ?? 0,
+                lng: lng ?? 0,
+                averageRating: data.averageRating,
+                gymName: data.name,
+              },
+            ]}
+            center={[lat ?? 0, lng ?? 0]}
+          />
         ) : (
           <p>No coordinates available for this gym.</p>
         )}

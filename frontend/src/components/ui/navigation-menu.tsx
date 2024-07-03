@@ -123,7 +123,9 @@ function NavigationMenuManager({ className }: { className: string }) {
 
   const navigate = useNavigate()
 
-  const { user, logout } = useAuth()
+  const { user, hasActiveSubscription, logout } = useAuth()
+
+  console.log('User has active subscription: ', hasActiveSubscription)
 
   let userStatus: 'GYM_USER' | 'USER' | 'NOT_LOGGED_IN' = 'NOT_LOGGED_IN'
 
@@ -183,13 +185,20 @@ function NavigationMenuManager({ className }: { className: string }) {
             className="bg-black"
             onClick={() => navigate('/create-user-account')}
           >
-            Signup
+            Sign up
           </Button>
         </div>
       )}
       {userStatus !== 'NOT_LOGGED_IN' && (
         <NavigationMenuList>
-          <NavigationMenuItem onClick={logout}>
+          <Button
+            variant={'outline'}
+            className="text-white bg-emerald-500 hover:text-white hover:bg-emerald-600"
+            onClick={() => logout()}
+          >
+            Logout
+          </Button>
+          <NavigationMenuItem onClick={() => navigate('/change-user-account')}>
             <NavigationMenuTrigger>
               <Avatar>
                 <AvatarFallback>
