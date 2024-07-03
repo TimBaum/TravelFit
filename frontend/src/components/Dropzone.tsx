@@ -66,7 +66,7 @@ function Dropzone() {
           )}
         </div>
         <aside>
-          <h4>Files</h4>
+          <h4 className="mt-4">Files for upload: </h4>
           <ul>{files}</ul>
         </aside>
         <Button
