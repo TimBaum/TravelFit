@@ -12,6 +12,14 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 // import { useDropzone } from 'react-dropzone'
 import {
+  Breadcrumb,
+  BreadcrumbList,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbSeparator,
+} from '@/components/ui/breadcrumb'
+
+import {
   Form,
   FormControl,
   FormDescription,
@@ -39,14 +47,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-
-import {
-  Breadcrumb,
-  BreadcrumbList,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbSeparator,
-} from '@/components/ui/breadcrumb'
 
 import {
   Dialog,
@@ -605,3 +605,114 @@ export function AddGym() {
 }
 
 export default AddGym
+
+/* <Dialog>
+        <DialogTrigger asChild>
+          <div className="grid gap-4 w-[100px]">
+            <Button variant="outline">+Add Offer</Button>
+          </div>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Add Offer</DialogTitle>
+            <DialogDescription>
+              Add price offers to your gym page.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="w-[300px]">
+            <div className="mt-2 ml-5"></div>
+          </div>
+          <div className="grid grid-cols-2">
+            <Label>Title</Label>
+            <Label>Offer type</Label>
+            <Input
+              className="w-[150px] ml-5 mt-4"
+              placeholder="Awesome offer"
+            />
+            <Select>
+              <SelectTrigger className="w-[180px] mt-4">
+                <SelectValue placeholder="Subscription" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Days">Subscription </SelectItem>
+                <SelectItem value="Weeks">OneTime</SelectItem>
+                <SelectItem value="Months">FreeTrial</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="grid gap-4">
+            <Label>Minimum term</Label>
+            <div className="grid grid-cols-2">
+              <Input id="name" defaultValue="12" className="w-[100px] ml-5" />
+              <Select>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Months" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Days">Days</SelectItem>
+                  <SelectItem value="Weeks">Weeks</SelectItem>
+                  <SelectItem value="Months">Months</SelectItem>
+                  <SelectItem value="Years">Years</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="grid grid-cols-2">
+              <Label>Price (€)</Label>
+              <Label>Payment frequency</Label>
+              <Input
+                id="price"
+                defaultValue="10"
+                className="w-[100px] ml-5  mt-4"
+              />
+              <Select>
+                <SelectTrigger className="w-[180px]  mt-4">
+                  <SelectValue placeholder="monthly" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Weekly">weekly</SelectItem>
+                  <SelectItem value="monthly">monthly</SelectItem>
+                  <SelectItem value="yearly">yearly</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="grid grid-cols-2">
+              <Label htmlFor="specialCheck">Special (limited) offer?</Label>
+              <Label>End date</Label>
+              <Checkbox
+                checked={isSpecialOffer}
+                onChange={() => setIsSpecialOffer((prevState) => !prevState)}
+                className="ml-5 mt-4"
+              />
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant={'outline'}
+                    className={cn(
+                      ' justify-start text-left font-normal',
+                      !date && 'text-muted-foreground',
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {date ? format(date, 'PPP') : <span>Pick a date</span>}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0">
+                  <Calendar
+                    mode="single"
+                    selected={date}
+                    onSelect={setDate}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
+            <div>
+              <Label htmlFor="minTerm">Description</Label>
+              <Textarea placeholder="Type your offer description here." />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button type="submit">Save changes</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog> */

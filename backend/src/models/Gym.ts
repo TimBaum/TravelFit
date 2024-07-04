@@ -1,4 +1,3 @@
-// backend/src/models/Gym.js
 import mongoose, { Document, Schema } from 'mongoose'
 import Address from './Address'
 import TimeRange from './TimeRange'
@@ -6,7 +5,7 @@ import Offer from './Offer'
 import Review from './Review'
 import { IGym } from '@models/gym'
 
-export interface IGymModel extends IGym, Document {}
+export interface IGymModel extends IGym, Document { }
 
 const GymSchema: Schema = new mongoose.Schema({
   name: { type: String, required: true },
