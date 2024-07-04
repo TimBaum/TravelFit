@@ -29,7 +29,7 @@ const formSchema = z.object({
   displayName: z
     .string()
     .min(2, { message: 'Name must be at least 2 characters.' }),
-  //email,
+  email: z.string().email({ message: 'Invalid email address.' }),
 })
 
 export function ChangeUserAccountForm() {
@@ -40,13 +40,14 @@ export function ChangeUserAccountForm() {
     | 'Diverse'
     | undefined
   const oldDisplayName = useReadUser(user?._id ?? '').data?.displayName
+  const oldEmail = useReadUser(user?._id ?? '').data?.email
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       salutation: oldSalutation,
       displayName: oldDisplayName,
-      //email: 'TODO: should email be changeable?',
+      email: oldEmail,
     },
   })
 
@@ -55,8 +56,9 @@ export function ChangeUserAccountForm() {
     form.reset({
       salutation: oldSalutation,
       displayName: oldDisplayName,
+      email: oldEmail,
     })
-  }, [oldSalutation, oldDisplayName, form.reset])
+  }, [oldSalutation, oldDisplayName, oldEmail, form.reset])
 
   async function onSubmitSaveChanges(values: z.infer<typeof formSchema>) {
     const userData = { ...values }
@@ -144,21 +146,18 @@ export function ChangeUserAccountForm() {
             </FormItem>
           )}
         />
-        {/* <FormField
+        <FormField
           control={form.control}
           name="email"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input
-                  placeholder="TODO: fetch email from backend"
-                  {...field}
-                />
+                <Input {...field} />
               </FormControl>
             </FormItem>
           )}
-        />*/}
+        />
         <Button
           type="submit"
           variant="outline"
