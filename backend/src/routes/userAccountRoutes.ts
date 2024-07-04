@@ -12,16 +12,13 @@ import auth from '../middleware/auth'
 
 const router = express.Router()
 
+// TODO: implement authetication-check
 router.post('/create', createUser)
-router.get('/get/:id', auth.isAuthorized, readUser)
-router.get('/get', auth.isAuthorized, readAllUsers)
+router.get('/get/:id', readUser)
+router.get('/get', readAllUsers)
 router.patch('/update/:id', auth.isAuthorized, updateUser)
-router.patch('/:id/favourites/add', auth.isAuthorized, addFavourite)
-router.patch(
-  '/:id/favourites/delete/:favourite',
-  auth.isAuthorized,
-  deleteFavourite,
-)
+router.patch('/:id/favourites/add', addFavourite)
+router.patch('/:id/favourites/delete/:favourite', deleteFavourite)
 router.delete('/delete/:id', auth.isAuthorized, deleteUser)
 
 export default router
