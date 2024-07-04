@@ -1,4 +1,3 @@
-import { config } from '@/config'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import ChangeUserAccountForm from '@/components/ChangeUserAccountForm'
 import PayPalButton from '@/components/PayPalButton'
@@ -7,28 +6,7 @@ import { Button } from '@/components/ui/button'
 import { cancelSubscription } from '@/services/subscriptionService'
 import { useState } from 'react'
 
-async function updateUserAccount(id: string, userData: string) {
-  try {
-    const response = await fetch(config.BACKEND_URL + '/users/update/' + id, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(userData),
-    })
-
-    if (!response.ok) {
-      throw new Error('Failed to update user')
-    }
-
-    const data = await response.json()
-    console.log('User updated successfully:', data)
-  } catch (error) {
-    console.error('Error updating user:', error)
-  }
-}
-
-function ChangeUserAccount() {
+function ChangeGymAccount() {
   const { hasActiveSubscription, checkSubscriptionStatus } = useAuth()
   const [isLoading, setIsLoading] = useState(false)
 
@@ -82,4 +60,4 @@ function ChangeUserAccount() {
   )
 }
 
-export default ChangeUserAccount
+export default ChangeGymAccount
