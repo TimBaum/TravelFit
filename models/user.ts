@@ -24,3 +24,20 @@ export interface IUser {
 export interface IUserWithId extends IUser {
   _id: string
 }
+
+export interface IGymUser {
+  email: string
+  firstName: string
+  lastName: string
+  salutation: string
+  address: string
+  phone: string
+  password: string
+  createdAt: Date
+  updatedAt: Date
+  favourites: string[]
+}
+
+export interface IGymUserWithId extends IGymUser {
+  _id: string
+}

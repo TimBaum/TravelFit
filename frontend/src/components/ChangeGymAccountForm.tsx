@@ -181,7 +181,7 @@ export function ChangeGymAccountForm() {
         />
         <FormField
           control={form.control}
-          name="displayName"
+          name="firstName"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Name</FormLabel>
@@ -189,7 +189,7 @@ export function ChangeGymAccountForm() {
                 <Input {...field} />
               </FormControl>
               <FormMessage>
-                {form.formState.errors.displayName?.message}
+                {form.formState.errors.firstName?.message}
               </FormMessage>
             </FormItem>
           )}
