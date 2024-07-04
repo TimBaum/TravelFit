@@ -109,6 +109,12 @@ export function ChangeGymAccountForm() {
     const userData = { ...values }
 
     try {
+      const testString =
+        config.BACKEND_URL + '/gymAccounts/update/' + user?._id ?? ''
+      console.log(
+        'string that is sent to backend for changing gym account',
+        testString,
+      )
       const response = await fetch(
         config.BACKEND_URL + '/gymAccounts/update/' + user?._id ?? '',
         {
@@ -184,12 +190,42 @@ export function ChangeGymAccountForm() {
           name="firstName"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Name</FormLabel>
+              <FormLabel>First name</FormLabel>
               <FormControl>
                 <Input {...field} />
               </FormControl>
               <FormMessage>
                 {form.formState.errors.firstName?.message}
+              </FormMessage>
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="lastName"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Last name</FormLabel>
+              <FormControl>
+                <Input {...field} />
+              </FormControl>
+              <FormMessage>
+                {form.formState.errors.lastName?.message}
+              </FormMessage>
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="address"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Address</FormLabel>
+              <FormControl>
+                <Input {...field} />
+              </FormControl>
+              <FormMessage>
+                {form.formState.errors.address?.message}
               </FormMessage>
             </FormItem>
           )}
@@ -203,6 +239,19 @@ export function ChangeGymAccountForm() {
               <FormControl>
                 <Input {...field} />
               </FormControl>
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="phone"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Phone</FormLabel>
+              <FormControl>
+                <Input {...field} />
+              </FormControl>
+              <FormMessage>{form.formState.errors.phone?.message}</FormMessage>
             </FormItem>
           )}
         />
