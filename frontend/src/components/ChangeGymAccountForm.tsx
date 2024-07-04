@@ -24,30 +24,64 @@ import { useAuth } from '@/provider/AuthProvider'
 import { useReadUser } from '@/services/userService'
 import { useEffect } from 'react'
 
-const formSchema = z.object({
-  salutation: z.enum(['Mr.', 'Ms.', 'Diverse'], {}),
-  displayName: z
-    .string()
-    .min(2, { message: 'Name must be at least 2 characters.' }),
-  email: z.string().email({ message: 'Invalid email address.' }),
-})
+//TODO: this is a code duplicate, see GymAccountForm -> refactor
+const phoneValidationRegex = /^\+?[1-9]\d{1,14}$/ // E.164 international phone number format
 
-export function ChangeUserAccountForm() {
+const formSchema = z
+  .object({
+    salutation: z.enum(['Mr.', 'Ms.', 'Diverse'], {
+      required_error: 'Salutation is required.',
+    }),
+    firstName: z
+      .string()
+      .min(2, { message: 'First name must be at least 2 characters.' }),
+    lastName: z
+      .string()
+      .min(2, { message: 'Last name must be at least 2 characters.' }),
+    email: z.string().email({ message: 'Invalid email address.' }),
+    phone: z
+      .string()
+      .min(10, { message: 'Phone number must be at least 10 characters.' })
+      .regex(phoneValidationRegex, {
+        message: 'Please enter a valid phone number.',
+      }),
+    address: z
+      .string()
+      .min(5, { message: 'Address must be at least 5 characters.' }),
+    password: z
+      .string()
+      .min(8, { message: 'Password must be at least 8 characters.' }),
+    confirmPassword: z
+      .string()
+      .min(8, { message: 'Confirm Password must be at least 8 characters.' }),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ['confirmPassword'],
+  })
+
+export function ChangeGymAccountForm() {
   const { user } = useAuth()
   const oldSalutation = useReadUser(user?._id ?? '').data?.salutation as
     | 'Mr.'
     | 'Ms.'
     | 'Diverse'
     | undefined
-  const oldDisplayName = useReadUser(user?._id ?? '').data?.displayName
+  const oldFirstName = useReadUser(user?._id ?? '').data?.firstName
+  const oldLastName = useReadUser(user?._id ?? '').data?.lastName
+  const oldAddress = useReadUser(user?._id ?? '').data?.address
   const oldEmail = useReadUser(user?._id ?? '').data?.email
+  const oldPhone = useReadUser(user?._id ?? '').data?.phone
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       salutation: oldSalutation,
-      displayName: oldDisplayName,
+      firstName: oldFirstName,
+      lastName: oldLastName,
+      address: oldAddress,
       email: oldEmail,
+      phone: oldPhone,
     },
   })
 
@@ -55,17 +89,28 @@ export function ChangeUserAccountForm() {
   useEffect(() => {
     form.reset({
       salutation: oldSalutation,
-      displayName: oldDisplayName,
+      firstName: oldFirstName,
+      lastName: oldLastName,
+      address: oldAddress,
       email: oldEmail,
+      phone: oldPhone,
     })
-  }, [oldSalutation, oldDisplayName, oldEmail, form.reset])
+  }, [
+    oldSalutation,
+    oldFirstName,
+    oldLastName,
+    oldAddress,
+    oldEmail,
+    oldPhone,
+    form.reset,
+  ])
 
   async function onSubmitSaveChanges(values: z.infer<typeof formSchema>) {
     const userData = { ...values }
 
     try {
       const response = await fetch(
-        config.BACKEND_URL + '/users/update/' + user?._id ?? '',
+        config.BACKEND_URL + '/gymAccounts/update/' + user?._id ?? '',
         {
           method: 'POST',
           headers: {
@@ -76,13 +121,13 @@ export function ChangeUserAccountForm() {
       )
 
       if (!response.ok) {
-        throw new Error('Failed to change user')
+        throw new Error('Failed to change gym account')
       }
 
       const data = await response.json()
-      console.log('User changed successfully:', data)
+      console.log('Gym account changed successfully:', data)
     } catch (error) {
-      console.error('Error changing user:', error)
+      console.error('Error changing gym account:', error)
     }
   }
 
@@ -189,4 +234,4 @@ export function ChangeUserAccountForm() {
   )
 }
 
-export default ChangeUserAccountForm
+export default ChangeGymAccountForm
