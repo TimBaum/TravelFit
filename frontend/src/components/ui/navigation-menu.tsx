@@ -132,6 +132,15 @@ function NavigationMenuManager({ className }: { className: string }) {
   // TODO: Implement user roles
   if (user) userStatus = 'USER'
 
+  function navigateToAccount() {
+    //TODO: OUtcommented just for testing! Uncomment later on
+    // if (userStatus == 'USER') {
+    // navigate('/change-user-account')
+    //} else if (userStatus == 'GYM_USER') {
+    navigate('/change-gym-account')
+    //}
+  }
+
   return (
     <NavigationMenu
       className={`navigationmenu w-full bg-emerald-500 text-black ${className} flex align-center justify-between drop-shadow-md sticky top-0 z-50`}
@@ -197,16 +206,7 @@ function NavigationMenuManager({ className }: { className: string }) {
           >
             Logout
           </Button>
-          <NavigationMenuItem onClick={() => navigate('/change-gym-account')}>
-            <NavigationMenuTrigger>
-              <Avatar>
-                <AvatarFallback>
-                  <PersonIcon className="icon" />
-                </AvatarFallback>
-              </Avatar>
-            </NavigationMenuTrigger>
-          </NavigationMenuItem>
-          <NavigationMenuItem onClick={() => navigate('/change-user-account')}>
+          <NavigationMenuItem onClick={() => navigateToAccount()}>
             <NavigationMenuTrigger>
               <Avatar>
                 <AvatarFallback>

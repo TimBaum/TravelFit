@@ -22,6 +22,7 @@ import AuthProvider, { useAuth } from './provider/AuthProvider'
 import { Toaster } from './components/ui/sonner'
 import DeleteGymAccounts from './pages/DeleteGymAccounts'
 import Favourites from './pages/Favourites'
+import ChangeGymAccount from './pages/ChangeGymAccount'
 
 const App: React.FC = () => {
   return (
@@ -47,6 +48,10 @@ const App: React.FC = () => {
                 <Route
                   path="/change-user-account/"
                   element={<ChangeUserAccount />}
+                />
+                <Route
+                  path="/change-gym-account/"
+                  element={<ChangeGymAccount />}
                 />
                 {/* DeleteUserAccounts is a page for us for testing that the user account deletion works. This option has to be removed in the final app. */}
                 <Route
