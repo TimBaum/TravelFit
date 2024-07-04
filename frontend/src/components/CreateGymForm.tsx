@@ -4,6 +4,9 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
+import OfferTile from '@/components/Offer'
+import { IOffer } from '@models/offer'
+
 
 /* UI imports */
 import { Button } from '@/components/ui/button'
@@ -34,53 +37,69 @@ const formSchema = z.object({
 
 /* Dialog form checks */
 const dialogFormSchema = z.object({
-  dialogField: z.string().min(2, {
-    message: 'Field is required.',
-  }),
+  title: z.string().min(2, { message: 'Field is required.', }),
+  description: z.string().min(2, { message: 'Field is required.', }),
+  // TODO Rest: type, priceEuro,validityDays,startDate,endDate
 })
 
 /* Component content */
 export function CreateGymForm() {
-  const [count, setCount] = React.useState(0); //delete
-  const increment = () => {
-    setCount(count + 1);
-  };
-  //constants
   const navigate = useNavigate()
+  // state for the dialog form open/close
+  const [isDialogOpen, setIsDialogOpen] = React.useState(false)
+  // offer array 
+  const [offers, setOffers] = React.useState<IOffer[]>([]);
+
+  //form default values
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
       gymname: '',
+      //TODO: insert other values
     },
   })
-
   const dialogForm = useForm({
     resolver: zodResolver(dialogFormSchema),
     defaultValues: {
-      dialogField: '',
+      title: '',
+      type: 'Special',
+      description: '',
+      priceEuro: 29.99,
+      validityDays: 7,
+      startDate: new Date(),
+      endDate: new Date('2024-06-04T11:00:12.070Z'),
     },
   })
 
-  const [isDialogOpen, setIsDialogOpen] = React.useState(false)
+  /* Dialog submission + offer array */
+  async function onDialogSubmit(values: z.infer<typeof dialogFormSchema>) {
+    console.log(values)
+    const newOffer: IOffer = {
+      title: values.title,
+      type: 'Special',
+      description: values.description,
+      priceEuro: 99.99,
+      validityDays: 7,
+      startDate: new Date(),
+      endDate: new Date('2222-06-04T11:00:12.070Z'),
+    };
+    setOffers([...offers, newOffer]);
+    setIsDialogOpen(false)
+  }
 
   /* Form submission */
   async function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values)
+    // TODO: send data to backend
     navigate('/my-gyms')
-  }
-
-  /* Dialog submission */
-  async function onDialogSubmit(values: z.infer<typeof dialogFormSchema>) {
-    console.log(values)
-
-    setIsDialogOpen(false)
   }
 
   /* Render */
   return (
+    /* one form that contains all the fields */
+
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
-        <FormLabel>Hallo!{count}</FormLabel>
         <FormField
           control={form.control}
           name="gymname"
@@ -96,25 +115,47 @@ export function CreateGymForm() {
           )}
         />
 
+        {/* OfferTile maps over the offer-array filled from the dialog form */}
+        <h1 className="text-2xl font-bold mb-2 mt-3">Offers</h1>
+        {offers.map((offer, index) => (
+          <OfferTile key={index} offer={offer} />
+        ))}
+
+        {/* The dialog form that fills the offer array */}
+
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
             <Button
               type="button"
               onClick={() => setIsDialogOpen(true)}
-              className="mt-4"
-            >
-              Open Dialog
-            </Button>
+              className="grid gap-4 mt-4"
+            > + Add Offer</Button>
           </DialogTrigger>
+
+          {/* The fields of the dialog form */}
+
           <DialogContent>
             <Form {...dialogForm}>
               <form onSubmit={dialogForm.handleSubmit(onDialogSubmit)}>
                 <FormField
                   control={dialogForm.control}
-                  name="dialogField"
+                  name="title"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Dialog Field</FormLabel>
+                      <FormLabel>Title</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={dialogForm.control}
+                  name="description"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Description</FormLabel>
                       <FormControl>
                         <Input {...field} />
                       </FormControl>
@@ -132,8 +173,8 @@ export function CreateGymForm() {
             </Form>
           </DialogContent>
         </Dialog>
-        <Button onClick={increment}>Increment</Button>
-        {/* Submit Button form */}
+
+        {/* Submit Button for the whole form */}
 
         <Button className="mt-4" type="submit">
           Submit
