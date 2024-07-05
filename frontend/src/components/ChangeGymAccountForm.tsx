@@ -86,6 +86,7 @@ export function ChangeGymAccountForm() {
   })
 
   //useEffect is necessary because the default values are not available when rendering the form and are thus not displayed without useEffect
+  //TODO: show new values instead of old values
   useEffect(() => {
     form.reset({
       salutation: oldSalutation,

@@ -1,11 +1,12 @@
 import { config } from '@/config'
 import { fetchJSON } from '@/services/utils'
 import { PublicUser } from '@models/user'
+import { PublicGymAccount } from '@models/gymAccount'
 import { useContext, createContext, ReactNode, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 interface AuthContextType {
-  user: PublicUser | null
+  user: PublicUser | PublicGymAccount | null
   hasActiveSubscription: boolean | null
   login: (email: string, password: string) => Promise<void>
   logout: () => void
@@ -21,7 +22,7 @@ const AuthContext = createContext<AuthContextType>({
 })
 
 const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<PublicUser | null>(
+  const [user, setUser] = useState<PublicUser | PublicGymAccount | null>(
     localStorage.getItem('token')
       ? decodeToken(localStorage.getItem('token')!)
       : null,
