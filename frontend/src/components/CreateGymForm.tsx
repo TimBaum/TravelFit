@@ -6,7 +6,7 @@ import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import OfferTile from '@/components/Offer'
 import { IOffer } from '@models/offer'
-
+import { config } from '@/config'
 
 /* UI imports */
 import { Button } from '@/components/ui/button'
@@ -37,8 +37,8 @@ const formSchema = z.object({
 
 /* Dialog form checks */
 const dialogFormSchema = z.object({
-  title: z.string().min(2, { message: 'Field is required.', }),
-  description: z.string().min(2, { message: 'Field is required.', }),
+  title: z.string().min(2, { message: 'Field is required.' }),
+  description: z.string().min(2, { message: 'Field is required.' }),
   // TODO Rest: type, priceEuro,validityDays,startDate,endDate
 })
 
@@ -47,8 +47,8 @@ export function CreateGymForm() {
   const navigate = useNavigate()
   // state for the dialog form open/close
   const [isDialogOpen, setIsDialogOpen] = React.useState(false)
-  // offer array 
-  const [offers, setOffers] = React.useState<IOffer[]>([]);
+  // offer array
+  const [offers, setOffers] = React.useState<IOffer[]>([])
 
   //form default values
   const form = useForm({
@@ -72,7 +72,12 @@ export function CreateGymForm() {
   })
 
   /* Dialog submission + offer array */
-  async function onDialogSubmit(values: z.infer<typeof dialogFormSchema>) {
+  async function onDialogSubmit(
+    event: React.FormEvent<HTMLFormElement>, //to prevent default form submission when submitting dialog offer
+    values: z.infer<typeof dialogFormSchema>,
+  ) {
+    event.preventDefault() // Verhindert das Standardverhalten des Formulars
+    event.stopPropagation() // Stoppt die Weitergabe des Events an übergeordnete Elemente
     console.log(values)
     const newOffer: IOffer = {
       title: values.title,
@@ -82,15 +87,63 @@ export function CreateGymForm() {
       validityDays: 7,
       startDate: new Date(),
       endDate: new Date('2222-06-04T11:00:12.070Z'),
-    };
-    setOffers([...offers, newOffer]);
+    }
+    setOffers([...offers, newOffer])
+
     setIsDialogOpen(false)
   }
 
   /* Form submission */
   async function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values)
+
     // TODO: send data to backend
+    //const gymData = { ...values }
+    const mockGym = {
+      name: 'Fitness World',
+      highlights: ['Sauna', 'Pool', 'Personal trainings'],
+      websiteLink: 'https://www.fitnessworld.com',
+      pictures: [
+        'https://example.com/picture1.jpg',
+        'https://example.com/picture2.jpg',
+      ],
+      averageRating: 4.5,
+      cheapestOfferPrice: 19.99,
+      address: {
+        street: '123 Fitness St',
+        city: 'Workout City',
+        state: 'Muscle State',
+        zipCode: '12345',
+        country: 'Gainsland',
+      },
+      openingHours: [
+        { start: '06:00', end: '22:00', dayOfWeek: 'Monday' },
+        { start: '06:00', end: '22:00', dayOfWeek: 'Tuesday' },
+        { start: '06:00', end: '22:00', dayOfWeek: 'Wednesday' },
+        { start: '06:00', end: '22:00', dayOfWeek: 'Thursday' },
+        { start: '06:00', end: '22:00', dayOfWeek: 'Friday' },
+        { start: '08:00', end: '20:00', dayOfWeek: 'Saturday' },
+        { start: '08:00', end: '20:00', dayOfWeek: 'Sunday' },
+      ],
+      offers: [],
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }
+
+    try {
+      const response = await fetch(config.BACKEND_URL + '/gyms/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(mockGym),
+      })
+      const data = await response.json()
+      console.log('Gym created:', data)
+      form.control._reset()
+    } catch (error) {
+      console.log('Error creating gym:', error)
+    }
     navigate('/my-gyms')
   }
 
@@ -129,7 +182,10 @@ export function CreateGymForm() {
               type="button"
               onClick={() => setIsDialogOpen(true)}
               className="grid gap-4 mt-4"
-            > + Add Offer</Button>
+            >
+              {' '}
+              + Add Offer
+            </Button>
           </DialogTrigger>
 
           {/* The fields of the dialog form */}
