@@ -67,19 +67,26 @@ function GymOverview() {
 
   async function fetchImages() {
     try {
-      const response = await fetch('/gyms/fetch-images')
+      const response = await fetch('/gyms/fetch-images/gymname')
       if (!response.ok) {
         throw new Error('Failed to fetch images')
       }
       const results = await response.json()
       console.log('Fetched images:', results)
-      return results.resources
+
+      // Get the first five images
+      const firstFiveImages = results.resources.slice(0, 5)
+      console.log('First five images:', firstFiveImages)
+
+      return firstFiveImages
     } catch (error) {
       console.error(error)
     }
   }
 
-  fetchImages().then((data) => console.log(data))
+  fetchImages().then((images) => {
+    console.log('fetch images response', images)
+  })
 
   const lat = data?.address.location.coordinates[1]
   const lng = data?.address.location.coordinates[0]
