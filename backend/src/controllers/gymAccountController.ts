@@ -3,6 +3,7 @@ import { error } from 'console'
 import GymAccount from '../models/GymAccount'
 import { Request, Response } from 'express'
 import mongoose from 'mongoose'
+import { PublicGymAccount } from '@models/gymAccount'
 
 export const createGymAccount = async (req: Request, res: Response) => {
   console.log(
@@ -45,7 +46,16 @@ export const readGymAccount = async (req: Request, res: Response) => {
     if (!gymAccount) {
       return res.status(404).json({ message: 'Gym account not found' })
     }
-    return res.status(200).json({ gymAccount })
+    const publicGymAccount: PublicGymAccount = {
+      _id: gymAccount._id.toString() || '',
+      firstName: gymAccount.firstName || '',
+      lastName: gymAccount.lastName || '',
+      salutation: gymAccount.salutation || '',
+      email: gymAccount.email || '',
+      favourites: gymAccount.favourites.map((fav) => fav.toString()),
+      gyms: gymAccount.gyms.map((gym) => gym.toString()),
+    }
+    return res.status(200).json({ publicGymAccount })
   } catch (err) {
     return res.status(500).json({ error })
   }
