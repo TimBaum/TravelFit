@@ -5,7 +5,6 @@ import { ChevronDown } from 'lucide-react'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { PersonIcon } from '@radix-ui/react-icons'
 import '@/index.css'
-
 import { cn } from '@/lib/utils'
 import { Button } from './button'
 import { useNavigate } from 'react-router-dom'
@@ -123,22 +122,16 @@ function NavigationMenuManager({ className }: { className: string }) {
 
   const navigate = useNavigate()
 
-  const { user, hasActiveSubscription, logout } = useAuth()
+  const { user, accountType, hasActiveSubscription, logout } = useAuth()
 
   console.log('User has active subscription: ', hasActiveSubscription)
 
-  let userStatus: 'GYM_USER' | 'USER' | 'NOT_LOGGED_IN' = 'NOT_LOGGED_IN'
-
-  // TODO: Implement user roles
-  if (user) userStatus = 'USER'
-
   function navigateToAccount() {
-    //TODO: OUtcommented just for testing! Uncomment later on
-    // if (userStatus == 'USER') {
-    // navigate('/change-user-account')
-    //} else if (userStatus == 'GYM_USER') {
-    navigate('/change-gym-account')
-    //}
+    if (accountType == 'USER') {
+      navigate('/change-user-account')
+    } else if (accountType == 'GYM_USER') {
+      navigate('/change-gym-account')
+    }
   }
 
   return (
@@ -167,7 +160,7 @@ function NavigationMenuManager({ className }: { className: string }) {
             </NavigationMenuLink>
           </NavigationMenuItem>
         )}
-        {userStatus === 'GYM_USER' && (
+        {accountType === 'GYM_USER' && (
           <NavigationMenuItem>
             <NavigationMenuLink
               className={navigationMenuTriggerStyle()}
@@ -178,7 +171,7 @@ function NavigationMenuManager({ className }: { className: string }) {
           </NavigationMenuItem>
         )}
       </NavigationMenuList>
-      {userStatus === 'NOT_LOGGED_IN' && (
+      {accountType === 'NOT_LOGGED_IN' && (
         <div className="flex gap-2">
           <Button
             variant={'outline'}
@@ -198,7 +191,7 @@ function NavigationMenuManager({ className }: { className: string }) {
           </Button>
         </div>
       )}
-      {userStatus !== 'NOT_LOGGED_IN' && (
+      {accountType !== 'NOT_LOGGED_IN' && (
         <NavigationMenuList>
           <Button
             className="text-white bg-emerald-500 hover:text-white hover:bg-emerald-600"

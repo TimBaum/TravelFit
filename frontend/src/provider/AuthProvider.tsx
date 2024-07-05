@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom'
 interface AuthContextType {
   user: PublicUser | PublicGymAccount | null
   hasActiveSubscription: boolean | null
+  accountType: 'GYM_USER' | 'USER' | 'NOT_LOGGED_IN'
   login: (email: string, password: string) => Promise<void>
   logout: () => void
   checkSubscriptionStatus: () => Promise<void>
@@ -16,6 +17,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType>({
   user: null,
   hasActiveSubscription: false,
+  accountType: 'NOT_LOGGED_IN',
   login: async () => {},
   logout: () => {},
   checkSubscriptionStatus: async () => {},
@@ -31,6 +33,17 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [hasActiveSubscription, setHasActiveSubscription] = useState<
     boolean | null
   >(null)
+
+  let accountType: string
+
+  if (!user) {
+    accountType = 'NOT_LOGGED_IN'
+  } else if ('displayName' in user) {
+    accountType = 'USER'
+  } // 'displayName' exists in PublicUser but not in PublicGymAccount
+  else {
+    accountType = 'GYM_USER'
+  }
 
   checkSubscriptionStatus()
 
@@ -74,6 +87,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     <AuthContext.Provider
       value={{
         user,
+        accountType,
         login,
         logout,
         hasActiveSubscription,
