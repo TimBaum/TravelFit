@@ -65,6 +65,22 @@ function GymOverview() {
     { url: '/src/assets/img5.png', alt: 'Gym photo 1' },
   ]
 
+  async function fetchImages() {
+    try {
+      const response = await fetch('/gyms/fetch-images')
+      if (!response.ok) {
+        throw new Error('Failed to fetch images')
+      }
+      const results = await response.json()
+      console.log('Fetched images:', results)
+      return results.resources
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  fetchImages().then((data) => console.log(data))
+
   const lat = data?.address.location.coordinates[1]
   const lng = data?.address.location.coordinates[0]
 

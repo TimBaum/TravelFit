@@ -193,6 +193,32 @@ const deleteGym = (req: Request, res: Response, next: NextFunction) => {
     })
 }
 
+export const fetchImages = async (req: Request, res: Response) => {
+  const cloudName = 'travelfit'
+  const apiKey = process.env.CLOUDINARY_KEY
+  const apiSecret = process.env.CLOUDINARY_SECRET
+  const url = `https://api.cloudinary.com/v1_1/${cloudName}/resources/image`
+
+  try {
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        Authorization:
+          'Basic ' + Buffer.from(`${apiKey}:${apiSecret}`).toString('base64'),
+      },
+    })
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch images')
+    }
+
+    const results = await response.json()
+    res.json(results)
+  } catch (error) {
+    res.status(500).json({ error })
+  }
+}
+
 export default {
   readAll,
   createGym,
@@ -200,4 +226,5 @@ export default {
   addReview,
   searchGyms,
   deleteGym,
+  fetchImages,
 }

@@ -10,5 +10,6 @@ router.get('/get/:id', controller.getGym)
 router.post('/search', controller.searchGyms)
 router.patch('/:id/reviews', controller.addReview)
 router.delete('/:id', controller.deleteGym)
+router.get('/fetch-images', controller.fetchImages)
 
 export = router
