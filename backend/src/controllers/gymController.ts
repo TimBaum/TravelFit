@@ -193,10 +193,29 @@ const deleteGym = (req: Request, res: Response, next: NextFunction) => {
     })
 }
 
+interface CloudinaryImage {
+  asset_id: string
+  public_id: string
+  format: string
+  version: number
+  resource_type: string
+  type: string
+  created_at: string
+  bytes: number
+  width: number
+  height: number
+  asset_folder: string
+  display_name: string
+  url: string
+  secure_url: string
+  [key: string]: any // To handle any additional properties that might be present
+}
+
 export const fetchImages = async (req: Request, res: Response) => {
   const cloudName = 'travelfit'
   const apiKey = process.env.CLOUDINARY_KEY
   const apiSecret = process.env.CLOUDINARY_SECRET
+  const gymId = req.params.id
   const url = `https://api.cloudinary.com/v1_1/${cloudName}/resources/image`
 
   try {
@@ -213,7 +232,10 @@ export const fetchImages = async (req: Request, res: Response) => {
     }
 
     const results = await response.json()
-    res.json(results)
+    const filteredImages = results.resources.filter((image: CloudinaryImage) =>
+      image.public_id.includes(gymId),
+    )
+    res.json(filteredImages)
   } catch (error) {
     res.status(500).json({ error })
   }
