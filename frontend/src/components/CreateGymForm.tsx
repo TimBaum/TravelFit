@@ -73,11 +73,11 @@ export function CreateGymForm() {
 
   /* Dialog submission + offer array */
   async function onDialogSubmit(
-    event: React.FormEvent<HTMLFormElement>, //to prevent default form submission when submitting dialog offer
+    // event: React.FormEvent<HTMLFormElement>, //to prevent default form submission when submitting dialog offer
     values: z.infer<typeof dialogFormSchema>,
   ) {
-    event.preventDefault() // Verhindert das Standardverhalten des Formulars
-    event.stopPropagation() // Stoppt die Weitergabe des Events an übergeordnete Elemente
+    // event.preventDefault() // Verhindert das Standardverhalten des Formulars
+    // event.stopPropagation() // Stoppt die Weitergabe des Events an übergeordnete Elemente
     console.log(values)
     const newOffer: IOffer = {
       title: values.title,
@@ -97,7 +97,7 @@ export function CreateGymForm() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values)
 
-    // TODO: send data to backend
+    // send data to backend
     //const gymData = { ...values }
     const mockGym = {
       name: 'Fitness World',
