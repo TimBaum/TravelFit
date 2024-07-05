@@ -34,7 +34,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     boolean | null
   >(null)
 
-  let accountType: string
+  let accountType: 'GYM_USER' | 'USER' | 'NOT_LOGGED_IN'
 
   if (!user) {
     accountType = 'NOT_LOGGED_IN'

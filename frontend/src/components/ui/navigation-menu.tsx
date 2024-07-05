@@ -125,6 +125,7 @@ function NavigationMenuManager({ className }: { className: string }) {
   const { user, accountType, hasActiveSubscription, logout } = useAuth()
 
   console.log('User has active subscription: ', hasActiveSubscription)
+  console.log('AccountType is: ', accountType)
 
   function navigateToAccount() {
     if (accountType == 'USER') {
