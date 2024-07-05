@@ -14,8 +14,7 @@ export const createUser = async (req: Request, res: Response) => {
   try {
     const newUser = new User({
       _id: new mongoose.Types.ObjectId(),
-      // TODO: check if email already exists
-      email,
+      email, // TODO: check if email already exists
       displayName,
       salutation,
       password: hashedPassword,
