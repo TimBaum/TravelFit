@@ -44,16 +44,29 @@ const PhotoTile = ({
           </DialogHeader>
           <div className="grid gap-4 py-4 grid-cols-2">
             {photos.map((photo, index) => (
-              <div
-                key={index}
-                className="rectangle relative drop-shadow-md rounded-lg overflow-hidden"
-              >
-                <img
-                  src={photo.url}
-                  alt={photo.alt}
-                  className="h-full w-full object-cover"
-                />
-              </div>
+              <Dialog key={index}>
+                <DialogTrigger asChild>
+                  <div className="rectangle relative drop-shadow-md rounded-lg overflow-hidden cursor-pointer">
+                    <img
+                      src={photo.url}
+                      alt={photo.alt}
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
+                </DialogTrigger>
+                <DialogContent className="max-w-[800px]">
+                  <DialogHeader>
+                    <DialogTitle>{photo.alt || 'Gym Picture'}</DialogTitle>
+                  </DialogHeader>
+                  <div className="flex justify-center">
+                    <img
+                      src={photo.url}
+                      alt={photo.alt}
+                      className="max-h-[90vh] w-auto object-contain"
+                    />
+                  </div>
+                </DialogContent>
+              </Dialog>
             ))}
           </div>
         </DialogContent>
