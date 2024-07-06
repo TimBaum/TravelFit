@@ -37,7 +37,7 @@ function GymOverview() {
 
   const { data, error, loading } = useGetGym(GymId)
   const { data: images } = useFetchImages('gymphoto')
-  console.log(images)
+  const showImages = (images ?? []).slice(0, 5)
   const gymname = data?.name
   const previousPage = useLocation().state?.from
   const previousPagePath =
@@ -99,7 +99,7 @@ function GymOverview() {
       {/* Basic structure for the rest of the page */}
       <div>
         {/* Basic structure for the rest of the page */}
-        <PhotoGallery photos={images ?? []} />
+        <PhotoGallery photos={showImages} />
         <div className="flex gap-2">
           {/* left side */}
           <div className="w-2/3 mr-10">
