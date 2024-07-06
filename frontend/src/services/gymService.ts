@@ -138,7 +138,14 @@ function useFetchImages(id: string | null) {
         return []
       })
 
-      setData(response)
+      const photos = response.map((image: CloudinaryImage) => {
+        return {
+          url: image.secure_url,
+          alt: image.display_name,
+        }
+      })
+
+      setData(photos)
       setLoading(false)
     }
 

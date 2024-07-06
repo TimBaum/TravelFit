@@ -7,14 +7,10 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
-
-interface Photo {
-  url: string
-  alt?: string
-}
+import { CloudinaryImage } from '@models/cloudinaryImage'
 
 interface PhotoGalleryProps {
-  photos: Photo[]
+  photos: CloudinaryImage[]
 }
 
 const PhotoTile = ({
