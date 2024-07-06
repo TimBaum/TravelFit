@@ -4,6 +4,7 @@ import Gym from '../models/Gym'
 import Review from '../models/Review'
 import { FilterState } from '@models/filter'
 import cache from '../cache'
+import CloudinaryImage from '../models/CloudinaryImage'
 
 const createGym = (req: Request, res: Response, next: NextFunction) => {
   const gymData = req.body
@@ -193,6 +194,36 @@ const deleteGym = (req: Request, res: Response, next: NextFunction) => {
     })
 }
 
+export const fetchImages = async (req: Request, res: Response) => {
+  const cloudName = 'travelfit'
+  const apiKey = process.env.CLOUDINARY_KEY
+  const apiSecret = process.env.CLOUDINARY_SECRET
+  const gymId = req.params.id
+  const url = `https://api.cloudinary.com/v1_1/${cloudName}/resources/image`
+
+  try {
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        Authorization:
+          'Basic ' + Buffer.from(`${apiKey}:${apiSecret}`).toString('base64'),
+      },
+    })
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch images')
+    }
+
+    const results = await response.json()
+    const filteredImages = results.resources.filter((image: CloudinaryImage) =>
+      image.public_id.includes(gymId),
+    )
+    res.json(filteredImages)
+  } catch (error) {
+    res.status(500).json({ error })
+  }
+}
+
 export default {
   readAll,
   createGym,
@@ -200,4 +231,5 @@ export default {
   addReview,
   searchGyms,
   deleteGym,
+  fetchImages,
 }

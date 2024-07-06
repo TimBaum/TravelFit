@@ -13,6 +13,7 @@ import HighlightBadge from '@/components/HighlightBadge'
 import { Button } from '@/components/ui/button'
 import OfferTile from '@/components/Offer'
 import Map from '@/components/map'
+import { CloudinaryImage } from '@models/cloudinaryImage'
 
 import '@/styles/gym-overview.css'
 
@@ -26,6 +27,7 @@ import '@/index.css'
 import { useAuth } from '@/provider/AuthProvider'
 import { StarFilledIcon } from '@radix-ui/react-icons'
 import Dropzone from '@/components/Dropzone'
+import { fetchJSON } from '@/services/utils'
 
 function GymOverview() {
   const { id } = useParams()
@@ -65,6 +67,25 @@ function GymOverview() {
     { url: '/src/assets/img4.png', alt: 'Gym photo 1' },
     { url: '/src/assets/img5.png', alt: 'Gym photo 1' },
   ]
+
+  async function fetchImages() {
+    try {
+      const response = await fetchJSON(`/gyms/fetch-images/gymname`, {
+        method: 'GET',
+      })
+      // Extract the necessary information
+      const photos = response.map((item: CloudinaryImage) => ({
+        url: item.secure_url,
+        alt: item.public_id,
+      }))
+
+      return photos
+    } catch (error) {
+      console.error('Error fetching images: ', error)
+    }
+  }
+
+  fetchImages()
 
   const lat = data?.address.location.coordinates[1]
   const lng = data?.address.location.coordinates[0]
