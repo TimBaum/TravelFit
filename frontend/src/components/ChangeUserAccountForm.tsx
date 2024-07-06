@@ -27,31 +27,25 @@ import { userAccountFormSchema } from '@/components/UserAccountForm'
 
 export function ChangeUserAccountForm() {
   const { user } = useAuth()
-  const oldSalutation = useReadUser(user?._id ?? '').data?.salutation as
-    | 'Mr.'
-    | 'Ms.'
-    | 'Diverse'
-    | undefined
-  const oldDisplayName = useReadUser(user?._id ?? '').data?.displayName
-  const oldEmail = useReadUser(user?._id ?? '').data?.email
+  const oldData = useReadUser(user?._id ?? '').data
 
   const form = useForm<z.infer<typeof userAccountFormSchema>>({
     resolver: zodResolver(userAccountFormSchema),
     defaultValues: {
-      salutation: oldSalutation,
-      displayName: oldDisplayName,
-      email: oldEmail,
+      salutation: oldData?.salutation as 'Mr.' | 'Ms.' | 'Diverse',
+      displayName: oldData?.displayName,
+      email: oldData?.email,
     },
   })
 
   //useEffect is necessary because the default values are not available when initially rendering the form and are thus not displayed without useEffect
   useEffect(() => {
     form.reset({
-      salutation: oldSalutation,
-      displayName: oldDisplayName,
-      email: oldEmail,
+      salutation: oldData?.salutation as 'Mr.' | 'Ms.' | 'Diverse',
+      displayName: oldData?.displayName,
+      email: oldData?.email,
     })
-  }, [oldSalutation, oldDisplayName, oldEmail, form.reset])
+  }, [form.reset, oldData])
 
   async function onSubmitSaveChanges(
     values: z.infer<typeof userAccountFormSchema>,
@@ -60,7 +54,7 @@ export function ChangeUserAccountForm() {
 
     try {
       const response = await fetch(
-        config.BACKEND_URL + '/users/update/' + user?._id ?? '',
+        config.BACKEND_URL + '/users/update/' + user?._id,
         {
           method: 'POST',
           headers: {

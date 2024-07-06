@@ -52,7 +52,7 @@ export function ChangeGymAccountForm() {
       email: oldData?.email,
       phone: oldData?.phone,
     })
-  }, [form.reset])
+  }, [form.reset, oldData])
 
   async function onSubmitSaveChanges(
     values: z.infer<typeof gymAccountFormSchema>,
@@ -60,14 +60,13 @@ export function ChangeGymAccountForm() {
     const userData = { ...values }
 
     try {
-      const testString =
-        config.BACKEND_URL + '/gymAccounts/update/' + user?._id ?? ''
+      const testString = config.BACKEND_URL + '/gymAccounts/update/' + user?._id
       console.log(
         'string that is sent to backend for changing gym account',
         testString,
       )
       const response = await fetch(
-        config.BACKEND_URL + '/gymAccounts/update/' + user?._id ?? '',
+        config.BACKEND_URL + '/gymAccounts/update/' + user?._id,
         {
           method: 'POST',
           headers: {
