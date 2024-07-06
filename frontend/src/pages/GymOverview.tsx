@@ -189,6 +189,7 @@ function GymOverview() {
           <p>No coordinates available for this gym.</p>
         )}
       </div>
+      <Dropzone />
     </div>
   )
 }
