@@ -34,6 +34,7 @@ function Dropzone() {
     formData.append('file', acceptedFiles[0])
     formData.append('upload_preset', 'test_preset')
     formData.append('api_key', import.meta.env.CLOUDINARY_KEY)
+    //TODO: formData.append('public_id', gym_id + time.now)()) Give the image a unique id inlcuding the gym id
 
     const results = await fetch(
       'https://api.cloudinary.com/v1_1/travelfit/image/upload',
