@@ -11,13 +11,7 @@ import { Label } from '@/components/ui/label'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 // import { useDropzone } from 'react-dropzone'
-import {
-  Breadcrumb,
-  BreadcrumbList,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbSeparator,
-} from '@/components/ui/breadcrumb'
+
 
 import {
   Form,
@@ -169,28 +163,6 @@ export function AddGym() {
   /* Render */
   return (
     <>
-      <div className="breadcrumps">
-        <Breadcrumb>
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbLink href="/">Home</BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbLink href="/my-gyms">My Gyms</BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbLink href="/add-gym">Add Gym</BreadcrumbLink>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
-      </div>
-
-      <div>
-        <h1 className="text-5xl font-bold mb-2">Add Gym</h1>
-      </div>
-
       {/* The three tabs "Key Information", "Opening Hours", "Offers". Contains all page content */}
 
       <Tabs
