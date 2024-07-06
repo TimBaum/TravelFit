@@ -34,6 +34,7 @@ function useGymSearch(
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(false)
 
+  /* useEffect hook specialized for manupilations after the component has been rendered  */
   useEffect(() => {
     async function fetchData() {
       if (!searchString) return
