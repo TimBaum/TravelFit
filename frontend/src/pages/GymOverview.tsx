@@ -13,6 +13,7 @@ import HighlightBadge from '@/components/HighlightBadge'
 import { Button } from '@/components/ui/button'
 import OfferTile from '@/components/Offer'
 import Map from '@/components/map'
+import { CloudinaryImage } from '@models/cloudinaryImage'
 
 import '@/styles/gym-overview.css'
 
@@ -25,6 +26,8 @@ import { Link } from 'react-router-dom'
 import '@/index.css'
 import { useAuth } from '@/provider/AuthProvider'
 import { StarFilledIcon } from '@radix-ui/react-icons'
+import Dropzone from '@/components/Dropzone'
+import { fetchJSON } from '@/services/utils'
 
 function GymOverview() {
   const { id } = useParams()
@@ -67,26 +70,22 @@ function GymOverview() {
 
   async function fetchImages() {
     try {
-      const response = await fetch('/gyms/fetch-images/gymname')
-      if (!response.ok) {
-        throw new Error('Failed to fetch images')
-      }
-      const results = await response.json()
-      console.log('Fetched images:', results)
+      const response = await fetchJSON(`/gyms/fetch-images/gymname`, {
+        method: 'GET',
+      })
+      // Extract the necessary information
+      const photos = response.map((item: CloudinaryImage) => ({
+        url: item.secure_url,
+        alt: item.public_id,
+      }))
 
-      // Get the first five images
-      const firstFiveImages = results.resources.slice(0, 5)
-      console.log('First five images:', firstFiveImages)
-
-      return firstFiveImages
+      return photos
     } catch (error) {
-      console.error(error)
+      console.error('Error fetching images: ', error)
     }
   }
 
-  fetchImages().then((images) => {
-    console.log('fetch images response', images)
-  })
+  fetchImages()
 
   const lat = data?.address.location.coordinates[1]
   const lng = data?.address.location.coordinates[0]
