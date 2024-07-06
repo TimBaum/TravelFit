@@ -4,6 +4,7 @@ import Gym from '../models/Gym'
 import Review from '../models/Review'
 import { FilterState } from '@models/filter'
 import cache from '../cache'
+import CloudinaryImage from '../models/CloudinaryImage'
 
 const createGym = (req: Request, res: Response, next: NextFunction) => {
   const gymData = req.body
@@ -191,24 +192,6 @@ const deleteGym = (req: Request, res: Response, next: NextFunction) => {
     .catch((error) => {
       return res.status(500).json({ error })
     })
-}
-
-interface CloudinaryImage {
-  asset_id: string
-  public_id: string
-  format: string
-  version: number
-  resource_type: string
-  type: string
-  created_at: string
-  bytes: number
-  width: number
-  height: number
-  asset_folder: string
-  display_name: string
-  url: string
-  secure_url: string
-  [key: string]: any // To handle any additional properties that might be present
 }
 
 export const fetchImages = async (req: Request, res: Response) => {
