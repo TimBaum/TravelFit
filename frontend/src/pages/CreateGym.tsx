@@ -22,7 +22,7 @@ function CreateUserAccount() {
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbLink href="/add-gym">Add Gym</BreadcrumbLink>
+              <BreadcrumbLink href="/create-gym">Create Gym</BreadcrumbLink>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
