@@ -21,7 +21,7 @@ import { config } from '@/config'
 
 const phoneValidationRegex = /^\+?[1-9]\d{1,14}$/ // E.164 international phone number format
 
-const formSchema = z
+export const gymAccountFormSchema = z
   .object({
     salutation: z.enum(['Mr.', 'Ms.', 'Diverse'], {
       required_error: 'Salutation is required.',
@@ -55,8 +55,8 @@ const formSchema = z
   })
 
 export function GymAccountForm() {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof gymAccountFormSchema>>({
+    resolver: zodResolver(gymAccountFormSchema),
     defaultValues: {
       salutation: undefined,
       firstName: '',
@@ -69,16 +69,14 @@ export function GymAccountForm() {
     },
   })
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    const gymAccountData = { ...values }
-
+  async function onSubmit(values: z.infer<typeof gymAccountFormSchema>) {
     try {
       const response = await fetch(config.BACKEND_URL + '/gymAccounts/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(gymAccountData),
+        body: JSON.stringify(values),
       })
 
       if (!response.ok) {

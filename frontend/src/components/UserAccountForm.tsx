@@ -21,7 +21,7 @@ import {
 import { LucidePencil } from 'lucide-react'
 import { config } from '@/config'
 
-const formSchema = z
+export const userAccountFormSchema = z
   .object({
     salutation: z.enum(['Mr.', 'Ms.', 'Diverse'], {
       required_error: 'Salutation is required.',
@@ -43,8 +43,8 @@ const formSchema = z
   })
 
 export function UserAccountForm() {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof userAccountFormSchema>>({
+    resolver: zodResolver(userAccountFormSchema),
     defaultValues: {
       salutation: undefined,
       displayName: '',
@@ -55,7 +55,7 @@ export function UserAccountForm() {
   })
 
   async function onSubmit(
-    values: z.infer<typeof formSchema>,
+    values: z.infer<typeof userAccountFormSchema>,
     accountType: string,
   ) {
     let hasPremiumSubscription = false

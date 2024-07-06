@@ -1,5 +1,4 @@
 import { config } from '@/config'
-import { IGymAccount } from '@models/gymAccount'
 import { IUser } from '@models/user'
 import { useEffect, useState } from 'react'
 

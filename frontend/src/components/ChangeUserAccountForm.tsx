@@ -23,14 +23,7 @@ import { config } from '@/config'
 import { useAuth } from '@/provider/AuthProvider'
 import { useReadUser } from '@/services/userService'
 import { useEffect } from 'react'
-
-const formSchema = z.object({
-  salutation: z.enum(['Mr.', 'Ms.', 'Diverse'], {}),
-  displayName: z
-    .string()
-    .min(2, { message: 'Name must be at least 2 characters.' }),
-  email: z.string().email({ message: 'Invalid email address.' }),
-})
+import { userAccountFormSchema } from '@/components/UserAccountForm'
 
 export function ChangeUserAccountForm() {
   const { user } = useAuth()
@@ -42,8 +35,8 @@ export function ChangeUserAccountForm() {
   const oldDisplayName = useReadUser(user?._id ?? '').data?.displayName
   const oldEmail = useReadUser(user?._id ?? '').data?.email
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof userAccountFormSchema>>({
+    resolver: zodResolver(userAccountFormSchema),
     defaultValues: {
       salutation: oldSalutation,
       displayName: oldDisplayName,
@@ -51,7 +44,7 @@ export function ChangeUserAccountForm() {
     },
   })
 
-  //useEffect is necessary because the default values are not available when rendering the form and are thus not displayed without useEffect
+  //useEffect is necessary because the default values are not available when initially rendering the form and are thus not displayed without useEffect
   useEffect(() => {
     form.reset({
       salutation: oldSalutation,
@@ -60,7 +53,9 @@ export function ChangeUserAccountForm() {
     })
   }, [oldSalutation, oldDisplayName, oldEmail, form.reset])
 
-  async function onSubmitSaveChanges(values: z.infer<typeof formSchema>) {
+  async function onSubmitSaveChanges(
+    values: z.infer<typeof userAccountFormSchema>,
+  ) {
     const userData = { ...values }
 
     try {
