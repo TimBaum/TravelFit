@@ -21,31 +21,23 @@ import {
 import { LucidePencil } from 'lucide-react'
 import { config } from '@/config'
 import { useAuth } from '@/provider/AuthProvider'
-import { useReadUser } from '@/services/userService'
+import { useReadGymAccount } from '@/services/gymAccountService'
 import { useEffect } from 'react'
 import { gymAccountFormSchema } from '@/components/GymAccountForm'
 
 export function ChangeGymAccountForm() {
   const { user } = useAuth()
-  const oldSalutation = useReadUser(user?._id ?? '').data?.salutation as
-    | 'Mr.'
-    | 'Ms.'
-    | 'Diverse'
-  const oldFirstName = useReadUser(user?._id ?? '').data?.firstName
-  const oldLastName = useReadUser(user?._id ?? '').data?.lastName
-  const oldAddress = useReadUser(user?._id ?? '').data?.address
-  const oldEmail = useReadUser(user?._id ?? '').data?.email
-  const oldPhone = useReadUser(user?._id ?? '').data?.phone
+  const oldData = useReadGymAccount(user?._id ?? '').data
 
   const form = useForm<z.infer<typeof gymAccountFormSchema>>({
     resolver: zodResolver(gymAccountFormSchema),
     defaultValues: {
-      salutation: oldSalutation,
-      firstName: oldFirstName,
-      lastName: oldLastName,
-      address: oldAddress,
-      email: oldEmail,
-      phone: oldPhone,
+      salutation: oldData?.salutation as 'Mr.' | 'Ms.' | 'Diverse',
+      firstName: oldData?.firstName,
+      lastName: oldData?.lastName,
+      address: oldData?.address,
+      email: oldData?.email,
+      phone: oldData?.phone,
     },
   })
 
@@ -53,22 +45,14 @@ export function ChangeGymAccountForm() {
   //TODO: show new values instead of old values
   useEffect(() => {
     form.reset({
-      salutation: oldSalutation,
-      firstName: oldFirstName,
-      lastName: oldLastName,
-      address: oldAddress,
-      email: oldEmail,
-      phone: oldPhone,
+      salutation: oldData?.salutation as 'Mr.' | 'Ms.' | 'Diverse',
+      firstName: oldData?.firstName,
+      lastName: oldData?.lastName,
+      address: oldData?.address,
+      email: oldData?.email,
+      phone: oldData?.phone,
     })
-  }, [
-    oldSalutation,
-    oldFirstName,
-    oldLastName,
-    oldAddress,
-    oldEmail,
-    oldPhone,
-    form.reset,
-  ])
+  }, [form.reset])
 
   async function onSubmitSaveChanges(
     values: z.infer<typeof gymAccountFormSchema>,
