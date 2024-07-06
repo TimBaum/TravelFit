@@ -27,40 +27,45 @@ import { userAccountFormSchema } from '@/components/UserAccountForm'
 
 export function ChangeUserAccountForm() {
   const { user } = useAuth()
-  const oldData = useReadUser(user?._id ?? '').data
+  let userDataFromBackend = useReadUser(user?._id ?? '').data
 
   const form = useForm<z.infer<typeof userAccountFormSchema>>({
     resolver: zodResolver(userAccountFormSchema),
     defaultValues: {
-      salutation: oldData?.salutation as 'Mr.' | 'Ms.' | 'Diverse',
-      displayName: oldData?.displayName,
-      email: oldData?.email,
+      salutation:
+        (userDataFromBackend?.salutation as 'Mr.' | 'Ms.' | 'Diverse') ??
+        'Diverse',
+      displayName: userDataFromBackend?.displayName ?? '',
+      email: userDataFromBackend?.email ?? '',
     },
   })
 
   //useEffect is necessary because the default values are not available when initially rendering the form and are thus not displayed without useEffect
   useEffect(() => {
     form.reset({
-      salutation: oldData?.salutation as 'Mr.' | 'Ms.' | 'Diverse',
-      displayName: oldData?.displayName,
-      email: oldData?.email,
+      salutation:
+        (userDataFromBackend?.salutation as 'Mr.' | 'Ms.' | 'Diverse') ??
+        'Diverse',
+      displayName: userDataFromBackend?.displayName ?? '',
+      email: userDataFromBackend?.email ?? '',
     })
-  }, [form.reset, oldData])
+  }, [form.reset, userDataFromBackend])
 
   async function onSubmitSaveChanges(
     values: z.infer<typeof userAccountFormSchema>,
   ) {
-    const userData = { ...values }
+    const newUserData = { ...values }
+    console.log('New user values for update HTTP request: ', values)
 
     try {
       const response = await fetch(
-        config.BACKEND_URL + '/users/update/' + user?._id,
+        config.BACKEND_URL + '/users/update/' + user?._id ?? '',
         {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(userData),
+          body: JSON.stringify(newUserData),
         },
       )
 
@@ -70,22 +75,28 @@ export function ChangeUserAccountForm() {
 
       const data = await response.json()
       console.log('User changed successfully:', data)
+      userDataFromBackend = useReadUser(user?._id ?? '').data
     } catch (error) {
       console.error('Error changing user:', error)
     }
   }
 
-  async function onSubmitChangeEmail() {
+  async function onClickChangeEmail() {
     return <h1>TODO: implement email change</h1>
   }
 
-  async function onSubmitChangePassword() {
+  async function onClickChangePassword() {
     return <h1>TODO: implement password change</h1>
   }
 
   return (
     <Form {...form}>
-      <form>
+      <form
+        onSubmit={form.handleSubmit((values) => {
+          console.log('handleSubmit called with values:', values)
+          onSubmitSaveChanges(values)
+        })}
+      >
         <div className="flex flex-col items-center mb-5">
           <LucidePencil size={20} />
           <span>Foto</span>
@@ -150,26 +161,20 @@ export function ChangeUserAccountForm() {
             </FormItem>
           )}
         />
-        <Button
-          type="submit"
-          variant="outline"
-          onClick={() =>
-            form.handleSubmit((values) => onSubmitSaveChanges(values))()
-          }
-        >
+        <Button type="submit" variant="outline">
           Save changes
         </Button>
         <Button
-          type="submit"
+          type="button"
           variant="outline"
-          onClick={() => form.handleSubmit(() => onSubmitChangeEmail())()}
+          onClick={() => onClickChangeEmail()}
         >
           Change email
         </Button>
         <Button
-          type="submit"
+          type="button"
           variant="outline"
-          onClick={() => form.handleSubmit(() => onSubmitChangePassword())()}
+          onClick={() => onClickChangePassword()}
         >
           Change password
         </Button>

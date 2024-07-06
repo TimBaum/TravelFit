@@ -58,6 +58,7 @@ export function ChangeGymAccountForm() {
     values: z.infer<typeof gymAccountFormSchema>,
   ) {
     const userData = { ...values }
+    console.log('New gym account values: ', values)
 
     try {
       const testString = config.BACKEND_URL + '/gymAccounts/update/' + user?._id
