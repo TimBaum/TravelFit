@@ -92,10 +92,10 @@ export function ChangeUserAccountForm() {
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit((values) => {
-          console.log('handleSubmit called with values:', values)
-          onSubmitSaveChanges(values)
-        })}
+      //onSubmit={form.handleSubmit((values) => {
+      //console.log('handleSubmit called with values:', values)
+      //onSubmitSaveChanges(values)
+      //})}
       >
         <div className="flex flex-col items-center mb-5">
           <LucidePencil size={20} />
@@ -161,7 +161,13 @@ export function ChangeUserAccountForm() {
             </FormItem>
           )}
         />
-        <Button type="submit" variant="outline">
+        <Button
+          type="submit"
+          variant="outline"
+          onClick={() =>
+            form.handleSubmit((values) => onSubmitSaveChanges(values))()
+          }
+        >
           Save changes
         </Button>
         <Button
