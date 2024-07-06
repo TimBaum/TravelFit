@@ -194,7 +194,7 @@ const deleteGym = (req: Request, res: Response, next: NextFunction) => {
     })
 }
 
-export const fetchImages = async (req: Request, res: Response) => {
+const fetchImages = async (req: Request, res: Response) => {
   const cloudName = 'travelfit'
   const apiKey = process.env.CLOUDINARY_KEY
   const apiSecret = process.env.CLOUDINARY_SECRET
