@@ -23,14 +23,23 @@ import { config } from '@/config'
 import { useAuth } from '@/provider/AuthProvider'
 import { useReadUser } from '@/services/userService'
 import { useEffect } from 'react'
-import { userAccountFormSchema } from '@/components/UserAccountForm'
+
+export const userAccountChangeFormSchema = z.object({
+  salutation: z.enum(['Mr.', 'Ms.', 'Diverse'], {
+    required_error: 'Salutation is required.',
+  }),
+  displayName: z
+    .string()
+    .min(2, { message: 'Name must be at least 2 characters.' }),
+  email: z.string().email({ message: 'Invalid email address.' }),
+})
 
 export function ChangeUserAccountForm() {
   const { user } = useAuth()
   let userDataFromBackend = useReadUser(user?._id ?? '').data
 
-  const form = useForm<z.infer<typeof userAccountFormSchema>>({
-    resolver: zodResolver(userAccountFormSchema),
+  const form = useForm<z.infer<typeof userAccountChangeFormSchema>>({
+    resolver: zodResolver(userAccountChangeFormSchema),
     defaultValues: {
       salutation:
         (userDataFromBackend?.salutation as 'Mr.' | 'Ms.' | 'Diverse') ??
@@ -52,7 +61,7 @@ export function ChangeUserAccountForm() {
   }, [form.reset, userDataFromBackend])
 
   async function onSubmitSaveChanges(
-    values: z.infer<typeof userAccountFormSchema>,
+    values: z.infer<typeof userAccountChangeFormSchema>,
   ) {
     const newUserData = { ...values }
     console.log('New user values for update HTTP request: ', values)
@@ -61,7 +70,7 @@ export function ChangeUserAccountForm() {
       const response = await fetch(
         config.BACKEND_URL + '/users/update/' + user?._id ?? '',
         {
-          method: 'POST',
+          method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',
           },
