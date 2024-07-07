@@ -23,14 +23,47 @@ import { config } from '@/config'
 import { useAuth } from '@/provider/AuthProvider'
 import { useReadGymAccount } from '@/services/gymAccountService'
 import { useEffect } from 'react'
-import { gymAccountFormSchema } from '@/components/GymAccountForm'
+
+const phoneValidationRegex = /^\+?[1-9]\d{1,14}$/ // E.164 international phone number format
+
+export const changeGymAccountFormSchema = z.object({
+  salutation: z.enum(['Mr.', 'Ms.', 'Diverse'], {
+    required_error: 'Salutation is required.',
+  }),
+  firstName: z
+    .string()
+    .min(2, { message: 'First name must be at least 2 characters.' }),
+  lastName: z
+    .string()
+    .min(2, { message: 'Last name must be at least 2 characters.' }),
+  email: z.string().email({ message: 'Invalid email address.' }),
+  phone: z
+    .string()
+    .min(10, { message: 'Phone number must be at least 10 characters.' })
+    .regex(phoneValidationRegex, {
+      message: 'Please enter a valid phone number.',
+    }),
+  address: z
+    .string()
+    .min(5, { message: 'Address must be at least 5 characters.' }),
+  /* password: z
+      .string()
+      .min(8, { message: 'Password must be at least 8 characters.' }),
+    confirmPassword: z
+      .string()
+      .min(8, { message: 'Confirm Password must be at least 8 characters.' }),*/
+})
+/* .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ['confirmPassword'],
+  })*/
 
 export function ChangeGymAccountForm() {
   const { user } = useAuth()
   const oldData = useReadGymAccount(user?._id ?? '').data
 
-  const form = useForm<z.infer<typeof gymAccountFormSchema>>({
-    resolver: zodResolver(gymAccountFormSchema),
+  const form = useForm<z.infer<typeof changeGymAccountFormSchema>>({
+    resolver: zodResolver(changeGymAccountFormSchema),
     defaultValues: {
       salutation: oldData?.salutation as 'Mr.' | 'Ms.' | 'Diverse',
       firstName: oldData?.firstName,
@@ -55,7 +88,7 @@ export function ChangeGymAccountForm() {
   }, [form.reset, oldData])
 
   async function onSubmitSaveChanges(
-    values: z.infer<typeof gymAccountFormSchema>,
+    values: z.infer<typeof changeGymAccountFormSchema>,
   ) {
     const userData = { ...values }
     console.log('New gym account values: ', values)
@@ -69,7 +102,7 @@ export function ChangeGymAccountForm() {
       const response = await fetch(
         config.BACKEND_URL + '/gymAccounts/update/' + user?._id,
         {
-          method: 'POST',
+          method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',
           },

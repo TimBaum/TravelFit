@@ -36,6 +36,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   let accountType: 'GYM_USER' | 'USER' | 'NOT_LOGGED_IN'
 
+  //TODO: this returns accountType 'USER' for 'GYM_ACCOUNTS' -> fix this
   if (!user) {
     accountType = 'NOT_LOGGED_IN'
   } else if ('displayName' in user) {

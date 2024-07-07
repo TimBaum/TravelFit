@@ -76,12 +76,22 @@ export const readAllGymAccounts = async (req: Request, res: Response) => {
 }
 
 export const updateGymAccount = async (req: Request, res: Response) => {
+  console.log(
+    'updateGymAccount was called in controller with request body ',
+    req.body,
+    ' and req.params ',
+    req.params,
+  )
   try {
     const gymAccount = await GymAccount.findById(req.params.id)
+    console.log('This user will be updated: ', gymAccount)
     if (!gymAccount) {
       return res.status(404).json({ message: 'Gym account not found' })
     }
-    const publicGymAccount: PublicGymAccount = {
+    gymAccount.set(req.body)
+    await gymAccount.save()
+    console.log('This is the updated gymAccount: ', gymAccount)
+    const updatedPublicGymAccount: PublicGymAccount = {
       _id: gymAccount._id.toString() || '',
       firstName: gymAccount.firstName || '',
       lastName: gymAccount.lastName || '',
@@ -92,9 +102,7 @@ export const updateGymAccount = async (req: Request, res: Response) => {
       //address: gymAccount.address.toString() || '',
       //phone: gymAccount.phone || '',
     }
-    gymAccount.set(req.body)
-    await gymAccount.save()
-    return res.status(201).json({ gymAccount })
+    return res.status(201).json({ updatedPublicGymAccount })
   } catch (err) {
     return res.status(500).json({ error })
   }
@@ -150,7 +158,7 @@ export const deleteFavourite = async (req: Request, res: Response) => {
 }
 
 export const deleteGymAccount = async (req: Request, res: Response) => {
-  console.log('Trying to delete a gym account for testing')
+  console.log('deleteGymAccount was called in controller')
   try {
     const gymAccount = await GymAccount.findByIdAndDelete(req.params.id)
     if (!gymAccount) {

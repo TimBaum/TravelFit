@@ -138,7 +138,7 @@ export const deleteFavourite = async (req: Request, res: Response) => {
 }
 
 export const deleteUser = async (req: Request, res: Response) => {
-  console.log('Trying to delete a user for testing')
+  console.log('deleteUser was called in controller')
   try {
     const user = await User.findByIdAndDelete(req.params.id)
     if (!user) {

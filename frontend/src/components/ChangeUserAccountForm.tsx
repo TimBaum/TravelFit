@@ -24,7 +24,7 @@ import { useAuth } from '@/provider/AuthProvider'
 import { useReadUser } from '@/services/userService'
 import { useEffect } from 'react'
 
-export const userAccountChangeFormSchema = z.object({
+export const changeUserAccountFormSchema = z.object({
   salutation: z.enum(['Mr.', 'Ms.', 'Diverse'], {
     required_error: 'Salutation is required.',
   }),
@@ -38,8 +38,8 @@ export function ChangeUserAccountForm() {
   const { user } = useAuth()
   let userDataFromBackend = useReadUser(user?._id ?? '').data
 
-  const form = useForm<z.infer<typeof userAccountChangeFormSchema>>({
-    resolver: zodResolver(userAccountChangeFormSchema),
+  const form = useForm<z.infer<typeof changeUserAccountFormSchema>>({
+    resolver: zodResolver(changeUserAccountFormSchema),
     defaultValues: {
       salutation:
         (userDataFromBackend?.salutation as 'Mr.' | 'Ms.' | 'Diverse') ??
@@ -61,7 +61,7 @@ export function ChangeUserAccountForm() {
   }, [form.reset, userDataFromBackend])
 
   async function onSubmitSaveChanges(
-    values: z.infer<typeof userAccountChangeFormSchema>,
+    values: z.infer<typeof changeUserAccountFormSchema>,
   ) {
     const newUserData = { ...values }
     console.log('New user values for update HTTP request: ', values)
