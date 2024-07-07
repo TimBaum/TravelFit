@@ -70,6 +70,7 @@ export function GymAccountForm() {
   })
 
   async function onSubmit(values: z.infer<typeof gymAccountFormSchema>) {
+    console.log('onSubmit was called in GymAccountForm with value ', values)
     try {
       const response = await fetch(config.BACKEND_URL + '/gymAccounts/create', {
         method: 'POST',
@@ -160,7 +161,7 @@ export function GymAccountForm() {
             )}
           />
         </div>
-        <FormField
+        {/* TODO: include address adhering to Address.schema <FormField
           control={form.control}
           name="address"
           render={({ field }) => (
@@ -174,7 +175,7 @@ export function GymAccountForm() {
               </FormMessage>
             </FormItem>
           )}
-        />
+        />*/}
         <div className="flex">
           <FormField
             control={form.control}

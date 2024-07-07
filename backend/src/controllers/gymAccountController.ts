@@ -17,7 +17,7 @@ export const createGymAccount = async (req: Request, res: Response) => {
     phone,
     salutation,
     password,
-    address,
+    //address,
     gyms,
   } = req.body
 
@@ -31,7 +31,7 @@ export const createGymAccount = async (req: Request, res: Response) => {
       lastName,
       phone,
       salutation,
-      address,
+      //address,
       gyms,
       password: hashedPassword,
     })

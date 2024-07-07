@@ -128,9 +128,9 @@ function NavigationMenuManager({ className }: { className: string }) {
   console.log('AccountType is: ', accountType)
 
   function navigateToAccount() {
-    if (accountType == 'USER') {
+    if (accountType === 'USER') {
       navigate('/change-user-account')
-    } else if (accountType == 'GYM_USER') {
+    } else if (accountType === 'GYM_USER') {
       navigate('/change-gym-account')
     }
   }
