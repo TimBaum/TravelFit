@@ -1,3 +1,5 @@
+import Address from './Address'
+
 export interface PublicGymAccount {
   _id: string
   email: string
@@ -16,7 +18,7 @@ export interface IGymAccount {
   salutation: string
   firstName: string
   lastName: string
-  address: string
+  address: Address.schema
   phone: string
   favourites: string[]
   gyms: string[]

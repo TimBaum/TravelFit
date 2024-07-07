@@ -21,13 +21,16 @@ async function createUserContext(
 ) {
   try {
     let token = req.headers.authorization
+    console.log('createUserContext in auth.ts was called with token ', token)
     if (!token) {
       throw new Error('No token provided')
     }
     token = token.split(' ')[1]
+    console.log('token was split:  ', token)
     const decoded = jwt.verify(token, config.JWT_SECRET) as
       | PublicUser
       | PublicGymAccount
+    console.log('token was decoded:  ', decoded)
     let ctx: IUserWithId | IGymAccountWithId | undefined
     if ('displayName' in decoded) {
       // as decoded is a type and not a value we need a runtime-check that aligns with the structure of PublicUser and PublicGymAccount to distinguish between them
@@ -45,6 +48,7 @@ async function createUserContext(
       ctx = gymAccount.toObject()
     }
     req.ctx = ctx
+    console.log('this context was created:  ', ctx)
   } catch (error) {
     // pass, since we also have non protected routes
   } finally {

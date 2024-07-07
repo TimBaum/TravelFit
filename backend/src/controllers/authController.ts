@@ -12,11 +12,12 @@ import bcryptjs from 'bcryptjs'
 export const login = async (req: Request, res: Response) => {
   const { email, password } = req.body
   try {
-    let user = await User.findOne({ email: email }).exec()
-    let gymAccount = await GymAccount.findOne({ email: email }).exec()
+    let user = await User.findOne({ email: email }).exec() // email could belong to a user account or a gym account
+    let gymAccount = await GymAccount.findOne({ email: email }).exec() // email could belong to a user account or a gym account
     let token
 
     if (user) {
+      // create token for the user if a user account exists
       const arePasswordsMatching = await bcryptjs.compare(
         password,
         user.password,
@@ -38,6 +39,7 @@ export const login = async (req: Request, res: Response) => {
         expiresIn: '7days', //TODO: enforce
       })
     } else if (gymAccount) {
+      // create token for the gym account if a gym account exists
       const arePasswordsMatching = await bcryptjs.compare(
         password,
         gymAccount.password,

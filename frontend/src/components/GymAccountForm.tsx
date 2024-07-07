@@ -93,7 +93,8 @@ export function GymAccountForm() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="mx-auto">
+      {/*<form onSubmit={form.handleSubmit(onSubmit)} className="mx-auto">*/}
+      <form className="mx-auto">
         <FormField
           control={form.control}
           name="salutation"
@@ -244,6 +245,7 @@ export function GymAccountForm() {
           type="submit"
           variant="outline"
           className="mt-4 bg-emerald-500 text-white"
+          onClick={() => form.handleSubmit((values) => onSubmit(values))()}
         >
           Create partner account
         </Button>

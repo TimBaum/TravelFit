@@ -41,12 +41,11 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     accountType = 'NOT_LOGGED_IN'
   } else if ('displayName' in user) {
     accountType = 'USER'
+    checkSubscriptionStatus()
   } // 'displayName' exists in PublicUser but not in PublicGymAccount
   else {
     accountType = 'GYM_USER'
   }
-
-  checkSubscriptionStatus()
 
   const navigate = useNavigate()
 
