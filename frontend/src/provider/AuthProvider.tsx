@@ -46,6 +46,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   else {
     accountType = 'GYM_USER'
   }
+  console.log('accountType is ', accountType)
 
   const navigate = useNavigate()
 
