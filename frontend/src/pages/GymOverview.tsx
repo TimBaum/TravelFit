@@ -13,11 +13,11 @@ import HighlightBadge from '@/components/HighlightBadge'
 import { Button } from '@/components/ui/button'
 import OfferTile from '@/components/Offer'
 import Map from '@/components/map'
-import { CloudinaryImage } from '@models/cloudinaryImage'
 
 import '@/styles/gym-overview.css'
 
 import { useGetGym } from '@/services/gymService'
+import { useFetchImages } from '@/services/gymService'
 
 import { useLocation, useParams } from 'react-router-dom'
 
@@ -27,7 +27,6 @@ import '@/index.css'
 import { useAuth } from '@/provider/AuthProvider'
 import { StarFilledIcon } from '@radix-ui/react-icons'
 import Dropzone from '@/components/Dropzone'
-import { fetchJSON } from '@/services/utils'
 
 function GymOverview() {
   const { id } = useParams()
@@ -37,6 +36,7 @@ function GymOverview() {
   const GymId = id || ''
 
   const { data, error, loading } = useGetGym(GymId)
+  const { data: images } = useFetchImages('gymphoto')
   const gymname = data?.name
   const previousPage = useLocation().state?.from
   const previousPagePath =
@@ -59,33 +59,6 @@ function GymOverview() {
   if (error) {
     return <div>Error fetching gym</div>
   }
-
-  const photos = [
-    { url: '/src/assets/img1.png', alt: 'Gym photo 1' },
-    { url: '/src/assets/img2.png', alt: 'Gym photo 1' },
-    { url: '/src/assets/img3.png', alt: 'Gym photo 1' },
-    { url: '/src/assets/img4.png', alt: 'Gym photo 1' },
-    { url: '/src/assets/img5.png', alt: 'Gym photo 1' },
-  ]
-
-  async function fetchImages() {
-    try {
-      const response = await fetchJSON(`/gyms/fetch-images/gymname`, {
-        method: 'GET',
-      })
-      // Extract the necessary information
-      const photos = response.map((item: CloudinaryImage) => ({
-        url: item.secure_url,
-        alt: item.public_id,
-      }))
-
-      return photos
-    } catch (error) {
-      console.error('Error fetching images: ', error)
-    }
-  }
-
-  fetchImages()
 
   const lat = data?.address.location.coordinates[1]
   const lng = data?.address.location.coordinates[0]
@@ -125,7 +98,7 @@ function GymOverview() {
       {/* Basic structure for the rest of the page */}
       <div>
         {/* Basic structure for the rest of the page */}
-        <PhotoGallery photos={photos} />
+        <PhotoGallery photos={images || []} />
         <div className="flex gap-2">
           {/* left side */}
           <div className="w-2/3 mr-10">
