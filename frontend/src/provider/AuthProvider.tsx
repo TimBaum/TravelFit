@@ -62,7 +62,12 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     if (data.error) throw new Error(data.error)
     // Store token in local storage
     localStorage.setItem('token', data.token)
+    console.log('this token was stored in local storage: ', data.token)
     const decodedToken = decodeToken(data.token)
+    console.log(
+      'this decoded token was set as the user in the context: ',
+      decodedToken,
+    )
     setUser(decodedToken)
   }
 
