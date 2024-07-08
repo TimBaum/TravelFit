@@ -21,7 +21,7 @@ import {
 import { LucidePencil } from 'lucide-react'
 import { config } from '@/config'
 import { useAuth } from '@/provider/AuthProvider'
-import { useReadUser } from '@/services/userService'
+import { useReadUser, useUpdateUser } from '@/services/userService'
 import { useEffect } from 'react'
 
 export const changeUserAccountFormSchema = z.object({
@@ -83,6 +83,10 @@ export function ChangeUserAccountForm() {
       }
 
       const data = await response.json()
+      /* const data = await useUpdateUser(
+      user?._id ?? '',
+      JSON.stringify(newUserData),
+    ).data*/
       console.log('User changed successfully:', data)
       userDataFromBackend = useReadUser(user?._id ?? '').data
     } catch (error) {

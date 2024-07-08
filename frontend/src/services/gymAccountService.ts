@@ -40,7 +40,11 @@ function useReadGymAccount(id: string | null): GymAccount {
   return { data, error, loading }
 }
 
-function useUpdateGymAccount(id: string | null): GymAccount {
+//TODO: test whetherh gym data as input parameter works correctly
+function useUpdateGymAccount(
+  id: string | null,
+  newGymData: string,
+): GymAccount {
   const [data, setData] = useState<IGymAccount>()
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(false)
@@ -53,6 +57,7 @@ function useUpdateGymAccount(id: string | null): GymAccount {
         `${config.BACKEND_URL}/gymAccounts/update/${id}`,
         {
           method: 'PATCH',
+          body: newGymData,
           headers: {
             'Content-Type': 'application/json',
           },
