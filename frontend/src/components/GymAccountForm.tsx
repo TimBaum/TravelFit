@@ -39,25 +39,25 @@ export const gymAccountFormSchema = z
       .regex(phoneValidationRegex, {
         message: 'Please enter a valid phone number.',
       }),
-    address: z.object({
-      street: z
-        .string()
-        .min(2, { message: 'Invalid street' })
-        .max(100, { message: 'Invalid street' }),
-      postalCode: z
-        .string()
-        .regex(/^\d+$/, { message: 'Please enter a number' })
-        .min(2, { message: 'Invalid code' })
-        .max(20, { message: 'Invalid code' }),
-      city: z
-        .string()
-        .min(2, { message: 'Invalid city' })
-        .max(50, { message: 'Invalid city' }),
-      country: z
-        .string()
-        .min(2, { message: 'Invalid country' })
-        .max(50, { message: 'Invalid country' }),
-    }),
+    // address: z.object({
+    //   street: z
+    //     .string()
+    //     .min(2, { message: 'Invalid street' })
+    //     .max(100, { message: 'Invalid street' }),
+    //   postalCode: z
+    //     .string()
+    //     .regex(/^\d+$/, { message: 'Please enter a number' })
+    //     .min(2, { message: 'Invalid code' })
+    //     .max(20, { message: 'Invalid code' }),
+    //   city: z
+    //     .string()
+    //     .min(2, { message: 'Invalid city' })
+    //     .max(50, { message: 'Invalid city' }),
+    //   country: z
+    //     .string()
+    //     .min(2, { message: 'Invalid country' })
+    //     .max(50, { message: 'Invalid country' }),
+    // }),
     password: z
       .string()
       .min(8, { message: 'Password must be at least 8 characters.' }),
@@ -79,12 +79,12 @@ export function GymAccountForm() {
       lastName: '',
       email: '',
       phone: '',
-      address: {
-        street: '',
-        postalCode: '',
-        city: '',
-        country: 'Germany',
-      },
+      // address: {
+      //   street: '',
+      //   postalCode: '',
+      //   city: '',
+      //   country: 'Germany',
+      // },
       password: '',
       confirmPassword: '',
     },
@@ -197,8 +197,8 @@ export function GymAccountForm() {
             </FormItem>
           )}
         />*/}
-        {/* Address */}
-        <div>
+        {/* Address von Leon */}
+        {/* <div>
           <FormField
             control={form.control}
             name="address.street"
@@ -251,7 +251,7 @@ export function GymAccountForm() {
               </FormItem>
             )}
           />
-        </div>
+        </div> */}
 
         <div className="flex">
           <FormField
