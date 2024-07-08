@@ -1,5 +1,5 @@
 /* Imports */
-import React from 'react'
+import React, { useState } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
@@ -31,15 +31,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectLabel,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
+import Dropzone from './Dropzone'
 
 /* Form checks */
 const formSchema = z.object({
@@ -155,6 +147,39 @@ export function CreateGymForm() {
       validityDays: 0,
     },
   })
+
+  interface UploadResult {
+    public_id: string
+    secure_url: string
+    [key: string]: unknown // This line allows any additional attributes
+  }
+
+  const [acceptedFiles, setAcceptedFiles] = useState<File[]>([])
+
+  const handleFilesSelected = (files: File[]) => {
+    setAcceptedFiles(files)
+  }
+
+  const uploadFiles = async (public_id: string) => {
+    const uploadedFiles: UploadResult[] = []
+    for (const file of acceptedFiles) {
+      const formData = new FormData()
+      formData.append('file', file)
+      formData.append('upload_preset', 'test_preset')
+      formData.append('api_key', import.meta.env.VITE_CLOUDINARY_KEY)
+      formData.append('public_id', public_id + Date.now())
+
+      const results = await fetch(
+        'https://api.cloudinary.com/v1_1/travelfit/image/upload',
+        {
+          method: 'POST',
+          body: formData,
+        },
+      ).then((r) => r.json())
+
+      uploadedFiles.push(results)
+    }
+  }
   // wierd workaround to get the dialog form to submit without submitting the main form lol
   function handleDialogSubmit() {
     return offerForm.handleSubmit(onDialogSubmit)()
@@ -185,9 +210,10 @@ export function CreateGymForm() {
     //  -> gymWithCheapestOffer = { cheapestOffer, ...values}
 
     /* send data to backend */
-
     const gymData = { offers, ...values }
     console.log(gymData)
+    // Use gmy name as image id without spaces
+    const image_id = values.name.replace(/\s+/g, '')
     try {
       const response = await fetch(config.BACKEND_URL + '/gyms/create', {
         method: 'POST',
@@ -202,6 +228,7 @@ export function CreateGymForm() {
       }
       const data = await response.json()
       console.log('Gym created:', data)
+      await uploadFiles(image_id)
       form.control._reset()
     } catch (error) {
       console.log('Error creating gym:', error)
@@ -406,6 +433,16 @@ export function CreateGymForm() {
         />
 
         {/* TODO: Pictures */}
+        <FormLabel className="text-2xl font-bold">Photos</FormLabel>
+        <FormDescription>Show your gym!</FormDescription>
+        <FormItem>
+          <FormControl>
+            <FormLabel className="font-normal">
+              <Dropzone onFilesSelected={handleFilesSelected} />
+            </FormLabel>
+          </FormControl>
+          <FormMessage />
+        </FormItem>
 
         {/* Offers: OfferTile maps over the offer-array filled from the dialog form */}
         <h1 className="text-2xl font-bold mb-2 mt-3">Offers</h1>
