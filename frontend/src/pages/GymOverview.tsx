@@ -60,8 +60,8 @@ function GymOverview() {
     return <div>Error fetching gym</div>
   }
 
-  const lat = data?.address.location.coordinates[1]
-  const lng = data?.address.location.coordinates[0]
+  const lat = data?.address.location?.coordinates[1]
+  const lng = data?.address.location?.coordinates[0]
 
   return (
     <div>
