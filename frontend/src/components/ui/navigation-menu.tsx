@@ -139,12 +139,16 @@ function NavigationMenuManager({ className }: { className: string }) {
       <NavigationMenuList>
         <NavigationMenuLink
           href="https://www.instagram.com/leonie_popk/"
-          className="pr-8"
+          className="pr-8 flex items-center gap-2"
         >
           <img src="/src/assets/TravelFitIcon.svg" className="w-8 h-8 " />
+          <div className="text-xl font-bold">TravelFit</div>
         </NavigationMenuLink>
         <NavigationMenuItem>
-          <NavigationMenuLink className={navigationMenuTriggerStyle()} href="/">
+          <NavigationMenuLink
+            className={navigationMenuTriggerStyle()}
+            onClick={() => navigate('/')}
+          >
             Find gyms
           </NavigationMenuLink>
         </NavigationMenuItem>
@@ -152,7 +156,7 @@ function NavigationMenuManager({ className }: { className: string }) {
           <NavigationMenuItem>
             <NavigationMenuLink
               className={navigationMenuTriggerStyle()}
-              href="/favourites"
+              onClick={() => navigate('/favourites')}
             >
               Favourites
             </NavigationMenuLink>
@@ -162,7 +166,7 @@ function NavigationMenuManager({ className }: { className: string }) {
           <NavigationMenuItem>
             <NavigationMenuLink
               className={navigationMenuTriggerStyle()}
-              href="/my-gyms"
+              onClick={() => navigate('/my-gyms')}
             >
               My gyms
             </NavigationMenuLink>

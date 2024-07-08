@@ -79,6 +79,7 @@ const App: React.FC = () => {
 
 const PrivateRoute = () => {
   // If the user is not logged in, redirect to the login page
+  // TODO: add functionality, which user type should see which page
   const { user } = useAuth()
   if (!user) return <Navigate to="/login" />
   return <Outlet />
