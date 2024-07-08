@@ -26,7 +26,6 @@ import { Link } from 'react-router-dom'
 import '@/index.css'
 import { useAuth } from '@/provider/AuthProvider'
 import { StarFilledIcon } from '@radix-ui/react-icons'
-import Dropzone from '@/components/Dropzone'
 
 function GymOverview() {
   const { id } = useParams()
@@ -162,7 +161,6 @@ function GymOverview() {
           <p>No coordinates available for this gym.</p>
         )}
       </div>
-      <Dropzone />
     </div>
   )
 }
