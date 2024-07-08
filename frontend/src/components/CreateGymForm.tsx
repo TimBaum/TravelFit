@@ -39,19 +39,17 @@ const formSchema = z.object({
     .string()
     .min(2, { message: 'Invalid name' })
     .max(50, { message: 'Invalid name' }),
-  websiteLink: z.string().refine((value) => simpleUrlRegex.test(value), {
-    message: 'Invalid URL',
-  }),
+  websiteLink: z
+    .string()
+    .refine((value) => simpleUrlRegex.test(value), { message: 'Invalid URL' }),
   address: z.object({
     street: z
       .string()
       .min(2, { message: 'Invalid street' })
       .max(100, { message: 'Invalid street' }),
-    postalCode: z
-      .string()
-      .regex(/^\d+$/, { message: 'Please enter a number' })
-      .min(2, { message: 'Invalid code' })
-      .max(20, { message: 'Invalid code' }),
+    postalCode: z.string().regex(/^\d{5}$/, {
+      message: 'Invalid postal code. It should be exactly 5 digits.',
+    }),
     city: z
       .string()
       .min(2, { message: 'Invalid city' })
@@ -61,16 +59,20 @@ const formSchema = z.object({
       .min(2, { message: 'Invalid country' })
       .max(50, { message: 'Invalid country' }),
   }),
-  weekday1: z
-    .string()
-    .min(2, { message: 'Invalid code' })
-    .max(20, { message: 'Invalid code' }),
-  weekday2: z
-    .string()
-    .min(2, { message: 'Invalid code' })
-    .max(20, { message: 'Invalid code' }),
-  openingHour: z.string().regex(/^\d+$/, { message: 'Please enter a number' }),
-  closingHour: z.string().regex(/^\d+$/, { message: 'Please enter a number' }),
+  openingHours: z.object({
+    weekday1: z
+      .string()
+      .min(2, { message: 'Invalid country' })
+      .max(50, { message: 'Invalid country' }),
+    weekday2: z
+      .string()
+      .min(2, { message: 'Invalid country' })
+      .max(50, { message: 'Invalid country' }),
+    openingHour: z.coerce.number(),
+    closingHour: z.coerce.number(),
+  }),
+  // openingHour: z.string().regex(/^\d+$/, { message: 'Please enter a number' }),
+  // closingHour: z.string().regex(/^\d+$/, { message: 'Please enter a number' }),
   highlights: z.array(z.string()).optional(),
 })
 const simpleUrlRegex =
@@ -91,8 +93,8 @@ const offerFormSchema = z.object({
         message: 'Invalid type',
       },
     ),
-  priceEuro: z.number(),
-  validityDays: z.number(),
+  priceEuro: z.coerce.number(),
+  validityDays: z.coerce.number(),
 })
 
 /* Component content */
@@ -126,11 +128,12 @@ export function CreateGymForm() {
         city: '',
         country: 'Germany',
       },
-      openingHours: [],
-      weekday1: '',
-      weekday2: '',
-      openingHour: '',
-      closingHour: '',
+      openingHours: {
+        weekday1: 'Monday',
+        weekday2: 'Friday',
+        openingHour: 8,
+        closingHour: 22,
+      },
       highlights: [],
       offers: [],
     },
@@ -330,10 +333,10 @@ export function CreateGymForm() {
         <FormLabel>Opening Hours</FormLabel>
         <FormField
           control={form.control}
-          name="weekday1"
+          name="openingHours.weekday1"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>From</FormLabel>
+              <FormLabel>Weekday 1</FormLabel>
               <FormControl>
                 <Input placeholder="Monday" {...field} />
               </FormControl>
@@ -343,7 +346,7 @@ export function CreateGymForm() {
         />
         <FormField
           control={form.control}
-          name="weekday2"
+          name="openingHours.weekday2"
           render={({ field }) => (
             <FormItem>
               <FormLabel>To</FormLabel>
@@ -356,7 +359,7 @@ export function CreateGymForm() {
         />
         <FormField
           control={form.control}
-          name="openingHour"
+          name="openingHours.openingHour"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Opening Hour</FormLabel>
@@ -369,7 +372,7 @@ export function CreateGymForm() {
         />
         <FormField
           control={form.control}
-          name="closingHour"
+          name="openingHours.closingHour"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Closing Hour</FormLabel>

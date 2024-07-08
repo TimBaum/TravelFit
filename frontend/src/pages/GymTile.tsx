@@ -12,16 +12,16 @@ export function GymTile({ gym }: { gym: IGymWithId }) {
 
   console.log(location.pathname)
 
-  function getMaxOpeningHourToday() {
-    const today = new Date().getDay()
-    const openingHoursToday = gym.openingHours.filter(
-      (openingHour) => openingHour.weekday === today,
-    )
-    if (openingHoursToday.length === 0) {
-      return 'Closed'
-    }
-    return openingHoursToday.slice(-1)[0].closingTime
-  }
+  // function getMaxOpeningHourToday() {
+  //   const today = new Date().getDay()
+  //   const openingHoursToday = gym.openingHours.filter(
+  //     (openingHour) => openingHour.weekday === today,
+  //   )
+  //   if (openingHoursToday.length === 0) {
+  //     return 'Closed'
+  //   }
+  //   return openingHoursToday.slice(-1)[0].closingTime
+  // }
 
   function findCheapestOffer() {
     const offers = gym.offers
@@ -34,7 +34,7 @@ export function GymTile({ gym }: { gym: IGymWithId }) {
     return 'from ' + cheapestOffer.priceEuro + '€'
   }
 
-  const maxOpeningHourToday = getMaxOpeningHourToday()
+  // const maxOpeningHourToday = getMaxOpeningHourToday()
 
   return (
     <div className="flex h-48 w-full border rounded p-2 items-stretch">
@@ -72,11 +72,11 @@ export function GymTile({ gym }: { gym: IGymWithId }) {
               ))}
             </div>
           </div>
-          <div>
+          {/* <div>
             {maxOpeningHourToday === 'Closed'
               ? 'Closed today'
               : `Open today until ${maxOpeningHourToday.hour}:${maxOpeningHourToday.minute.toString().padStart(2, '0')}`}
-          </div>
+          </div> */}
         </div>
         <div className="flex flex-col justify-between items-end w-1/3">
           <div className="flex items-center gap-1 text-nowrap">

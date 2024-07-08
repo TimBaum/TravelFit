@@ -5,7 +5,7 @@ import Offer from './Offer'
 import Review from './Review'
 import { IGym } from '@models/gym'
 
-export interface IGymModel extends IGym, Document { }
+export interface IGymModel extends IGym, Document {}
 
 const GymSchema: Schema = new mongoose.Schema({
   name: { type: String, required: true },
@@ -29,7 +29,7 @@ const GymSchema: Schema = new mongoose.Schema({
   averageRating: Number,
   cheapestOfferPrice: Number,
   address: { type: Address.schema, required: true },
-  openingHours: [TimeRange.schema],
+  openingHours: TimeRange.schema,
   offers: [Offer.schema],
   reviews: [Review.schema],
   createdAt: { type: Date, default: Date.now },
