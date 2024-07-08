@@ -6,8 +6,11 @@ import {
   BreadcrumbLink,
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb'
+import { useParams } from 'react-router-dom'
 
 function CreateUserAccount() {
+  const { id } = useParams<{ id: string }>()
+  const isEdit = Boolean(id)
   return (
     <>
       <div className="breadcrumps">
@@ -22,14 +25,18 @@ function CreateUserAccount() {
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbLink href="/create-gym">Create Gym</BreadcrumbLink>
+              <BreadcrumbLink href={isEdit ? `/edit-gym/${id}` : '/create-gym'}>
+                {isEdit ? 'Edit Gym' : 'Create Gym'}
+              </BreadcrumbLink>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
       </div>
-      <h1 className="text-5xl font-bold mb-2">Add Gym</h1>
+      <h1 className="text-5xl font-bold mb-2">
+        {isEdit ? 'Edit Gym' : 'Add Gym'}
+      </h1>
       <div>
-        <CreateGymForm />
+        <CreateGymForm mode={isEdit ? 'edit' : 'create'} />
       </div>
     </>
   )

@@ -65,6 +65,7 @@ const App: React.FC = () => {
               <Route path="/add-gym/" element={<AddGym />} />
               {/* for outsourcing form problem */}
               <Route path="/create-gym/" element={<CreateGym />} />
+              <Route path="/edit-gym/:id" element={<CreateGym />} />
               <Route path="/gyms/:id" element={<GymOverview />} />
               <Route path="/favourites" element={<Favourites />} />
               {/* <Route path="*" element={<NoPage />} /> */}

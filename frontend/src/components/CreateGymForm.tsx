@@ -95,8 +95,13 @@ const offerFormSchema = z.object({
   validityDays: z.number(),
 })
 
+interface CreateGymFormProps {
+  mode: 'create' | 'edit'
+}
+
 /* Component content */
-export function CreateGymForm() {
+export function CreateGymForm({ mode }: CreateGymFormProps) {
+  console.log(mode)
   const navigate = useNavigate()
   const [isDialogOpen, setIsDialogOpen] = React.useState(false)
   // offer array
