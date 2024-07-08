@@ -39,9 +39,25 @@ export const gymAccountFormSchema = z
       .regex(phoneValidationRegex, {
         message: 'Please enter a valid phone number.',
       }),
-    /* address: z
-      .string()
-      .min(5, { message: 'Address must be at least 5 characters.' }),*/
+    address: z.object({
+      street: z
+        .string()
+        .min(2, { message: 'Invalid street' })
+        .max(100, { message: 'Invalid street' }),
+      postalCode: z
+        .string()
+        .regex(/^\d+$/, { message: 'Please enter a number' })
+        .min(2, { message: 'Invalid code' })
+        .max(20, { message: 'Invalid code' }),
+      city: z
+        .string()
+        .min(2, { message: 'Invalid city' })
+        .max(50, { message: 'Invalid city' }),
+      country: z
+        .string()
+        .min(2, { message: 'Invalid country' })
+        .max(50, { message: 'Invalid country' }),
+    }),
     password: z
       .string()
       .min(8, { message: 'Password must be at least 8 characters.' }),
@@ -63,7 +79,12 @@ export function GymAccountForm() {
       lastName: '',
       email: '',
       phone: '',
-      // address: '',
+      address: {
+        street: '',
+        postalCode: '',
+        city: '',
+        country: 'Germany',
+      },
       password: '',
       confirmPassword: '',
     },
