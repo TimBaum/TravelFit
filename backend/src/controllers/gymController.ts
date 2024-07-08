@@ -199,7 +199,7 @@ const fetchImages = async (req: Request, res: Response) => {
   const apiKey = process.env.CLOUDINARY_KEY
   const apiSecret = process.env.CLOUDINARY_SECRET
   const gymId = req.params.id
-  const url = `https://api.cloudinary.com/v1_1/${cloudName}/resources/image`
+  const url = `https://api.cloudinary.com/v1_1/${cloudName}/resources/image?max_results=20&prefix=${gymId}&type=upload`
 
   try {
     const response = await fetch(url, {
@@ -215,10 +215,7 @@ const fetchImages = async (req: Request, res: Response) => {
     }
 
     const results = await response.json()
-    const filteredImages = results.resources.filter((image: CloudinaryImage) =>
-      image.public_id.includes(gymId),
-    )
-    res.json(filteredImages)
+    res.json(results)
   } catch (error) {
     res.status(500).json({ error })
   }

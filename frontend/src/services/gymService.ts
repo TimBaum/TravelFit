@@ -139,7 +139,7 @@ function useFetchImages(id: string | null) {
         return []
       })
 
-      const photos = response.map((image: CloudinaryImage) => {
+      const photos = response.resources.map((image: CloudinaryImage) => {
         return {
           url: image.secure_url,
           alt: image.display_name,
