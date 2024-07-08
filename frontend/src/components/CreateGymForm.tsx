@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import OfferTile from '@/components/Offer'
 import { IOffer } from '@models/offer'
 import { config } from '@/config'
@@ -32,6 +32,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog'
 import Dropzone from './Dropzone'
+import { useGetGym } from '@/services/gymService'
 
 /* Form checks */
 const formSchema = z.object({
@@ -101,9 +102,16 @@ interface CreateGymFormProps {
 
 /* Component content */
 export function CreateGymForm({ mode }: CreateGymFormProps) {
-  console.log(mode)
   const navigate = useNavigate()
   const [isDialogOpen, setIsDialogOpen] = React.useState(false)
+  const { id } = useParams<{ id: string }>()
+  const gymId = id || ''
+  const {
+    data: gym,
+    error: getGymError,
+    loading: getGymLoading,
+  } = useGetGym(gymId)
+
   // offer array
   const [offers, setOffers] = React.useState<IOffer[]>([])
 
@@ -140,6 +148,18 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
       offers: [],
     },
   })
+
+  // Prefill the form with the gyms data if in edit mode
+
+  React.useEffect(() => {
+    if (mode === 'edit' && gym) {
+      form.reset({
+        name: gym.name,
+        websiteLink: gym.websiteLink,
+        address: gym.address,
+      })
+    }
+  }, [mode, gym, form])
 
   /* Dialog submission default values */
   const offerForm = useForm({
