@@ -197,6 +197,62 @@ export function GymAccountForm() {
             </FormItem>
           )}
         />*/}
+        {/* Address */}
+        <div>
+          <FormField
+            control={form.control}
+            name="address.street"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Street and Number *</FormLabel>
+                <FormControl>
+                  <Input placeholder="Awesome street 12" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="address.postalCode"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Postal Code *</FormLabel>
+                <FormControl>
+                  <Input placeholder="12345" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="address.city"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>City *</FormLabel>
+                <FormControl>
+                  <Input placeholder="Awesometown" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="address.country"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Country *</FormLabel>
+                <FormControl>
+                  <Input placeholder="Germany" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+
         <div className="flex">
           <FormField
             control={form.control}
