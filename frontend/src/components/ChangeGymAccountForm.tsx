@@ -18,7 +18,6 @@ import {
   DropdownMenuTrigger,
   DropdownMenuItem,
 } from '@/components/ui/dropdown-menu'
-import { LucidePencil } from 'lucide-react'
 import { config } from '@/config'
 import { useAuth } from '@/provider/AuthProvider'
 import { useReadGymAccount } from '@/services/gymAccountService'
@@ -68,7 +67,7 @@ export function ChangeGymAccountForm() {
       salutation: oldData?.salutation as 'Mr.' | 'Ms.' | 'Diverse',
       firstName: oldData?.firstName,
       lastName: oldData?.lastName,
-      address: oldData?.address,
+      //address: oldData?.address,
       email: oldData?.email,
       phone: oldData?.phone,
     },
@@ -81,7 +80,7 @@ export function ChangeGymAccountForm() {
       salutation: oldData?.salutation as 'Mr.' | 'Ms.' | 'Diverse',
       firstName: oldData?.firstName,
       lastName: oldData?.lastName,
-      address: oldData?.address,
+      // address: oldData?.address,
       email: oldData?.email,
       phone: oldData?.phone,
     })
@@ -121,10 +120,6 @@ export function ChangeGymAccountForm() {
     }
   }
 
-  async function onSubmitChangeEmail() {
-    return <h1>TODO: implement email change</h1>
-  }
-
   async function onSubmitChangePassword() {
     return <h1>TODO: implement password change</h1>
   }
@@ -132,10 +127,6 @@ export function ChangeGymAccountForm() {
   return (
     <Form {...form}>
       <form>
-        <div className="flex flex-col items-center mb-5">
-          <LucidePencil size={20} />
-          <span>Foto</span>
-        </div>
         <FormField
           control={form.control}
           name="salutation"
@@ -247,13 +238,6 @@ export function ChangeGymAccountForm() {
           }
         >
           Save changes
-        </Button>
-        <Button
-          type="submit"
-          variant="outline"
-          onClick={() => form.handleSubmit(() => onSubmitChangeEmail())()}
-        >
-          Change email
         </Button>
         <Button
           type="submit"
