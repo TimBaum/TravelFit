@@ -48,7 +48,7 @@ async function createUserContext(
       ctx = gymAccount.toObject()
     }
     req.ctx = ctx
-    console.log('this context was created:  ', ctx)
+    //console.log('this context was created:  ', ctx)
   } catch (error) {
     // pass, since we also have non protected routes
   } finally {

@@ -52,7 +52,7 @@ function useUpdateGymAccount(id: string | null): GymAccount {
       const response = await fetch(
         `${config.BACKEND_URL}/gymAccounts/update/${id}`,
         {
-          method: 'PUT',
+          method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',
           },

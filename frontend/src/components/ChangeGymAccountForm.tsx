@@ -42,9 +42,9 @@ export const changeGymAccountFormSchema = z.object({
     .regex(phoneValidationRegex, {
       message: 'Please enter a valid phone number.',
     }),
-  address: z
+  /*address: z
     .string()
-    .min(5, { message: 'Address must be at least 5 characters.' }),
+    .min(5, { message: 'Address must be at least 5 characters.' }),*/
   /* password: z
       .string()
       .min(8, { message: 'Password must be at least 8 characters.' }),
@@ -59,17 +59,19 @@ export const changeGymAccountFormSchema = z.object({
 
 export function ChangeGymAccountForm() {
   const { user } = useAuth()
-  const oldData = useReadGymAccount(user?._id ?? '').data
+  let gymAccountDataFromBackend = useReadGymAccount(user?._id ?? '').data
 
   const form = useForm<z.infer<typeof changeGymAccountFormSchema>>({
     resolver: zodResolver(changeGymAccountFormSchema),
     defaultValues: {
-      salutation: oldData?.salutation as 'Mr.' | 'Ms.' | 'Diverse',
-      firstName: oldData?.firstName,
-      lastName: oldData?.lastName,
-      //address: oldData?.address,
-      email: oldData?.email,
-      phone: oldData?.phone,
+      salutation:
+        (gymAccountDataFromBackend?.salutation as 'Mr.' | 'Ms.' | 'Diverse') ??
+        'Diverse',
+      firstName: gymAccountDataFromBackend?.firstName ?? '',
+      lastName: gymAccountDataFromBackend?.lastName ?? '',
+      //address: gymAccountDataFromBackend?.address ?? '',
+      email: gymAccountDataFromBackend?.email ?? '',
+      phone: gymAccountDataFromBackend?.phone ?? '',
     },
   })
 
@@ -77,35 +79,37 @@ export function ChangeGymAccountForm() {
   //TODO: show new values instead of old values
   useEffect(() => {
     form.reset({
-      salutation: oldData?.salutation as 'Mr.' | 'Ms.' | 'Diverse',
-      firstName: oldData?.firstName,
-      lastName: oldData?.lastName,
+      salutation:
+        (gymAccountDataFromBackend?.salutation as 'Mr.' | 'Ms.' | 'Diverse') ??
+        'Diverse',
+      firstName: gymAccountDataFromBackend?.firstName ?? '',
+      lastName: gymAccountDataFromBackend?.lastName ?? '',
       // address: oldData?.address,
-      email: oldData?.email,
-      phone: oldData?.phone,
+      email: gymAccountDataFromBackend?.email ?? '',
+      phone: gymAccountDataFromBackend?.phone ?? '',
     })
-  }, [form.reset, oldData])
+  }, [form.reset, gymAccountDataFromBackend])
 
   async function onSubmitSaveChanges(
     values: z.infer<typeof changeGymAccountFormSchema>,
   ) {
-    const userData = { ...values }
+    const newUserData = { ...values }
     console.log('New gym account values: ', values)
 
     try {
-      const testString = config.BACKEND_URL + '/gymAccounts/update/' + user?._id
+      /* const testString = config.BACKEND_URL + '/gymAccounts/update/' + user?._id
       console.log(
         'string that is sent to backend for changing gym account',
         testString,
-      )
+      )*/
       const response = await fetch(
-        config.BACKEND_URL + '/gymAccounts/update/' + user?._id,
+        config.BACKEND_URL + '/gymAccounts/update/' + user?._id ?? '',
         {
           method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(userData),
+          body: JSON.stringify(newUserData),
         },
       )
 
@@ -115,12 +119,13 @@ export function ChangeGymAccountForm() {
 
       const data = await response.json()
       console.log('Gym account changed successfully:', data)
+      gymAccountDataFromBackend = useReadGymAccount(user?._id ?? '').data
     } catch (error) {
       console.error('Error changing gym account:', error)
     }
   }
 
-  async function onSubmitChangePassword() {
+  async function onClickChangePassword() {
     return <h1>TODO: implement password change</h1>
   }
 
@@ -190,7 +195,7 @@ export function ChangeGymAccountForm() {
             </FormItem>
           )}
         />
-        <FormField
+        {/* <FormField
           control={form.control}
           name="address"
           render={({ field }) => (
@@ -204,7 +209,7 @@ export function ChangeGymAccountForm() {
               </FormMessage>
             </FormItem>
           )}
-        />
+        />*/}
         <FormField
           control={form.control}
           name="email"
@@ -240,9 +245,9 @@ export function ChangeGymAccountForm() {
           Save changes
         </Button>
         <Button
-          type="submit"
+          type="button"
           variant="outline"
-          onClick={() => form.handleSubmit(() => onSubmitChangePassword())()}
+          onClick={() => onClickChangePassword()}
         >
           Change password
         </Button>

@@ -7,7 +7,7 @@ export interface PublicGymAccount {
   firstName: string
   lastName: string
   //address: string
-  //phone: string
+  phone: string
   favourites: string[]
   gyms: string[]
 }

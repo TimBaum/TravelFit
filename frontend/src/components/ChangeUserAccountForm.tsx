@@ -90,10 +90,6 @@ export function ChangeUserAccountForm() {
     }
   }
 
-  async function onClickChangeEmail() {
-    return <h1>TODO: implement email change</h1>
-  }
-
   async function onClickChangePassword() {
     return <h1>TODO: implement password change</h1>
   }
@@ -178,13 +174,6 @@ export function ChangeUserAccountForm() {
           }
         >
           Save changes
-        </Button>
-        <Button
-          type="button"
-          variant="outline"
-          onClick={() => onClickChangeEmail()}
-        >
-          Change email
         </Button>
         <Button
           type="button"
