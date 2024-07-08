@@ -2,7 +2,6 @@ import express from 'express'
 import {
   createUser,
   readUser,
-  readAllUsers,
   updateUser,
   deleteUser,
   addFavourite,
@@ -15,7 +14,6 @@ const router = express.Router()
 // TODO: implement authetication-check
 router.post('/create', createUser)
 router.get('/get/:id', readUser)
-router.get('/get', readAllUsers)
 router.patch('/update/:id', updateUser) // without authorization for testing with postman
 //router.patch('/update/:id', auth.isAuthorized, updateUser)
 router.patch('/:id/favourites/add', addFavourite)

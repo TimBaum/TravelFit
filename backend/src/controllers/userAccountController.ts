@@ -53,15 +53,6 @@ export const readUser = async (req: Request, res: Response) => {
   }
 }
 
-export const readAllUsers = async (req: Request, res: Response) => {
-  try {
-    const users = await User.find()
-    return res.status(200).json({ users })
-  } catch (err) {
-    return res.status(500).json({ error })
-  }
-}
-
 export const updateUser = async (req: Request, res: Response) => {
   console.log(
     'updateUser was called in controller with request body ',
