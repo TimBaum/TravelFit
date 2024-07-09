@@ -12,5 +12,6 @@ router.patch('/:id/reviews', controller.addReview)
 router.delete('/:id', controller.deleteGym)
 router.get('/fetch-images/:id', controller.fetchImages)
 router.patch('/update/:id', controller.updateGym)
+router.delete('/delete-image/:public_id', controller.deleteImage)
 
 export = router

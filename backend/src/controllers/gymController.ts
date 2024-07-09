@@ -4,7 +4,7 @@ import Gym from '../models/Gym'
 import Review from '../models/Review'
 import { FilterState } from '@models/filter'
 import cache from '../cache'
-import CloudinaryImage from '../models/CloudinaryImage'
+import cloudinary from 'cloudinary'
 
 const createGym = (req: Request, res: Response, next: NextFunction) => {
   const gymData = req.body
@@ -229,6 +229,28 @@ const fetchImages = async (req: Request, res: Response) => {
   }
 }
 
+cloudinary.v2.config({
+  cloud_name: 'travelfit',
+  api_key: process.env.CLOUDINARY_KEY,
+  api_secret: process.env.CLOUDINARY_SECRET,
+})
+
+const deleteImage = async (req: Request, res: Response) => {
+  try {
+    const public_id = req.params.public_id
+
+    // Cloudinary API call to delete the image
+    await cloudinary.v2.api.delete_resources([public_id], (error, result) => {
+      if (error) {
+        return res.status(500).json({ error })
+      }
+      return res.status(200).json({ result })
+    })
+  } catch (error) {
+    res.status(500).json({ error })
+  }
+}
+
 export default {
   readAll,
   createGym,
@@ -238,4 +260,5 @@ export default {
   deleteGym,
   fetchImages,
   updateGym,
+  deleteImage,
 }
