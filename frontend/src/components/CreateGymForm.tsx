@@ -152,6 +152,22 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
     },
   })
 
+  const [flaggedForDeletion, setFlaggedForDeletion] = useState<number[]>([])
+
+  const toggleFlagForDeletion = (
+    event: React.MouseEvent<HTMLButtonElement>,
+    index: number,
+  ) => {
+    event.preventDefault()
+    setFlaggedForDeletion((prevFlagged) => {
+      if (prevFlagged.includes(index)) {
+        return prevFlagged.filter((i) => i !== index)
+      } else {
+        return [...prevFlagged, index]
+      }
+    })
+  }
+
   // Prefill the form with the gyms data if in edit mode
 
   React.useEffect(() => {
@@ -482,9 +498,12 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
                   <img
                     src={photo.url}
                     alt={`Gym Photo ${index}`}
-                    className="w-full h-full object-cover"
+                    className={`w-full h-full object-cover ${flaggedForDeletion.includes(index) ? 'opacity-50' : ''}`}
                   />
-                  <button className="absolute top-0 right-0 bg-red-500 text-white m-2 p-1">
+                  <button
+                    className="absolute top-0 right-0 bg-red-500 text-white m-2 p-1"
+                    onClick={(event) => toggleFlagForDeletion(event, index)}
+                  >
                     <TrashIcon />
                   </button>
                 </div>
