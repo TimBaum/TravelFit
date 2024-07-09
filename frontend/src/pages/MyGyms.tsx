@@ -142,7 +142,7 @@ const MyGyms: React.FC = () => {
                       </Button>
                       <Button
                         className="px-2.5"
-                        onClick={() => navigate('/gyms/')}
+                        onClick={() => navigate(`/edit-gym/${gym._id}`)}
                       >
                         <Pencil className="h-5 w-6" />
                       </Button>

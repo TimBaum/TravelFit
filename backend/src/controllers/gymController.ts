@@ -194,6 +194,14 @@ const deleteGym = (req: Request, res: Response, next: NextFunction) => {
     })
 }
 
+const updateGym = (req: Request, res: Response, next: NextFunction) => {
+  const { id } = req.params
+  const gymData = req.body
+  return Gym.findByIdAndUpdate(id, gymData)
+    .then((gym) => res.status(201).json({ gym }))
+    .catch((error) => res.status(500).json({ error }))
+}
+
 const fetchImages = async (req: Request, res: Response) => {
   const cloudName = 'travelfit'
   const apiKey = process.env.CLOUDINARY_KEY
@@ -229,4 +237,5 @@ export default {
   searchGyms,
   deleteGym,
   fetchImages,
+  updateGym,
 }

@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import OfferTile from '@/components/Offer'
 import { IOffer } from '@models/offer'
 import { config } from '@/config'
@@ -13,6 +13,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { TrashIcon } from '@radix-ui/react-icons'
 import {
   Form,
   FormControl,
@@ -32,6 +33,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog'
 import Dropzone from './Dropzone'
+import { useFetchImages, useGetGym } from '@/services/gymService'
 
 /* Form checks */
 const formSchema = z.object({
@@ -95,10 +97,24 @@ const offerFormSchema = z.object({
   validityDays: z.number(),
 })
 
+interface CreateGymFormProps {
+  mode: 'create' | 'edit'
+}
+
 /* Component content */
-export function CreateGymForm() {
+export function CreateGymForm({ mode }: CreateGymFormProps) {
   const navigate = useNavigate()
   const [isDialogOpen, setIsDialogOpen] = React.useState(false)
+  const { id } = useParams<{ id: string }>()
+  const gymId = id || ''
+  const {
+    data: gym,
+    error: getGymError,
+    loading: getGymLoading,
+  } = useGetGym(gymId)
+  const { data: photos } = useFetchImages('gym')
+  console.log(photos)
+
   // offer array
   const [offers, setOffers] = React.useState<IOffer[]>([])
 
@@ -135,6 +151,34 @@ export function CreateGymForm() {
       offers: [],
     },
   })
+
+  const [flaggedForDeletion, setFlaggedForDeletion] = useState<number[]>([])
+
+  const toggleFlagForDeletion = (
+    event: React.MouseEvent<HTMLButtonElement>,
+    index: number,
+  ) => {
+    event.preventDefault()
+    setFlaggedForDeletion((prevFlagged) => {
+      if (prevFlagged.includes(index)) {
+        return prevFlagged.filter((i) => i !== index)
+      } else {
+        return [...prevFlagged, index]
+      }
+    })
+  }
+
+  // Prefill the form with the gyms data if in edit mode
+
+  React.useEffect(() => {
+    if (mode === 'edit' && gym) {
+      form.reset({
+        name: gym.name,
+        websiteLink: gym.websiteLink,
+        address: gym.address,
+      })
+    }
+  }, [mode, gym, form])
 
   /* Dialog submission default values */
   const offerForm = useForm({
@@ -209,31 +253,58 @@ export function CreateGymForm() {
 
     //  -> gymWithCheapestOffer = { cheapestOffer, ...values}
 
-    /* send data to backend */
     const gymData = { offers, ...values }
     console.log(gymData)
-    // Use gmy name as image id without spaces
     const image_id = values.name.replace(/\s+/g, '')
-    try {
-      const response = await fetch(config.BACKEND_URL + '/gyms/create', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(gymData),
-      })
-      if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.error || 'Failed to create gym')
+    /* send data to backend */
+    if (mode === 'create') {
+      // Use gmy name as image id without spaces
+
+      try {
+        const response = await fetch(config.BACKEND_URL + '/gyms/create', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(gymData),
+        })
+        if (!response.ok) {
+          const errorData = await response.json()
+          throw new Error(errorData.error || 'Failed to create gym')
+        }
+        const data = await response.json()
+        console.log('Gym created:', data)
+        await uploadFiles(image_id)
+        form.control._reset()
+      } catch (error) {
+        console.log('Error creating gym:', error)
       }
-      const data = await response.json()
-      console.log('Gym created:', data)
-      await uploadFiles(image_id)
-      form.control._reset()
-    } catch (error) {
-      console.log('Error creating gym:', error)
+      navigate('/my-gyms')
+    } else if (mode === 'edit') {
+      try {
+        const response = await fetch(
+          config.BACKEND_URL + `/gyms/update/${gym?._id}`,
+          {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(gymData),
+          },
+        )
+        if (!response.ok) {
+          const errorData = await response.json()
+          throw new Error(errorData.error || 'Failed to create gym')
+        }
+        const data = await response.json()
+        console.log('Gym created:', data)
+        await uploadFiles(image_id)
+        form.control._reset()
+      } catch (error) {
+        console.log('Error creating gym:', error)
+      }
+      navigate('/my-gyms')
     }
-    navigate('/my-gyms')
   }
 
   /* Render */
@@ -443,6 +514,35 @@ export function CreateGymForm() {
           </FormControl>
           <FormMessage />
         </FormItem>
+
+        {/* Display stored photos if edit mode*/}
+
+        {mode === 'edit' && (
+          <>
+            <FormLabel className="text-2xl font-bold">Current Photos</FormLabel>
+            <div className="grid grid-cols-3 gap-4 mt-4">
+              {photos && photos.length > 0 ? (
+                photos.map((photo, index) => (
+                  <div key={index} className="relative">
+                    <img
+                      src={photo.url}
+                      alt={`Gym Photo ${index}`}
+                      className={`w-full h-full object-cover ${flaggedForDeletion.includes(index) ? 'opacity-50' : ''}`}
+                    />
+                    <button
+                      className="absolute top-0 right-0 bg-red-500 text-white m-2 p-1"
+                      onClick={(event) => toggleFlagForDeletion(event, index)}
+                    >
+                      <TrashIcon />
+                    </button>
+                  </div>
+                ))
+              ) : (
+                <p>No photos available</p>
+              )}
+            </div>
+          </>
+        )}
 
         {/* Offers: OfferTile maps over the offer-array filled from the dialog form */}
         <h1 className="text-2xl font-bold mb-2 mt-3">Offers</h1>
