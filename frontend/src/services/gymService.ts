@@ -156,4 +156,30 @@ function useFetchImages(id: string | null) {
   return { data, error, loading }
 }
 
-export { useGymSearch, useGetGym, useReadAll, useFetchImages }
+const useDeleteImage = (public_id: string | null) => {
+  const [data, setData] = useState()
+  const [error, setError] = useState(null)
+  const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    async function fetchData() {
+      setLoading(true)
+      setError(null)
+      const response = await fetchJSON(`/gyms/delete-image/${public_id}`, {
+        method: 'DELETE',
+      }).catch((error) => {
+        setError(error.message)
+        return []
+      })
+
+      setData(response)
+      setLoading(false)
+    }
+
+    fetchData()
+  }, [public_id])
+
+  return { data, error, loading }
+}
+
+export { useGymSearch, useGetGym, useReadAll, useFetchImages, useDeleteImage }
