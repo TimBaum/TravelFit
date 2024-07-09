@@ -13,6 +13,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { CloudinaryImage } from '@models/cloudinaryImage'
 import {
   Form,
   FormControl,
@@ -32,7 +33,9 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog'
 import Dropzone from './Dropzone'
-import { useGetGym } from '@/services/gymService'
+import { useFetchImages, useGetGym } from '@/services/gymService'
+import { Card } from './ui/card'
+import PhotoGallery from './PhotoGallery'
 
 /* Form checks */
 const formSchema = z.object({
@@ -111,6 +114,8 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
     error: getGymError,
     loading: getGymLoading,
   } = useGetGym(gymId)
+  const { data: photos } = useFetchImages('gym')
+  console.log(photos)
 
   // offer array
   const [offers, setOffers] = React.useState<IOffer[]>([])
@@ -468,6 +473,25 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
           </FormControl>
           <FormMessage />
         </FormItem>
+
+        {/* Display stored photos if edit mode*/}
+        <FormLabel className="text-2xl font-bold">Current Photos</FormLabel>
+        {mode === 'edit' && (
+          <div className="grid grid-cols-3 gap-4 mt-4">
+            {photos && photos.length > 0 ? (
+              photos.map((photo, index) => (
+                <img
+                  key={index}
+                  src={photo.url}
+                  alt={`Gym Photo ${index}`}
+                  className="w-full w-full h-48 object-cover"
+                />
+              ))
+            ) : (
+              <p>No photos available</p>
+            )}
+          </div>
+        )}
 
         {/* Offers: OfferTile maps over the offer-array filled from the dialog form */}
         <h1 className="text-2xl font-bold mb-2 mt-3">Offers</h1>
