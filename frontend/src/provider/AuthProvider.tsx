@@ -2,7 +2,13 @@ import { config } from '@/config'
 import { fetchJSON } from '@/services/utils'
 import { PublicUser } from '@models/user'
 import { PublicGymAccount } from '@models/gymAccount'
-import { useContext, createContext, ReactNode, useState } from 'react'
+import {
+  useContext,
+  createContext,
+  ReactNode,
+  useState,
+  useEffect,
+} from 'react'
 import { useNavigate } from 'react-router-dom'
 
 interface AuthContextType {
@@ -32,11 +38,10 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const [hasActiveSubscription, setHasActiveSubscription] = useState<
     boolean | null
-  >(null)
+  >(false)
 
   let accountType: 'GYM_USER' | 'USER' | 'NOT_LOGGED_IN'
 
-  //TODO: this returns accountType 'USER' for 'GYM_ACCOUNTS' -> fix this
   if (!user) {
     accountType = 'NOT_LOGGED_IN'
   } else if ('displayName' in user) {
@@ -47,6 +52,34 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     accountType = 'GYM_USER'
   }
   console.log('accountType is ', accountType)
+
+  async function checkSubscriptionStatus() {
+    return fetchJSON('/subscriptions/active')
+      .then((data) => {
+        setHasActiveSubscription(data.hasPremiumSubscription)
+      })
+      .catch((error) => {
+        console.error('Failed to check subscription status:', error)
+        setHasActiveSubscription(false)
+      })
+  }
+
+  useEffect(() => {
+    if (!user) {
+      accountType = 'NOT_LOGGED_IN'
+      setHasActiveSubscription(false)
+      return
+    } else if ('displayName' in user) {
+      accountType = 'USER'
+      checkSubscriptionStatus()
+    } // 'displayName' exists in PublicUser but not in PublicGymAccount
+    else {
+      accountType = 'GYM_USER'
+      setHasActiveSubscription(false)
+      return
+    }
+    console.log('accountType is ', accountType)
+  }, [user])
 
   const navigate = useNavigate()
 
@@ -76,17 +109,6 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     localStorage.removeItem('user')
     setUser(null)
     navigate('/login')
-  }
-
-  async function checkSubscriptionStatus() {
-    return fetchJSON('/subscriptions/active')
-      .then((data) => {
-        setHasActiveSubscription(data.hasPremiumSubscription)
-      })
-      .catch((error) => {
-        console.error('Failed to check subscription status:', error)
-        setHasActiveSubscription(false)
-      })
   }
 
   return (

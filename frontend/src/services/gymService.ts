@@ -3,6 +3,7 @@ import { IGymWithId } from '@models/gym'
 import { fetchJSON } from './utils'
 import { FilterState } from '@models/filter'
 import { config } from '@/config'
+import { CloudinaryImage } from '@models/cloudinaryImage'
 
 interface GymSearchResults {
   data: IGymWithId[]
@@ -33,6 +34,7 @@ function useGymSearch(
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(false)
 
+  /* useEffect hook specialized for manupilations after the component has been rendered  */
   useEffect(() => {
     async function fetchData() {
       if (!searchString) return
@@ -121,4 +123,37 @@ function useReadAll(): {
   return { data, error, loading }
 }
 
-export { useGymSearch, useGetGym, useReadAll }
+function useFetchImages(id: string | null) {
+  const [data, setData] = useState<CloudinaryImage[]>()
+  const [error, setError] = useState(null)
+  const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    async function fetchData() {
+      setLoading(true)
+      setError(null)
+      const response = await fetchJSON(`/gyms/fetch-images/${id}`, {
+        method: 'GET',
+      }).catch((error) => {
+        setError(error.message)
+        return []
+      })
+
+      const photos = response.resources.map((image: CloudinaryImage) => {
+        return {
+          url: image.secure_url,
+          alt: image.display_name,
+        }
+      })
+
+      setData(photos)
+      setLoading(false)
+    }
+
+    fetchData()
+  }, [])
+
+  return { data, error, loading }
+}
+
+export { useGymSearch, useGetGym, useReadAll, useFetchImages }

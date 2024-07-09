@@ -99,7 +99,10 @@ const MyGyms: React.FC = () => {
             className="w-2/5 mx-auto mb-6"
           />
           <p className="text-2xl">Nothing here yet.</p>
-          <Button className="mx-auto mt-3" onClick={() => navigate('/add-gym')}>
+          <Button
+            className="mx-auto mt-3"
+            onClick={() => navigate('/create-gym')}
+          >
             + Add your first gym
           </Button>
         </div>
@@ -139,7 +142,7 @@ const MyGyms: React.FC = () => {
                       </Button>
                       <Button
                         className="px-2.5"
-                        onClick={() => navigate('/gyms/')}
+                        onClick={() => navigate(`/edit-gym/${gym._id}`)}
                       >
                         <Pencil className="h-5 w-6" />
                       </Button>
@@ -176,7 +179,7 @@ const MyGyms: React.FC = () => {
               ))}
             </TableBody>
           </Table>
-          <Button onClick={() => navigate('/add-gym')}>+ Add a Gym</Button>
+          <Button onClick={() => navigate('/create-gym')}>+ Add a Gym</Button>
         </>
       )}
     </>

@@ -17,6 +17,7 @@ import Map from '@/components/map'
 import '@/styles/gym-overview.css'
 
 import { useGetGym } from '@/services/gymService'
+import { useFetchImages } from '@/services/gymService'
 
 import { useLocation, useParams } from 'react-router-dom'
 
@@ -34,6 +35,7 @@ function GymOverview() {
   const GymId = id || ''
 
   const { data, error, loading } = useGetGym(GymId)
+  const { data: images } = useFetchImages('gym')
   const gymname = data?.name
   const previousPage = useLocation().state?.from
   const previousPagePath =
@@ -57,16 +59,8 @@ function GymOverview() {
     return <div>Error fetching gym</div>
   }
 
-  const photos = [
-    { url: '/src/assets/img1.png', alt: 'Gym photo 1' },
-    { url: '/src/assets/img2.png', alt: 'Gym photo 1' },
-    { url: '/src/assets/img3.png', alt: 'Gym photo 1' },
-    { url: '/src/assets/img4.png', alt: 'Gym photo 1' },
-    { url: '/src/assets/img5.png', alt: 'Gym photo 1' },
-  ]
-
-  const lat = data?.address.location.coordinates[1]
-  const lng = data?.address.location.coordinates[0]
+  const lat = data?.address.location?.coordinates[1]
+  const lng = data?.address.location?.coordinates[0]
 
   return (
     <div>
@@ -103,7 +97,7 @@ function GymOverview() {
       {/* Basic structure for the rest of the page */}
       <div>
         {/* Basic structure for the rest of the page */}
-        <PhotoGallery photos={photos} />
+        <PhotoGallery photos={images || []} />
         <div className="flex gap-2">
           {/* left side */}
           <div className="w-2/3 mr-10">
