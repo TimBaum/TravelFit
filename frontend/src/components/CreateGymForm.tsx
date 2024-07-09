@@ -14,6 +14,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { TrashIcon } from '@radix-ui/react-icons'
+import { ResetIcon } from '@radix-ui/react-icons'
 import {
   Form,
   FormControl,
@@ -548,7 +549,11 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
                         toggleFlagForDeletion(event, photo.public_id)
                       }
                     >
-                      <TrashIcon />
+                      {flaggedForDeletion.includes(photo.public_id) ? (
+                        <ResetIcon />
+                      ) : (
+                        <TrashIcon />
+                      )}
                     </button>
                   </div>
                 ))
