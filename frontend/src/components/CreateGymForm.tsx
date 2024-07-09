@@ -13,7 +13,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { CloudinaryImage } from '@models/cloudinaryImage'
+import { TrashIcon } from '@radix-ui/react-icons'
 import {
   Form,
   FormControl,
@@ -34,8 +34,6 @@ import {
 } from '@/components/ui/dialog'
 import Dropzone from './Dropzone'
 import { useFetchImages, useGetGym } from '@/services/gymService'
-import { Card } from './ui/card'
-import PhotoGallery from './PhotoGallery'
 
 /* Form checks */
 const formSchema = z.object({
@@ -480,12 +478,16 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
           <div className="grid grid-cols-3 gap-4 mt-4">
             {photos && photos.length > 0 ? (
               photos.map((photo, index) => (
-                <img
-                  key={index}
-                  src={photo.url}
-                  alt={`Gym Photo ${index}`}
-                  className="w-full w-full h-48 object-cover"
-                />
+                <div key={index} className="relative">
+                  <img
+                    src={photo.url}
+                    alt={`Gym Photo ${index}`}
+                    className="w-full h-full object-cover"
+                  />
+                  <button className="absolute top-0 right-0 bg-red-500 text-white m-2 p-1">
+                    <TrashIcon />
+                  </button>
+                </div>
               ))
             ) : (
               <p>No photos available</p>
