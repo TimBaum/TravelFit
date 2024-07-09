@@ -12,6 +12,8 @@ export function GymTile({ gym }: { gym: IGymWithId }) {
 
   console.log(location.pathname)
 
+  /* TODO: decide wheter to change back the Timerange interface or change up this function! */
+
   // function getMaxOpeningHourToday() {
   //   const today = new Date().getDay()
   //   const openingHoursToday = gym.openingHours.filter(

@@ -31,6 +31,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import Dropzone from './Dropzone'
 
 /* Form checks */
@@ -60,24 +67,24 @@ const formSchema = z.object({
       .max(50, { message: 'Invalid country' }),
   }),
   openingHours: z.object({
-    weekday1: z
-      .string()
-      .min(2, { message: 'Invalid country' })
-      .max(50, { message: 'Invalid country' }),
-    weekday2: z
-      .string()
-      .min(2, { message: 'Invalid country' })
-      .max(50, { message: 'Invalid country' }),
+    weekday1: z.string(),
+    weekday2: z.string(),
     openingHour: z.coerce.number(),
     closingHour: z.coerce.number(),
   }),
-  // openingHour: z.string().regex(/^\d+$/, { message: 'Please enter a number' }),
-  // closingHour: z.string().regex(/^\d+$/, { message: 'Please enter a number' }),
   highlights: z.array(z.string()).optional(),
 })
 const simpleUrlRegex =
   /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/
-
+const weekdays = [
+  'Monday',
+  'Tuesday',
+  'Wednesday',
+  'Thursday',
+  'Friday',
+  'Saturday',
+  'Sunday',
+]
 /* Dialog form checks */
 const offerFormSchema = z.object({
   title: z.string().min(2, { message: 'Field is required.' }),
@@ -130,7 +137,7 @@ export function CreateGymForm() {
       },
       openingHours: {
         weekday1: 'Monday',
-        weekday2: 'Friday',
+        weekday2: 'Sunday',
         openingHour: 8,
         closingHour: 22,
       },
@@ -146,23 +153,21 @@ export function CreateGymForm() {
       title: '',
       type: 'Subscription',
       description: '',
-      priceEuro: 0,
-      validityDays: 0,
+      priceEuro: 5,
+      validityDays: 7,
     },
   })
 
+  /* Pictures */
   interface UploadResult {
     public_id: string
     secure_url: string
     [key: string]: unknown // This line allows any additional attributes
   }
-
   const [acceptedFiles, setAcceptedFiles] = useState<File[]>([])
-
   const handleFilesSelected = (files: File[]) => {
     setAcceptedFiles(files)
   }
-
   const uploadFiles = async (public_id: string) => {
     const uploadedFiles: UploadResult[] = []
     for (const file of acceptedFiles) {
@@ -183,7 +188,7 @@ export function CreateGymForm() {
       uploadedFiles.push(results)
     }
   }
-  // wierd workaround to get the dialog form to submit without submitting the main form lol
+  // workaround to get the dialog form to submit without submitting the main form lol
   function handleDialogSubmit() {
     return offerForm.handleSubmit(onDialogSubmit)()
   }
@@ -196,8 +201,8 @@ export function CreateGymForm() {
       title: values.title,
       type: 'Special',
       description: values.description,
-      priceEuro: 99.99,
-      validityDays: 7,
+      priceEuro: values.priceEuro,
+      validityDays: values.validityDays,
       startDate: new Date(),
       endDate: new Date('2222-06-04T11:00:12.070Z'),
     }
@@ -215,7 +220,7 @@ export function CreateGymForm() {
     /* send data to backend */
     const gymData = { offers, ...values }
     console.log(gymData)
-    // Use gmy name as image id without spaces
+    // Use gym name as image id without spaces
     const image_id = values.name.replace(/\s+/g, '')
     try {
       const response = await fetch(config.BACKEND_URL + '/gyms/create', {
@@ -330,7 +335,7 @@ export function CreateGymForm() {
         </div>
 
         {/* OpeningHours */}
-        <FormLabel>Opening Hours</FormLabel>
+        <FormLabel className="text-2xl font-bold">Opening hours</FormLabel>
         <FormField
           control={form.control}
           name="openingHours.weekday1"
@@ -338,7 +343,18 @@ export function CreateGymForm() {
             <FormItem>
               <FormLabel>Weekday 1</FormLabel>
               <FormControl>
-                <Input placeholder="Monday" {...field} />
+                <Select onValueChange={(value) => field.onChange(value)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Monday" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {weekdays.map((weekday) => (
+                      <SelectItem key={weekday} value={weekday}>
+                        {weekday}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -349,9 +365,20 @@ export function CreateGymForm() {
           name="openingHours.weekday2"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>To</FormLabel>
+              <FormLabel>Weekday 2</FormLabel>
               <FormControl>
-                <Input placeholder="Friday" {...field} />
+                <Select onValueChange={(value) => field.onChange(value)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Sunday" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {weekdays.map((weekday) => (
+                      <SelectItem key={weekday} value={weekday}>
+                        {weekday}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -509,7 +536,7 @@ export function CreateGymForm() {
                     <FormItem>
                       <FormLabel>Price (€)</FormLabel>
                       <FormControl>
-                        <Input {...field} />
+                        <Input type="number" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -522,7 +549,7 @@ export function CreateGymForm() {
                     <FormItem>
                       <FormLabel>Validity in days</FormLabel>
                       <FormControl>
-                        <Input {...field} />
+                        <Input type="number" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

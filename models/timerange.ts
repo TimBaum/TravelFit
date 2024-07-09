@@ -1,12 +1,3 @@
-export type Weekday =
-  | 'Monday'
-  | 'Tuesday'
-  | 'Wednesday'
-  | 'Thursday'
-  | 'Friday'
-  | 'Saturday'
-  | 'Sunday'
-
 export interface ITimeRange {
   weekday1: string
   weekday2: string
