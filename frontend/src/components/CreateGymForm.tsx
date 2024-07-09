@@ -253,31 +253,58 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
 
     //  -> gymWithCheapestOffer = { cheapestOffer, ...values}
 
-    /* send data to backend */
     const gymData = { offers, ...values }
     console.log(gymData)
-    // Use gmy name as image id without spaces
     const image_id = values.name.replace(/\s+/g, '')
-    try {
-      const response = await fetch(config.BACKEND_URL + '/gyms/create', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(gymData),
-      })
-      if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.error || 'Failed to create gym')
+    /* send data to backend */
+    if (mode === 'create') {
+      // Use gmy name as image id without spaces
+
+      try {
+        const response = await fetch(config.BACKEND_URL + '/gyms/create', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(gymData),
+        })
+        if (!response.ok) {
+          const errorData = await response.json()
+          throw new Error(errorData.error || 'Failed to create gym')
+        }
+        const data = await response.json()
+        console.log('Gym created:', data)
+        await uploadFiles(image_id)
+        form.control._reset()
+      } catch (error) {
+        console.log('Error creating gym:', error)
       }
-      const data = await response.json()
-      console.log('Gym created:', data)
-      await uploadFiles(image_id)
-      form.control._reset()
-    } catch (error) {
-      console.log('Error creating gym:', error)
+      navigate('/my-gyms')
+    } else if (mode === 'edit') {
+      try {
+        const response = await fetch(
+          config.BACKEND_URL + `/gyms/update/${gym?._id}`,
+          {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(gymData),
+          },
+        )
+        if (!response.ok) {
+          const errorData = await response.json()
+          throw new Error(errorData.error || 'Failed to create gym')
+        }
+        const data = await response.json()
+        console.log('Gym created:', data)
+        await uploadFiles(image_id)
+        form.control._reset()
+      } catch (error) {
+        console.log('Error creating gym:', error)
+      }
+      navigate('/my-gyms')
     }
-    navigate('/my-gyms')
   }
 
   /* Render */
@@ -489,29 +516,32 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
         </FormItem>
 
         {/* Display stored photos if edit mode*/}
-        <FormLabel className="text-2xl font-bold">Current Photos</FormLabel>
+
         {mode === 'edit' && (
-          <div className="grid grid-cols-3 gap-4 mt-4">
-            {photos && photos.length > 0 ? (
-              photos.map((photo, index) => (
-                <div key={index} className="relative">
-                  <img
-                    src={photo.url}
-                    alt={`Gym Photo ${index}`}
-                    className={`w-full h-full object-cover ${flaggedForDeletion.includes(index) ? 'opacity-50' : ''}`}
-                  />
-                  <button
-                    className="absolute top-0 right-0 bg-red-500 text-white m-2 p-1"
-                    onClick={(event) => toggleFlagForDeletion(event, index)}
-                  >
-                    <TrashIcon />
-                  </button>
-                </div>
-              ))
-            ) : (
-              <p>No photos available</p>
-            )}
-          </div>
+          <>
+            <FormLabel className="text-2xl font-bold">Current Photos</FormLabel>
+            <div className="grid grid-cols-3 gap-4 mt-4">
+              {photos && photos.length > 0 ? (
+                photos.map((photo, index) => (
+                  <div key={index} className="relative">
+                    <img
+                      src={photo.url}
+                      alt={`Gym Photo ${index}`}
+                      className={`w-full h-full object-cover ${flaggedForDeletion.includes(index) ? 'opacity-50' : ''}`}
+                    />
+                    <button
+                      className="absolute top-0 right-0 bg-red-500 text-white m-2 p-1"
+                      onClick={(event) => toggleFlagForDeletion(event, index)}
+                    >
+                      <TrashIcon />
+                    </button>
+                  </div>
+                ))
+              ) : (
+                <p>No photos available</p>
+              )}
+            </div>
+          </>
         )}
 
         {/* Offers: OfferTile maps over the offer-array filled from the dialog form */}
