@@ -152,20 +152,20 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
     },
   })
 
-  const [flaggedForDeletion, setFlaggedForDeletion] = useState<number[]>([])
+  const [flaggedForDeletion, setFlaggedForDeletion] = useState<string[]>([])
+
+  console.log(flaggedForDeletion)
 
   const toggleFlagForDeletion = (
     event: React.MouseEvent<HTMLButtonElement>,
-    index: number,
+    photoId: string,
   ) => {
     event.preventDefault()
-    setFlaggedForDeletion((prevFlagged) => {
-      if (prevFlagged.includes(index)) {
-        return prevFlagged.filter((i) => i !== index)
-      } else {
-        return [...prevFlagged, index]
-      }
-    })
+    setFlaggedForDeletion((prev) =>
+      prev.includes(photoId)
+        ? prev.filter((id) => id !== photoId)
+        : [...prev, photoId],
+    )
   }
 
   // Prefill the form with the gyms data if in edit mode
@@ -299,6 +299,19 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
         const data = await response.json()
         console.log('Gym created:', data)
         await uploadFiles(image_id)
+        if (flaggedForDeletion.length > 0) {
+          await Promise.all(
+            flaggedForDeletion.map(async (photoId) => {
+              await fetch(
+                `${config.BACKEND_URL}/gyms/delete-image/${photoId}`,
+                {
+                  method: 'DELETE',
+                },
+              )
+            }),
+          )
+          setFlaggedForDeletion([]) // Reset flagged photos
+        }
         form.control._reset()
       } catch (error) {
         console.log('Error creating gym:', error)
@@ -527,11 +540,13 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
                     <img
                       src={photo.url}
                       alt={`Gym Photo ${index}`}
-                      className={`w-full h-full object-cover ${flaggedForDeletion.includes(index) ? 'opacity-50' : ''}`}
+                      className={`w-full h-full object-cover ${flaggedForDeletion.includes(photo.public_id) ? 'opacity-50' : ''}`}
                     />
                     <button
                       className="absolute top-0 right-0 bg-red-500 text-white m-2 p-1"
-                      onClick={(event) => toggleFlagForDeletion(event, index)}
+                      onClick={(event) =>
+                        toggleFlagForDeletion(event, photo.public_id)
+                      }
                     >
                       <TrashIcon />
                     </button>

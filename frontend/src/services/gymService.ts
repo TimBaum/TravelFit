@@ -143,6 +143,7 @@ function useFetchImages(id: string | null) {
         return {
           url: image.secure_url,
           alt: image.display_name,
+          public_id: image.public_id,
         }
       })
 
