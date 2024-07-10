@@ -23,6 +23,7 @@ import { config } from '@/config'
 import { useAuth } from '@/provider/AuthProvider'
 import { useReadUser, useUpdateUser } from '@/services/userService'
 import { useEffect } from 'react'
+import { fetchJSON } from '@/services/utils'
 
 export const changeUserAccountFormSchema = z.object({
   salutation: z.enum(['Mr.', 'Ms.', 'Diverse'], {
@@ -67,22 +68,16 @@ export function ChangeUserAccountForm() {
     console.log('New user values for update HTTP request: ', values)
 
     try {
-      const response = await fetch(
-        config.BACKEND_URL + '/users/update/' + user?._id ?? '',
-        {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(newUserData),
-        },
-      )
+      const response = await fetchJSON('/users/update/' + user?._id ?? '', {
+        method: 'PATCH',
+        body: JSON.stringify(newUserData),
+      })
 
       if (!response.ok) {
         throw new Error('Failed to change user')
       }
 
-      const data = await response.json()
+      const data = await response
       /* const data = await useUpdateUser(
       user?._id ?? '',
       JSON.stringify(newUserData),
