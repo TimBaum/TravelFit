@@ -11,7 +11,7 @@ import { AddReviewDialog, ReviewTile, ReviewDialog } from '@/components/Review'
 import { MarkFavourite } from '@/components/MarkFavourite'
 import HighlightBadge from '@/components/HighlightBadge'
 import { Button } from '@/components/ui/button'
-import OfferTile from '@/components/Offer'
+import OfferTile from '@/components/OfferTile'
 import Map from '@/components/map'
 
 import '@/styles/gym-overview.css'

@@ -1,11 +1,10 @@
 export interface IOffer {
   title: string
-  type: 'Subscription' | 'OneTime' | 'FreeTrial' | 'Special' | '...'
+  type: string //'Subscription' | 'OneTime' | 'FreeTrial' | 'Special'
+  isSpecial: boolean
   description: string
-  validityDays: number
+  //validityDays: number
   priceEuro: number
-
-  // Special Offer
   startDate: Date
   endDate: Date
 }

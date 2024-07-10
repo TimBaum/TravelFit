@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
-import OfferTile from '@/components/Offer'
+import OfferTile from '@/components/OfferTile'
 import { IOffer } from '@models/offer'
 import { config } from '@/config'
 
@@ -13,6 +13,11 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { CalendarIcon } from 'lucide-react'
+import { Calendar } from '@/components/ui/calendar'
+import { format } from 'date-fns'
+import { cn } from '@/lib/utils'
+
 import {
   Form,
   FormControl,
@@ -38,6 +43,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover'
 import Dropzone from './Dropzone'
 
 /* Form checks */
@@ -69,8 +79,8 @@ const formSchema = z.object({
   openingHours: z.object({
     weekday1: z.string(),
     weekday2: z.string(),
-    openingHour: z.coerce.number(),
-    closingHour: z.coerce.number(),
+    openingHour: z.coerce.number().min(0).max(24),
+    closingHour: z.coerce.number().min(0).max(24),
   }),
   highlights: z.array(z.string()).optional(),
 })
@@ -85,78 +95,27 @@ const weekdays = [
   'Saturday',
   'Sunday',
 ]
+const types = ['Subscription', 'One time payment', 'Trial']
 /* Dialog form checks */
 const offerFormSchema = z.object({
   title: z.string().min(2, { message: 'Field is required.' }),
   description: z.string().min(2, { message: 'Field is required.' }),
-  type: z
-    .string()
-    .refine(
-      (val) =>
-        ['Subscription', 'OneTime', 'FreeTrial', 'Special', '...'].includes(
-          val,
-        ),
-      {
-        message: 'Invalid type',
-      },
-    ),
+  type: z.string(),
+  isSpecial: z.boolean(),
   priceEuro: z.coerce.number(),
-  validityDays: z.coerce.number(),
+  //validityDays: z.coerce.number(),
+  endDate: z.coerce.date(),
 })
 
 /* Component content */
 export function CreateGymForm() {
   const navigate = useNavigate()
   const [isDialogOpen, setIsDialogOpen] = React.useState(false)
+  // state for the special offer checkbox
+  const [isSpecial, setIsSpecial] = React.useState(false)
+
   // offer array
   const [offers, setOffers] = React.useState<IOffer[]>([])
-
-  //highlight options
-  const highlights = [
-    'Sauna',
-    'Posing room',
-    'Pool',
-    'Courses',
-    'Personal trainings',
-    'Nutrition bar',
-    'Outdoor',
-    'Parking',
-  ] as const
-
-  /* form default values */
-  const form = useForm({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      name: '',
-      websiteLink: '',
-      address: {
-        street: '',
-        postalCode: '',
-        city: '',
-        country: 'Germany',
-      },
-      openingHours: {
-        weekday1: 'Monday',
-        weekday2: 'Sunday',
-        openingHour: 8,
-        closingHour: 22,
-      },
-      highlights: [],
-      offers: [],
-    },
-  })
-
-  /* Dialog submission default values */
-  const offerForm = useForm({
-    resolver: zodResolver(offerFormSchema),
-    defaultValues: {
-      title: '',
-      type: 'Subscription',
-      description: '',
-      priceEuro: 5,
-      validityDays: 7,
-    },
-  })
 
   /* Pictures */
   interface UploadResult {
@@ -188,7 +147,56 @@ export function CreateGymForm() {
       uploadedFiles.push(results)
     }
   }
-  // workaround to get the dialog form to submit without submitting the main form lol
+
+  //highlight options
+  const highlights = [
+    'Sauna',
+    'Posing room',
+    'Pool',
+    'Courses',
+    'Personal trainings',
+    'Nutrition bar',
+    'Outdoor',
+    'Parking',
+  ] as const
+  /* form default values */
+  const form = useForm({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: '',
+      websiteLink: '',
+      address: {
+        street: '',
+        postalCode: '',
+        city: '',
+        country: 'Germany',
+      },
+      openingHours: {
+        weekday1: 'Monday',
+        weekday2: 'Sunday',
+        openingHour: 8,
+        closingHour: 22,
+      },
+      highlights: [],
+      offers: [],
+    },
+  })
+
+  /* Dialog submission default values */
+  const offerForm = useForm({
+    resolver: zodResolver(offerFormSchema),
+    defaultValues: {
+      title: '',
+      type: 'Subscription',
+      isSpecial: false,
+      description: '',
+      priceEuro: 5,
+      //validityDays: 7,
+      endDate: new Date(new Date().setMonth(new Date().getMonth() + 1)),
+    },
+  })
+
+  // workaround to get the dialog form to submit without submitting the main form
   function handleDialogSubmit() {
     return offerForm.handleSubmit(onDialogSubmit)()
   }
@@ -199,12 +207,13 @@ export function CreateGymForm() {
     // mock offer, can be deleted later
     const newOffer: IOffer = {
       title: values.title,
-      type: 'Special',
+      type: values.type,
+      isSpecial: values.isSpecial,
       description: values.description,
       priceEuro: values.priceEuro,
-      validityDays: values.validityDays,
+      //validityDays: values.validityDays,
       startDate: new Date(),
-      endDate: new Date('2222-06-04T11:00:12.070Z'),
+      endDate: values.endDate,
     }
     setOffers([...offers, newOffer])
 
@@ -462,7 +471,7 @@ export function CreateGymForm() {
           )}
         />
 
-        {/* TODO: Pictures */}
+        {/* Pictures */}
         <FormLabel className="text-2xl font-bold">Photos</FormLabel>
         <FormDescription>Show your gym!</FormDescription>
         <FormItem>
@@ -523,62 +532,119 @@ export function CreateGymForm() {
                     <FormItem>
                       <FormLabel>Type</FormLabel>
                       <FormControl>
-                        <Input {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={offerForm.control}
-                  name="priceEuro"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Price (€)</FormLabel>
-                      <FormControl>
-                        <Input type="number" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={offerForm.control}
-                  name="validityDays"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Validity in days</FormLabel>
-                      <FormControl>
-                        <Input type="number" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                {/* Offer Type: Irgendein kack rekursionsproblem */}
-
-                {/* <FormField
-                  control={offerForm.control}
-                  name="type"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Offer Type</FormLabel>
-                      <Select onValueChange={handleChange} defaultValue={ }>
-                        <FormControl>
+                        <Select
+                          onValueChange={(value) => field.onChange(value)}
+                        >
                           <SelectTrigger>
-                            <SelectValue placeholder="Select a verified email to display" />
+                            <SelectValue placeholder="Subscription" />
                           </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="m@example.com">m@example.com</SelectItem>
-                        </SelectContent>
-                      </Select>
+                          <SelectContent>
+                            {types.map((type) => (
+                              <SelectItem key={type} value={type}>
+                                {type}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
-                /> */}
+                />
+                <div className="grid grid-cols-2">
+                  <FormField
+                    control={offerForm.control}
+                    name="priceEuro"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Price (€)</FormLabel>
+                        <FormControl>
+                          <Input type="number" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  {/* <FormField
+                    control={offerForm.control}
+                    name="validityDays"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Validity in days</FormLabel>
+                        <FormControl>
+                          <Input type="number" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  /> */}
+                </div>
+                <div className="grid grid-cols-2">
+                  <FormField
+                    control={offerForm.control}
+                    name="isSpecial"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          Special (time limited) offer?{field.value}
+                        </FormLabel>
+                        <FormControl>
+                          <Checkbox
+                            className={cn('grid ml-5')}
+                            checked={field.value}
+                            onCheckedChange={() => {
+                              const newValue = !field.value
+                              setIsSpecial(newValue)
+                              field.onChange(newValue)
+                            }}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
+                  <FormField
+                    control={offerForm.control}
+                    name="endDate"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Special Offer ends on:</FormLabel>
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <FormControl>
+                              <Button
+                                disabled={!isSpecial}
+                                variant={'outline'}
+                                className={cn(
+                                  'w-[240px] text-left',
+                                  !field.value && 'text-muted-foreground',
+                                )}
+                              >
+                                {field.value ? (
+                                  format(field.value, 'PPP')
+                                ) : (
+                                  <span>Pick a date</span>
+                                )}
+                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                              </Button>
+                            </FormControl>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-auto p-0" align="start">
+                            <Calendar
+                              mode="single"
+                              selected={field.value}
+                              onSelect={field.onChange}
+                              disabled={(date) => date < new Date()}
+                              initialFocus
+                            />
+                          </PopoverContent>
+                        </Popover>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
                 <FormField
                   control={offerForm.control}
                   name="description"
@@ -588,7 +654,7 @@ export function CreateGymForm() {
                       <FormControl>
                         <Textarea
                           {...field}
-                          placeholder="Type your offer description here."
+                          placeholder="Describe your offer here. What is included and what is not? What are the benefits?"
                         />
                       </FormControl>
                       <FormMessage />
@@ -605,7 +671,6 @@ export function CreateGymForm() {
                   <Button type="button" onClick={() => handleDialogSubmit()}>
                     Save
                   </Button>
-                  {/* <Button type="submit">Submit</Button> */}
                 </DialogFooter>
               </form>
             </Form>
