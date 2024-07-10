@@ -158,7 +158,7 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
   /* 
   Array of strings (public_ids of images) to be deleted after submission
   Initiaizated with an empty array
-  setFlaggedForDeletion is used to update the array. It takes a function as an argument, where the function's parameter prev represents the previous state.
+  setFlaggedForDeletion  takes a function as an argument, where the function's parameter represents the previous state.
   */
   const [flaggedForDeletion, setFlaggedForDeletion] = useState<string[]>([])
 
@@ -180,8 +180,11 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
     )
   }
 
-  // Prefill the form with the gyms data if in edit mode
-
+  /* 
+  hook for prefill the form with the gyms data if in edit mode
+  runs before form is rendered  
+  pre-fills a form with a gym's data when the component is in "edit" mode and a gym object is provided
+  */
   React.useEffect(() => {
     if (mode === 'edit' && gym) {
       form.reset({
@@ -204,25 +207,32 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
     },
   })
 
+  /* Response from cloudinary when image is uploaded successfully*/
   interface UploadResult {
     public_id: string
     secure_url: string
     [key: string]: unknown // This line allows any additional attributes
   }
 
+  // Array of files that have been selected via the dropzone
   const [acceptedFiles, setAcceptedFiles] = useState<File[]>([])
 
+  // Callback function that will be triggered when files are dropped/selected
   const handleFilesSelected = (files: File[]) => {
     setAcceptedFiles(files)
   }
 
-  const uploadFiles = async (public_id: string) => {
+  // Upload files to cloudinary (public_id is gym name and used for all images. To make it unique, a TimeStamp is added)
+  const uploadFiles = async (public_id: string, acceptedFiles: File[]) => {
     const uploadedFiles: UploadResult[] = []
+    // Loop through all files and upload them one by one
     for (const file of acceptedFiles) {
       const formData = new FormData()
       formData.append('file', file)
+      /* set of settings and configurations defined in Cloudinary account that specify how to handle the media files being uploaded */
       formData.append('upload_preset', 'test_preset')
       formData.append('api_key', import.meta.env.VITE_CLOUDINARY_KEY)
+      // Specify public_id to match gym id
       formData.append('public_id', public_id + Date.now())
 
       const results = await fetch(
@@ -267,11 +277,10 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
 
     const gymData = { offers, ...values }
     console.log(gymData)
+    // set the image id to the gym name
     const image_id = values.name.replace(/\s+/g, '')
     /* send data to backend */
     if (mode === 'create') {
-      // Use gmy name as image id without spaces
-
       try {
         const response = await fetch(config.BACKEND_URL + '/gyms/create', {
           method: 'POST',
@@ -286,7 +295,7 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
         }
         const data = await response.json()
         console.log('Gym created:', data)
-        await uploadFiles(image_id)
+        await uploadFiles(image_id, acceptedFiles)
         form.control._reset()
       } catch (error) {
         console.log('Error creating gym:', error)
@@ -536,6 +545,7 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
         <FormItem>
           <FormControl>
             <FormLabel className="font-normal">
+              {/* Dropzone accepts callback function that will be triggered when files are dropped/selected */}
               <Dropzone onFilesSelected={handleFilesSelected} />
             </FormLabel>
           </FormControl>
