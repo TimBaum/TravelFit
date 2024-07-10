@@ -114,9 +114,11 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
     loading: getGymLoading,
   } = useGetGym(gymId)
 
-  // Get all images for that the public_id starts with gym
-  const { data: photos } = useFetchImages('gym')
-  console.log(photos)
+  // FIXME: at the moment only pictures which public_id starts with gym are used. For some reason gym.name is not arriving on time.
+  const cleanedName = gym?.name?.replace(/\s+/g, '-') || 'gym'
+
+  // Use custom hook to fetch images
+  const { data: photos } = useFetchImages(cleanedName || '')
 
   // offer array
   const [offers, setOffers] = React.useState<IOffer[]>([])
@@ -320,7 +322,7 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
         const data = await response.json()
         console.log('Gym created:', data)
         // Upload new images
-        await uploadFiles(image_id)
+        await uploadFiles(image_id, acceptedFiles)
         // Delete flagged photos
         if (flaggedForDeletion.length > 0) {
           await Promise.all(
