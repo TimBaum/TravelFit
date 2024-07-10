@@ -123,6 +123,7 @@ function useReadAll(): {
   return { data, error, loading }
 }
 
+// Fetch all images from cloudinary for a gym (id)
 function useFetchImages(id: string | null) {
   const [data, setData] = useState<CloudinaryImage[]>()
   const [error, setError] = useState(null)

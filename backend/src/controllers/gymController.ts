@@ -207,6 +207,7 @@ const fetchImages = async (req: Request, res: Response) => {
   const apiKey = process.env.CLOUDINARY_KEY
   const apiSecret = process.env.CLOUDINARY_SECRET
   const gymId = req.params.id
+  // filter images by gymId (public_id starts with gymId); limit to 20 results
   const url = `https://api.cloudinary.com/v1_1/${cloudName}/resources/image?max_results=20&prefix=${gymId}&type=upload`
 
   try {

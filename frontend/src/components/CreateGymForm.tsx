@@ -113,6 +113,8 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
     error: getGymError,
     loading: getGymLoading,
   } = useGetGym(gymId)
+
+  // Get all images for that the public_id starts with gym
   const { data: photos } = useFetchImages('gym')
   console.log(photos)
 
@@ -552,11 +554,13 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
                     <img
                       src={photo.url}
                       alt={`Gym Photo ${index}`}
+                      // If the photo is flagged for deletion, the image is greyed out
                       className={`w-full h-full object-cover ${flaggedForDeletion.includes(photo.public_id) ? 'opacity-50' : ''}`}
                     />
                     <button
                       className="absolute top-0 right-0 bg-red-500 text-white m-2 p-1"
                       onClick={(event) =>
+                        // Toggles the flag for deletion: if the photo is already flagged, it is removed from the array. If it is not flagged, it is added to the array
                         toggleFlagForDeletion(event, photo.public_id)
                       }
                     >
