@@ -43,13 +43,18 @@ function GymOverview() {
       ? '/favourites'
       : previousPage === '/find-gyms'
         ? `/find-gyms?search=${data?.address?.city || ''}`
-        : '/'
+        : previousPage === '/my-gyms'
+          ? '/my-gyms'
+          : '/'
+
   const breadcrumbPrevious =
     previousPage === '/favourites'
       ? 'Favourites'
       : previousPage === '/find-gyms'
-        ? `${data?.address.city}`
-        : '/'
+        ? `${data?.address?.city}`
+        : previousPage === '/my-gyms'
+          ? 'My Gyms'
+          : '/'
 
   if (!id) {
     return <div>Invalid ID</div>

@@ -136,7 +136,11 @@ const MyGyms: React.FC = () => {
                     <div className="flex justify-end items-center gap-2">
                       <Button
                         className="px-2.5"
-                        onClick={() => navigate(`/gyms/${gym._id}`)}
+                        onClick={() =>
+                          navigate(`/gyms/${gym._id}`, {
+                            state: { from: '/my-gyms' },
+                          })
+                        }
                       >
                         View
                       </Button>
