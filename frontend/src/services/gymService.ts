@@ -123,7 +123,8 @@ function useReadAll(): {
   return { data, error, loading }
 }
 
-function useFetchImages(id: string | null) {
+// Fetch all images from cloudinary for a gym (id)
+function useFetchImages(prefix: string | null) {
   const [data, setData] = useState<CloudinaryImage[]>()
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(false)
@@ -132,7 +133,7 @@ function useFetchImages(id: string | null) {
     async function fetchData() {
       setLoading(true)
       setError(null)
-      const response = await fetchJSON(`/gyms/fetch-images/${id}`, {
+      const response = await fetchJSON(`/gyms/fetch-images/${prefix}`, {
         method: 'GET',
       }).catch((error) => {
         setError(error.message)
@@ -143,6 +144,7 @@ function useFetchImages(id: string | null) {
         return {
           url: image.secure_url,
           alt: image.display_name,
+          public_id: image.public_id,
         }
       })
 
@@ -156,4 +158,30 @@ function useFetchImages(id: string | null) {
   return { data, error, loading }
 }
 
-export { useGymSearch, useGetGym, useReadAll, useFetchImages }
+const useDeleteImage = (public_id: string | null) => {
+  const [data, setData] = useState()
+  const [error, setError] = useState(null)
+  const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    async function fetchData() {
+      setLoading(true)
+      setError(null)
+      const response = await fetchJSON(`/gyms/delete-image/${public_id}`, {
+        method: 'DELETE',
+      }).catch((error) => {
+        setError(error.message)
+        return []
+      })
+
+      setData(response)
+      setLoading(false)
+    }
+
+    fetchData()
+  }, [public_id])
+
+  return { data, error, loading }
+}
+
+export { useGymSearch, useGetGym, useReadAll, useFetchImages, useDeleteImage }

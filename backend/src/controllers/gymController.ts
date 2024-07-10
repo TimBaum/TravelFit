@@ -4,7 +4,7 @@ import Gym from '../models/Gym'
 import Review from '../models/Review'
 import { FilterState } from '@models/filter'
 import cache from '../cache'
-import CloudinaryImage from '../models/CloudinaryImage'
+import cloudinary from 'cloudinary'
 
 const createGym = (req: Request, res: Response, next: NextFunction) => {
   const gymData = req.body
@@ -206,8 +206,9 @@ const fetchImages = async (req: Request, res: Response) => {
   const cloudName = 'travelfit'
   const apiKey = process.env.CLOUDINARY_KEY
   const apiSecret = process.env.CLOUDINARY_SECRET
-  const gymId = req.params.id
-  const url = `https://api.cloudinary.com/v1_1/${cloudName}/resources/image?max_results=20&prefix=${gymId}&type=upload`
+  const prefix = req.params.id
+  // filter images by gymId (public_id starts with gymId); limit to 20 results
+  const url = `https://api.cloudinary.com/v1_1/${cloudName}/resources/image?max_results=20&prefix=${prefix}&type=upload`
 
   try {
     const response = await fetch(url, {
@@ -229,6 +230,29 @@ const fetchImages = async (req: Request, res: Response) => {
   }
 }
 
+cloudinary.v2.config({
+  cloud_name: 'travelfit',
+  api_key: process.env.CLOUDINARY_KEY,
+  api_secret: process.env.CLOUDINARY_SECRET,
+})
+
+const deleteImage = async (req: Request, res: Response) => {
+  try {
+    // Extract the public_id from the request parameters
+    const public_id = req.params.public_id
+
+    /* Cloudinary API call to delete the image: takes in an array of public_ids and a callback function for response handling */
+    await cloudinary.v2.api.delete_resources([public_id], (error, result) => {
+      if (error) {
+        return res.status(500).json({ error })
+      }
+      return res.status(200).json({ result })
+    })
+  } catch (error) {
+    res.status(500).json({ error })
+  }
+}
+
 export default {
   readAll,
   createGym,
@@ -238,4 +262,5 @@ export default {
   deleteGym,
   fetchImages,
   updateGym,
+  deleteImage,
 }
