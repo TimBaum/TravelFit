@@ -237,9 +237,10 @@ cloudinary.v2.config({
 
 const deleteImage = async (req: Request, res: Response) => {
   try {
+    // Extract the public_id from the request parameters
     const public_id = req.params.public_id
 
-    // Cloudinary API call to delete the image
+    /* Cloudinary API call to delete the image: takes in an array of public_ids and a callback function for response handling */
     await cloudinary.v2.api.delete_resources([public_id], (error, result) => {
       if (error) {
         return res.status(500).json({ error })

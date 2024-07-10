@@ -153,14 +153,23 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
     },
   })
 
+  /* 
+  Array of strings (public_ids of images) to be deleted after submission
+  Initiaizated with an empty array
+  setFlaggedForDeletion is used to update the array. It takes a function as an argument, where the function's parameter prev represents the previous state.
+  */
   const [flaggedForDeletion, setFlaggedForDeletion] = useState<string[]>([])
 
-  console.log(flaggedForDeletion)
-
+  /*
+  Function to toggle flag for deletion of images:
+  - if image is already flagged, it is removed from the array
+  - if image is not flagged, it is added to the array 
+  */
   const toggleFlagForDeletion = (
     event: React.MouseEvent<HTMLButtonElement>,
     photoId: string,
   ) => {
+    // Prevent form submission (default behaviour for buttons in forms)
     event.preventDefault()
     setFlaggedForDeletion((prev) =>
       prev.includes(photoId)
@@ -299,7 +308,9 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
         }
         const data = await response.json()
         console.log('Gym created:', data)
+        // Upload new images
         await uploadFiles(image_id)
+        // Delete flagged photos
         if (flaggedForDeletion.length > 0) {
           await Promise.all(
             flaggedForDeletion.map(async (photoId) => {
