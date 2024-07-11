@@ -13,6 +13,8 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Switch } from '@/components/ui/switch'
+import { Label } from '@/components/ui/label'
 import { CalendarIcon } from 'lucide-react'
 import { Calendar } from '@/components/ui/calendar'
 import { format } from 'date-fns'
@@ -76,24 +78,28 @@ const formSchema = z.object({
       .min(2, { message: 'Invalid country' })
       .max(50, { message: 'Invalid country' }),
   }),
-  openingHours: z.object({
-    weekday1: z.string(),
-    weekday2: z.string(),
-    openingHour: z.coerce.number().min(0).max(24),
-    closingHour: z.coerce.number().min(0).max(24),
-  }),
+  openingHours: z.array(
+    z
+      .object({
+        weekday: z.coerce.number().min(0).max(6).optional(), //0 = Sunday, 6 = Saturday
+        //open: z.boolean(),
+        openingTime: z.string(),
+        closingTime: z.string(),
+      })
+      .optional(),
+  ),
   highlights: z.array(z.string()).optional(),
 })
 const simpleUrlRegex =
   /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/
 const weekdays = [
+  'Sunday',
   'Monday',
   'Tuesday',
   'Wednesday',
   'Thursday',
   'Friday',
   'Saturday',
-  'Sunday',
 ]
 const types = ['Subscription', 'One time payment', 'Trial']
 /* Dialog form checks */
@@ -103,7 +109,6 @@ const offerFormSchema = z.object({
   type: z.string(),
   isSpecial: z.boolean(),
   priceEuro: z.coerce.number(),
-  //validityDays: z.coerce.number(),
   endDate: z.coerce.date(),
 })
 
@@ -171,12 +176,23 @@ export function CreateGymForm() {
         city: '',
         country: 'Germany',
       },
-      openingHours: {
-        weekday1: 'Monday',
-        weekday2: 'Sunday',
-        openingHour: 8,
-        closingHour: 22,
-      },
+      openingHours: Array(7).fill({
+        weekday: null,
+        openingTime: '',
+        closingTime: '',
+      }),
+      // [
+      //   {
+      //     weekday: 0, //0 = Sunday
+      //     openingTime: '09:00',
+      //     closingTime: '17:00',
+      //   },
+      //   {
+      //     weekday: 1,
+      //     openingTime: '09:00',
+      //     closingTime: '17:00',
+      //   },
+      // ],
       highlights: [],
       offers: [],
     },
@@ -191,7 +207,6 @@ export function CreateGymForm() {
       isSpecial: false,
       description: '',
       priceEuro: 5,
-      //validityDays: 7,
       endDate: new Date(new Date().setMonth(new Date().getMonth() + 1)),
     },
   })
@@ -202,6 +217,11 @@ export function CreateGymForm() {
   }
   async function onDialogSubmit(values: z.infer<typeof offerFormSchema>) {
     console.log(values)
+    if (!values.isSpecial) {
+      values.endDate = new Date(
+        new Date().setFullYear(new Date().getFullYear() + 50),
+      )
+    }
     // TODO:
     // const offerData: IOffer = { ...values}
     // mock offer, can be deleted later
@@ -211,7 +231,6 @@ export function CreateGymForm() {
       isSpecial: values.isSpecial,
       description: values.description,
       priceEuro: values.priceEuro,
-      //validityDays: values.validityDays,
       startDate: new Date(),
       endDate: values.endDate,
     }
@@ -343,84 +362,92 @@ export function CreateGymForm() {
           />
         </div>
 
-        {/* OpeningHours */}
-        <FormLabel className="text-2xl font-bold">Opening hours</FormLabel>
-        <FormField
-          control={form.control}
-          name="openingHours.weekday1"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Weekday 1</FormLabel>
-              <FormControl>
-                <Select onValueChange={(value) => field.onChange(value)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Monday" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {weekdays.map((weekday) => (
-                      <SelectItem key={weekday} value={weekday}>
-                        {weekday}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="openingHours.weekday2"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Weekday 2</FormLabel>
-              <FormControl>
-                <Select onValueChange={(value) => field.onChange(value)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Sunday" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {weekdays.map((weekday) => (
-                      <SelectItem key={weekday} value={weekday}>
-                        {weekday}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="openingHours.openingHour"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Opening Hour</FormLabel>
-              <FormControl>
-                <Input type="number" placeholder="6" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="openingHours.closingHour"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Closing Hour</FormLabel>
-              <FormControl>
-                <Input type="number" placeholder="22" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        {/* Opening Times */}
+
+        <FormLabel className="text-2xl font-bold">Opening Times</FormLabel>
+        <div className="grid grid-cols-7">
+          {weekdays.map((day) => (
+            <div key={day} className="day-row">
+              <FormField
+                control={form.control}
+                name={`openingHours.${weekdays.indexOf(day)}.weekday`}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{day}: open</FormLabel>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={(checked) => field.onChange(checked)}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name={`openingHours.${weekdays.indexOf(day)}.openingTime`}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Opening Time</FormLabel>
+                    <FormControl>
+                      <Select onValueChange={(value) => field.onChange(value)}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select time" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {[...Array(24)].map((_, hour) =>
+                            [...Array(2)].map((_, half) => {
+                              const time = `${hour.toString().padStart(2, '0')}:${half === 0 ? '00' : '30'}`
+                              return (
+                                <SelectItem key={time} value={time}>
+                                  {time}
+                                </SelectItem>
+                              )
+                            }),
+                          )}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name={`openingHours.${weekdays.indexOf(day)}.closingTime`}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Closing Time</FormLabel>
+                    <FormControl>
+                      <Select onValueChange={(value) => field.onChange(value)}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select time" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {[...Array(24)].map((_, hour) =>
+                            [...Array(2)].map((_, half) => {
+                              const time = `${hour.toString().padStart(2, '0')}:${half === 0 ? '00' : '30'}`
+                              return (
+                                <SelectItem key={time} value={time}>
+                                  {time}
+                                </SelectItem>
+                              )
+                            }),
+                          )}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          ))}
+        </div>
 
         {/* Highlights: */}
+
         <FormLabel className="text-2xl font-bold">Highlights</FormLabel>
         <FormDescription>
           Select the highlights your gym offers.
@@ -470,7 +497,6 @@ export function CreateGymForm() {
             </FormItem>
           )}
         />
-
         {/* Pictures */}
         <FormLabel className="text-2xl font-bold">Photos</FormLabel>
         <FormDescription>Show your gym!</FormDescription>
@@ -482,15 +508,12 @@ export function CreateGymForm() {
           </FormControl>
           <FormMessage />
         </FormItem>
-
         {/* Offers: OfferTile maps over the offer-array filled from the dialog form */}
         <h1 className="text-2xl font-bold mb-2 mt-3">Offers</h1>
         {offers.map((offer, index) => (
           <OfferTile key={index} offer={offer} />
         ))}
-
         {/* Dialog form that fills the offer array */}
-
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
             <Button
@@ -676,9 +699,7 @@ export function CreateGymForm() {
             </Form>
           </DialogContent>
         </Dialog>
-
         {/* Submit Button for the whole form */}
-
         <Button className="mt-4" type="submit">
           Submit
         </Button>

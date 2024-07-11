@@ -11,7 +11,7 @@ export interface IGym {
   averageRating: number
   cheapestOfferPrice: number
   address: IAddress
-  openingHours: ITimeRange
+  openingHours: ITimeRange[]
   offers: IOffer[]
   reviews: IReview[]
   createdAt: Date

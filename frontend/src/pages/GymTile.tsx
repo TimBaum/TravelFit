@@ -12,18 +12,24 @@ export function GymTile({ gym }: { gym: IGymWithId }) {
 
   console.log(location.pathname)
 
-  /* TODO: decide wheter to change back the Timerange interface or change up this function! */
+  function getMaxOpeningHourToday() {
+    const today = new Date().getDay()
+    const openingHoursToday = gym.openingHours.filter(
+      (openingHour) => openingHour.weekday === today,
+    )
+    if (openingHoursToday.length === 0) {
+      return 'Closed'
+    }
 
-  // function getMaxOpeningHourToday() {
-  //   const today = new Date().getDay()
-  //   const openingHoursToday = gym.openingHours.filter(
-  //     (openingHour) => openingHour.weekday === today,
-  //   )
-  //   if (openingHoursToday.length === 0) {
-  //     return 'Closed'
-  //   }
-  //   return openingHoursToday.slice(-1)[0].closingTime
-  // }
+    // Find the maximum closing time
+    const maxClosingTime = openingHoursToday.reduce((max, current) => {
+      return current.closingTime > max ? current.closingTime : max
+    }, '00:00')
+
+    return maxClosingTime
+
+    // return openingHoursToday.slice(-1)[0].closingTime
+  }
 
   function findCheapestOffer() {
     const offers = gym.offers
@@ -36,7 +42,7 @@ export function GymTile({ gym }: { gym: IGymWithId }) {
     return 'from ' + cheapestOffer.priceEuro + '€'
   }
 
-  // const maxOpeningHourToday = getMaxOpeningHourToday()
+  const maxOpeningHourToday = getMaxOpeningHourToday()
 
   return (
     <div className="flex h-48 w-full border rounded p-2 items-stretch">
@@ -73,6 +79,11 @@ export function GymTile({ gym }: { gym: IGymWithId }) {
                 <HighlightBadge key={element} name={element} />
               ))}
             </div>
+          </div>
+          <div>
+            {maxOpeningHourToday === 'Closed'
+              ? 'Closed today'
+              : `Open today until ${maxOpeningHourToday}`}
           </div>
           {/* <div>
             {maxOpeningHourToday === 'Closed'

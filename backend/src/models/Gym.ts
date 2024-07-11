@@ -29,7 +29,7 @@ const GymSchema: Schema = new mongoose.Schema({
   averageRating: Number,
   cheapestOfferPrice: Number,
   address: { type: Address.schema, required: true },
-  openingHours: TimeRange.schema,
+  openingHours: [TimeRange.schema],
   offers: [Offer.schema],
   reviews: [Review.schema],
   createdAt: { type: Date, default: Date.now },
