@@ -1,15 +1,15 @@
 import { config } from '@/config'
-import { IGymAccount } from '@models/gymAccount'
+import { PublicGymAccount } from '@models/gymAccount'
 import { useEffect, useState } from 'react'
 
 interface GymAccount {
-  data: IGymAccount | undefined
+  data: PublicGymAccount | undefined
   loading: boolean
   error: string | null
 }
 
 function useReadGymAccount(id: string | null): GymAccount {
-  const [data, setData] = useState<IGymAccount>()
+  const [data, setData] = useState<PublicGymAccount>()
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(false)
 
@@ -40,12 +40,11 @@ function useReadGymAccount(id: string | null): GymAccount {
   return { data, error, loading }
 }
 
-//TODO: test whetherh gym data as input parameter works correctly
 function useUpdateGymAccount(
   id: string | null,
   newGymData: string,
 ): GymAccount {
-  const [data, setData] = useState<IGymAccount>()
+  const [data, setData] = useState<PublicGymAccount>()
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(false)
 

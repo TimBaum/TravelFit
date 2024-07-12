@@ -19,7 +19,6 @@ import {
   DropdownMenuItem,
 } from '@/components/ui/dropdown-menu'
 import { LucidePencil } from 'lucide-react'
-import { config } from '@/config'
 import { useAuth } from '@/provider/AuthProvider'
 import { useReadUser, useUpdateUser } from '@/services/userService'
 import { useEffect } from 'react'

@@ -20,7 +20,10 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { config } from '@/config'
 import { useAuth } from '@/provider/AuthProvider'
-import { useReadGymAccount } from '@/services/gymAccountService'
+import {
+  useReadGymAccount,
+  useUpdateGymAccount,
+} from '@/services/gymAccountService'
 import { useEffect } from 'react'
 
 const phoneValidationRegex = /^\+?[1-9]\d{1,14}$/ // E.164 international phone number format
@@ -76,7 +79,6 @@ export function ChangeGymAccountForm() {
   })
 
   //useEffect is necessary because the default values are not available when rendering the form and are thus not displayed without useEffect
-  //TODO: show new values instead of old values
   useEffect(() => {
     form.reset({
       salutation:
