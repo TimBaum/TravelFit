@@ -11,31 +11,33 @@ function ChangeUserAccount() {
   const { hasActiveSubscription, checkSubscriptionStatus } = useAuth()
   const [isLoading, setIsLoading] = useState(false)
 
-  const hasPremium = hasActiveSubscription ?? false
+  //const hasPremium = hasActiveSubscription ?? false
 
   return (
     <>
       <h1 className="mb-2 font-bold text-5xl">Account</h1>
-      <Tabs defaultValue="account" className="w-[400px]">
+      <Tabs defaultValue="account" className="w-full">
         <TabsList>
           <TabsTrigger value="account">Account</TabsTrigger>
           <TabsTrigger value="subscription">Subscription</TabsTrigger>
         </TabsList>
-        <TabsContent value="account">
-          <ChangeUserAccountForm />
+        <TabsContent value="account" className="w-full">
+          <div className="border-2 border-gray-300 rounded-lg p-4">
+            <ChangeUserAccountForm />
+          </div>
         </TabsContent>
-        <TabsContent value="subscription">
-          <div className="p-6 m-6 text-center">
+        <TabsContent value="subscription" className="w-full">
+          <div className="text-center border-2 border-gray-300 rounded-lg p-4">
             <p className="text-2xl font-bold mb-4">Active subscription</p>
-            <div className="flex justify-center items-baseline">
+            <div className="flex justify-center items-baseline w-full">
               {hasActiveSubscription ? (
                 <div>
-                  <div className="p-4 text-3xl font-bold flex items-center justify-center space-x-5 border-2 border-gray-300 rounded-lg">
+                  <div className="text-3xl font-bold flex items-center justify-center border-2 border-gray-300 rounded-lg">
                     <Crown size={48} className="text-yellow-500" />
                     <span>TravelFitPremium</span>
                     <Crown size={48} className="text-yellow-500" />
                   </div>
-                  <p className="text-xl mb-4">
+                  <p className="text-xl mb-4 text-xs">
                     Monthly payments of 2,99€ via PayPal
                   </p>
                   <Button

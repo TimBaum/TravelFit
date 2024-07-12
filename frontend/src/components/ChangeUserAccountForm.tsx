@@ -96,86 +96,88 @@ export function ChangeUserAccountForm() {
       //onSubmitSaveChanges(values)
       //})}
       >
-        <div className="flex flex-col items-center mb-5">
-          <LucidePencil size={20} />
-          <span>Foto</span>
+        <div>
+          <div className="flex flex-col items-center">
+            <LucidePencil size={20} />
+            <span>Foto</span>
+          </div>
+          <FormField
+            control={form.control}
+            name="salutation"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Salutation</FormLabel>
+                <FormControl>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="outline" className="justify-between">
+                        {field.value || 'Select'}
+                        <span className="ml-2">&#x25BC;</span>{' '}
+                        {/* Down arrow symbol */}
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                      {['Mr.', 'Ms.', 'Diverse'].map((option) => (
+                        <DropdownMenuItem
+                          key={option}
+                          onSelect={() => field.onChange(option)}
+                        >
+                          {option}
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </FormControl>
+                <FormMessage>
+                  {form.formState.errors.salutation?.message}
+                </FormMessage>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="displayName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Name</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+                <FormMessage>
+                  {form.formState.errors.displayName?.message}
+                </FormMessage>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Email</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+          <Button
+            type="submit"
+            variant="outline"
+            onClick={() =>
+              form.handleSubmit((values) => onSubmitSaveChanges(values))()
+            }
+          >
+            Save changes
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => onClickChangePassword()}
+          >
+            Change password
+          </Button>
         </div>
-        <FormField
-          control={form.control}
-          name="salutation"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Salutation</FormLabel>
-              <FormControl>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="outline" className="justify-between">
-                      {field.value || 'Select'}
-                      <span className="ml-2">&#x25BC;</span>{' '}
-                      {/* Down arrow symbol */}
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    {['Mr.', 'Ms.', 'Diverse'].map((option) => (
-                      <DropdownMenuItem
-                        key={option}
-                        onSelect={() => field.onChange(option)}
-                      >
-                        {option}
-                      </DropdownMenuItem>
-                    ))}
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </FormControl>
-              <FormMessage>
-                {form.formState.errors.salutation?.message}
-              </FormMessage>
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="displayName"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Name</FormLabel>
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
-              <FormMessage>
-                {form.formState.errors.displayName?.message}
-              </FormMessage>
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email</FormLabel>
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
-            </FormItem>
-          )}
-        />
-        <Button
-          type="submit"
-          variant="outline"
-          onClick={() =>
-            form.handleSubmit((values) => onSubmitSaveChanges(values))()
-          }
-        >
-          Save changes
-        </Button>
-        <Button
-          type="button"
-          variant="outline"
-          onClick={() => onClickChangePassword()}
-        >
-          Change password
-        </Button>
       </form>
     </Form>
   )
