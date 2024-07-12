@@ -117,39 +117,41 @@ export function GymAccountForm() {
     <Form {...form}>
       {/*<form onSubmit={form.handleSubmit(onSubmit)} className="mx-auto">*/}
       <form>
-        <FormField
-          control={form.control}
-          name="salutation"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="mr-2">Salutation</FormLabel>
-              <FormControl>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="outline" className="justify-between">
-                      {field.value || 'Select'}
-                      <span className="ml-2">&#x25BC;</span>{' '}
-                      {/* Down arrow symbol */}
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    {['Mr.', 'Ms.', 'Diverse'].map((option) => (
-                      <DropdownMenuItem
-                        key={option}
-                        onSelect={() => field.onChange(option)}
-                      >
-                        {option}
-                      </DropdownMenuItem>
-                    ))}
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </FormControl>
-              <FormMessage>
-                {form.formState.errors.salutation?.message}
-              </FormMessage>
-            </FormItem>
-          )}
-        />
+        <div className="mb-2">
+          <FormField
+            control={form.control}
+            name="salutation"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="mr-2">Salutation</FormLabel>
+                <FormControl>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="outline" className="justify-between">
+                        {field.value || 'Select'}
+                        <span className="ml-2">&#x25BC;</span>{' '}
+                        {/* Down arrow symbol */}
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                      {['Mr.', 'Ms.', 'Diverse'].map((option) => (
+                        <DropdownMenuItem
+                          key={option}
+                          onSelect={() => field.onChange(option)}
+                        >
+                          {option}
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </FormControl>
+                <FormMessage>
+                  {form.formState.errors.salutation?.message}
+                </FormMessage>
+              </FormItem>
+            )}
+          />
+        </div>
         <div className="flex space-x-4">
           <FormField
             control={form.control}

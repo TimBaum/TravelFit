@@ -135,70 +135,72 @@ export function ChangeGymAccountForm() {
   return (
     <Form {...form}>
       <form>
-        <FormField
-          control={form.control}
-          name="salutation"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="mr-2">Salutation</FormLabel>
-              <FormControl>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="outline" className="justify-between">
-                      {field.value || 'Select'}
-                      <span className="ml-2">&#x25BC;</span>{' '}
-                      {/* Down arrow symbol */}
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    {['Mr.', 'Ms.', 'Diverse'].map((option) => (
-                      <DropdownMenuItem
-                        key={option}
-                        onSelect={() => field.onChange(option)}
-                      >
-                        {option}
-                      </DropdownMenuItem>
-                    ))}
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </FormControl>
-              <FormMessage>
-                {form.formState.errors.salutation?.message}
-              </FormMessage>
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="firstName"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>First name</FormLabel>
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
-              <FormMessage>
-                {form.formState.errors.firstName?.message}
-              </FormMessage>
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="lastName"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Last name</FormLabel>
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
-              <FormMessage>
-                {form.formState.errors.lastName?.message}
-              </FormMessage>
-            </FormItem>
-          )}
-        />
-        {/* <FormField
+        <div className="border-2 border-gray-300 rounded-lg p-4">
+          <FormField
+            control={form.control}
+            name="salutation"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="mr-2">Salutation</FormLabel>
+                <FormControl>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="outline" className="justify-between">
+                        {field.value || 'Select'}
+                        <span className="ml-2">&#x25BC;</span>{' '}
+                        {/* Down arrow symbol */}
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                      {['Mr.', 'Ms.', 'Diverse'].map((option) => (
+                        <DropdownMenuItem
+                          key={option}
+                          onSelect={() => field.onChange(option)}
+                        >
+                          {option}
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </FormControl>
+                <FormMessage>
+                  {form.formState.errors.salutation?.message}
+                </FormMessage>
+              </FormItem>
+            )}
+          />
+          <div className="mt-4">
+            <FormField
+              control={form.control}
+              name="firstName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>First name</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage>
+                    {form.formState.errors.firstName?.message}
+                  </FormMessage>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="lastName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Last name</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage>
+                    {form.formState.errors.lastName?.message}
+                  </FormMessage>
+                </FormItem>
+              )}
+            />
+            {/* <FormField
           control={form.control}
           name="address"
           render={({ field }) => (
@@ -213,48 +215,52 @@ export function ChangeGymAccountForm() {
             </FormItem>
           )}
         />*/}
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email</FormLabel>
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="phone"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Phone</FormLabel>
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
-              <FormMessage>{form.formState.errors.phone?.message}</FormMessage>
-            </FormItem>
-          )}
-        />
-        <div className="mt-6 space-x-4">
-          <Button
-            type="submit"
-            variant="outline"
-            onClick={() =>
-              form.handleSubmit((values) => onSubmitSaveChanges(values))()
-            }
-          >
-            Save changes
-          </Button>
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => onClickChangePassword()}
-          >
-            Change password
-          </Button>
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="phone"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Phone</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage>
+                    {form.formState.errors.phone?.message}
+                  </FormMessage>
+                </FormItem>
+              )}
+            />
+          </div>
+          <div className="mt-6 space-x-4">
+            <Button
+              type="submit"
+              variant="outline"
+              onClick={() =>
+                form.handleSubmit((values) => onSubmitSaveChanges(values))()
+              }
+            >
+              Save changes
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => onClickChangePassword()}
+            >
+              Change password
+            </Button>
+          </div>
         </div>
       </form>
     </Form>

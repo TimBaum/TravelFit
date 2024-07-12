@@ -192,7 +192,7 @@ export function UserAccountForm() {
         <Button
           type="submit"
           variant="outline"
-          className="mt-4"
+          className="mt-4 mr-4 mb-4"
           onClick={() =>
             form.handleSubmit((values) => onSubmit(values, 'basic'))()
           }
