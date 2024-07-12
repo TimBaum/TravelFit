@@ -21,77 +21,86 @@ import {
 import { LucidePencil } from 'lucide-react'
 import { config } from '@/config'
 import { useAuth } from '@/provider/AuthProvider'
-import { useReadUser } from '@/services/userService'
+import { useReadUser, useUpdateUser } from '@/services/userService'
 import { useEffect } from 'react'
+import { fetchJSON } from '@/services/utils'
 
-const formSchema = z.object({
-  salutation: z.enum(['Mr.', 'Ms.', 'Diverse'], {}),
+export const changeUserAccountFormSchema = z.object({
+  salutation: z.enum(['Mr.', 'Ms.', 'Diverse'], {
+    required_error: 'Salutation is required.',
+  }),
   displayName: z
     .string()
     .min(2, { message: 'Name must be at least 2 characters.' }),
-  //email,
+  email: z.string().email({ message: 'Invalid email address.' }),
 })
 
 export function ChangeUserAccountForm() {
   const { user } = useAuth()
-  const oldSalutation = useReadUser(user?._id ?? '').data?.salutation as
-    | 'Mr.'
-    | 'Ms.'
-    | 'Diverse'
-    | undefined
-  const oldDisplayName = useReadUser(user?._id ?? '').data?.displayName
+  let userDataFromBackend = useReadUser(user?._id ?? '').data
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof changeUserAccountFormSchema>>({
+    resolver: zodResolver(changeUserAccountFormSchema),
     defaultValues: {
-      salutation: oldSalutation,
-      displayName: oldDisplayName,
-      //email: 'TODO: should email be changeable?',
+      salutation:
+        (userDataFromBackend?.salutation as 'Mr.' | 'Ms.' | 'Diverse') ??
+        'Diverse',
+      displayName: userDataFromBackend?.displayName ?? '',
+      email: userDataFromBackend?.email ?? '',
     },
   })
 
-  //useEffect is necessary because the default values are not available when rendering the form and are thus not displayed without useEffect
+  //useEffect is necessary because the default values are not available when initially rendering the form and are thus not displayed without useEffect
   useEffect(() => {
     form.reset({
-      salutation: oldSalutation,
-      displayName: oldDisplayName,
+      salutation:
+        (userDataFromBackend?.salutation as 'Mr.' | 'Ms.' | 'Diverse') ??
+        'Diverse',
+      displayName: userDataFromBackend?.displayName ?? '',
+      email: userDataFromBackend?.email ?? '',
     })
-  }, [oldSalutation, oldDisplayName, form.reset])
+  }, [form.reset, userDataFromBackend])
 
-  async function onSubmitSaveChanges(values: z.infer<typeof formSchema>) {
-    const userData = { ...values }
+  async function onSubmitSaveChanges(
+    values: z.infer<typeof changeUserAccountFormSchema>,
+  ) {
+    const newUserData = { ...values }
+    console.log('New user values for update HTTP request: ', values)
 
     try {
-      const response = await fetch(config.BACKEND_URL + '/users/create', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(userData),
+      const response = await fetchJSON('/users/update/' + user?._id ?? '', {
+        method: 'PATCH',
+        body: JSON.stringify(newUserData),
       })
 
       if (!response.ok) {
-        throw new Error('Failed to create user')
+        throw new Error('Failed to change user')
       }
 
-      const data = await response.json()
-      console.log('User created successfully:', data)
+      const data = await response
+      /* const data = await useUpdateUser(
+      user?._id ?? '',
+      JSON.stringify(newUserData),
+    ).data*/
+      console.log('User changed successfully:', data)
+      userDataFromBackend = useReadUser(user?._id ?? '').data
     } catch (error) {
-      console.error('Error creating user:', error)
+      console.error('Error changing user:', error)
     }
   }
 
-  async function onSubmitChangeEmail() {
-    return <h1>TODO: implement email change</h1>
-  }
-
-  async function onSubmitChangePassword() {
+  async function onClickChangePassword() {
     return <h1>TODO: implement password change</h1>
   }
 
   return (
     <Form {...form}>
-      <form>
+      <form
+      //onSubmit={form.handleSubmit((values) => {
+      //console.log('handleSubmit called with values:', values)
+      //onSubmitSaveChanges(values)
+      //})}
+      >
         <div className="flex flex-col items-center mb-5">
           <LucidePencil size={20} />
           <span>Foto</span>
@@ -144,21 +153,18 @@ export function ChangeUserAccountForm() {
             </FormItem>
           )}
         />
-        {/* <FormField
+        <FormField
           control={form.control}
           name="email"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input
-                  placeholder="TODO: fetch email from backend"
-                  {...field}
-                />
+                <Input {...field} />
               </FormControl>
             </FormItem>
           )}
-        />*/}
+        />
         <Button
           type="submit"
           variant="outline"
@@ -169,16 +175,9 @@ export function ChangeUserAccountForm() {
           Save changes
         </Button>
         <Button
-          type="submit"
+          type="button"
           variant="outline"
-          onClick={() => form.handleSubmit(() => onSubmitChangeEmail())()}
-        >
-          Change email
-        </Button>
-        <Button
-          type="submit"
-          variant="outline"
-          onClick={() => form.handleSubmit(() => onSubmitChangePassword())()}
+          onClick={() => onClickChangePassword()}
         >
           Change password
         </Button>

@@ -1,6 +1,5 @@
 import express from 'express'
 import controller from '../controllers/gymController'
-import { Schemas, ValidateJoi } from '../middleware/joi'
 
 const router = express.Router()
 

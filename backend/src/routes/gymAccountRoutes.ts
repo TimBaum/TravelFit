@@ -9,6 +9,7 @@ import {
 
 const router = express.Router()
 
+// TODO: add authentication
 router.post('/create', createGymAccount)
 router.get('/get/:id', readGymAccount)
 router.get('/get', readAllGymAccounts)
