@@ -42,9 +42,10 @@ function useReadGymAccount(id: string | null): GymAccount {
   return { data, error, loading }
 }
 
+//TODO: fix this method
 function useUpdateGymAccount(
   id: string | null,
-  newGymData: string,
+  newGymAccountData: string,
 ): GymAccount {
   const [data, setData] = useState<PublicGymAccount>()
   const [error, setError] = useState(null)
@@ -54,21 +55,22 @@ function useUpdateGymAccount(
     async function updateData() {
       if (!id) return
       setLoading(true)
-      const response = await fetch(
-        `${config.BACKEND_URL}/gymAccounts/update/${id}`,
-        {
-          method: 'PATCH',
-          body: newGymData,
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        },
+      setError(null)
+      const response = await fetchJSON(`/gymAccounts/update/${id}`, {
+        method: 'PATCH',
+        body: newGymAccountData,
+      }).catch((error) => {
+        setError(error.message)
+        return []
+      })
+
+      console.log(
+        'userUpdateGymAccount was called and returned the response ',
+        response,
       )
-        .then((response) => response.json())
-        .catch((error) => {
-          setError(error)
-        })
-      setData(response)
+      const publicGymAccount = response
+      console.log('Gym account changed successfully:', publicGymAccount)
+      setData(publicGymAccount)
       setLoading(false)
     }
 

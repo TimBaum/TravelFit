@@ -100,6 +100,12 @@ export function ChangeGymAccountForm() {
   ) {
     const newGymAccountData = { ...values }
     console.log('New gym account values for update HTTP request: ', values)
+    /*const data = useUpdateGymAccount(
+      user?._id ?? '',
+      JSON.stringify(newGymAccountData),
+    )
+    console.log('Gym account changed successfully:', data)
+    gymAccountDataFromBackend = useReadGymAccount(user?._id ?? '').data*/
 
     try {
       const response = await fetchJSON(
