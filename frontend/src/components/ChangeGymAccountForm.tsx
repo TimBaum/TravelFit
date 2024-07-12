@@ -238,22 +238,24 @@ export function ChangeGymAccountForm() {
             </FormItem>
           )}
         />
-        <Button
-          type="submit"
-          variant="outline"
-          onClick={() =>
-            form.handleSubmit((values) => onSubmitSaveChanges(values))()
-          }
-        >
-          Save changes
-        </Button>
-        <Button
-          type="button"
-          variant="outline"
-          onClick={() => onClickChangePassword()}
-        >
-          Change password
-        </Button>
+        <div className="mt-6 space-x-4">
+          <Button
+            type="submit"
+            variant="outline"
+            onClick={() =>
+              form.handleSubmit((values) => onSubmitSaveChanges(values))()
+            }
+          >
+            Save changes
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => onClickChangePassword()}
+          >
+            Change password
+          </Button>
+        </div>
       </form>
     </Form>
   )

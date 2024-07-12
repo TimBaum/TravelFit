@@ -14,7 +14,7 @@ function ChangeUserAccount() {
   //const hasPremium = hasActiveSubscription ?? false
 
   return (
-    <>
+    <div>
       <h1 className="mb-2 font-bold text-5xl">Account</h1>
       <Tabs defaultValue="account" className="w-full">
         <TabsList>
@@ -76,7 +76,7 @@ function ChangeUserAccount() {
           </div>
         </TabsContent>
       </Tabs>
-    </>
+    </div>
   )
 }
 

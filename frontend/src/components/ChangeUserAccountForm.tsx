@@ -97,9 +97,11 @@ export function ChangeUserAccountForm() {
       //})}
       >
         <div>
-          <div className="flex flex-col items-center">
-            <LucidePencil size={20} />
-            <span>Foto</span>
+          <div className="flex justify-center items-center m-6">
+            <div className="flex flex-col justify-center items-center p-6 border-2 border-gray-300 rounded-lg w-32 h-32">
+              <LucidePencil size={20} />
+              <span>Foto</span>
+            </div>
           </div>
           <FormField
             control={form.control}
@@ -161,6 +163,8 @@ export function ChangeUserAccountForm() {
               </FormItem>
             )}
           />
+        </div>
+        <div className="mt-6 space-x-4">
           <Button
             type="submit"
             variant="outline"
