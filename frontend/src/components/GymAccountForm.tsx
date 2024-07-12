@@ -116,13 +116,13 @@ export function GymAccountForm() {
   return (
     <Form {...form}>
       {/*<form onSubmit={form.handleSubmit(onSubmit)} className="mx-auto">*/}
-      <form className="mx-auto">
+      <form>
         <FormField
           control={form.control}
           name="salutation"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Salutation</FormLabel>
+              <FormLabel className="mr-2">Salutation</FormLabel>
               <FormControl>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -150,12 +150,12 @@ export function GymAccountForm() {
             </FormItem>
           )}
         />
-        <div className="flex">
+        <div className="flex space-x-4">
           <FormField
             control={form.control}
             name="firstName"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="w-1/2">
                 <FormLabel>First name</FormLabel>
                 <FormControl>
                   <Input placeholder="first name" {...field} />
@@ -170,7 +170,7 @@ export function GymAccountForm() {
             control={form.control}
             name="lastName"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="w-1/2">
                 <FormLabel>Last name</FormLabel>
                 <FormControl>
                   <Input placeholder="last name" {...field} />
@@ -253,12 +253,12 @@ export function GymAccountForm() {
           />
         </div> */}
 
-        <div className="flex">
+        <div className="flex space-x-4">
           <FormField
             control={form.control}
             name="email"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="w-1/2">
                 <FormLabel>Email</FormLabel>
                 <FormControl>
                   <Input placeholder="email" {...field} />
@@ -273,7 +273,7 @@ export function GymAccountForm() {
             control={form.control}
             name="phone"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="w-1/2">
                 <FormLabel>Phone</FormLabel>
                 <FormControl>
                   <Input placeholder="phone" {...field} />

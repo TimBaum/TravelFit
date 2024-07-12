@@ -87,17 +87,19 @@ export function UserAccountForm() {
 
   return (
     <Form {...form}>
-      <form className="mx-auto">
-        <div className="flex flex-col items-center mb-5">
-          <LucidePencil size={20} />
-          <span>Foto</span>
+      <form>
+        <div className="flex justify-center items-center m-6">
+          <div className="flex flex-col justify-center items-center p-6 border-2 border-gray-300 rounded-lg w-32 h-32">
+            <LucidePencil size={20} />
+            <span>Foto</span>
+          </div>
         </div>
         <FormField
           control={form.control}
           name="salutation"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Salutation</FormLabel>
+              <FormLabel className="mr-2">Salutation</FormLabel>
               <FormControl>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>

@@ -140,7 +140,7 @@ export function ChangeGymAccountForm() {
           name="salutation"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Salutation</FormLabel>
+              <FormLabel className="mr-2">Salutation</FormLabel>
               <FormControl>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>

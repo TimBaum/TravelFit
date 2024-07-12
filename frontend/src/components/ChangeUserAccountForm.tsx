@@ -108,7 +108,7 @@ export function ChangeUserAccountForm() {
             name="salutation"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Salutation</FormLabel>
+                <FormLabel className="mr-2">Salutation</FormLabel>
                 <FormControl>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
