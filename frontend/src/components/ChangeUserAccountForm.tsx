@@ -77,10 +77,6 @@ export function ChangeUserAccountForm() {
       }
 
       const data = await response
-      /* const data = await useUpdateUser(
-      user?._id ?? '',
-      JSON.stringify(newUserData),
-    ).data*/
       console.log('User changed successfully:', data)
       userDataFromBackend = useReadUser(user?._id ?? '').data
     } catch (error) {

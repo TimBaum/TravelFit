@@ -102,13 +102,8 @@ export function ChangeGymAccountForm() {
     console.log('New gym account values for update HTTP request: ', values)
 
     try {
-      /* const testString = config.BACKEND_URL + '/gymAccounts/update/' + user?._id
-      console.log(
-        'string that is sent to backend for changing gym account',
-        testString,
-      )*/
       const response = await fetchJSON(
-        config.BACKEND_URL + '/gymAccounts/update/' + user?._id ?? '',
+        '/gymAccounts/update/' + user?._id ?? '',
         {
           method: 'PATCH',
           body: JSON.stringify(newGymAccountData),
