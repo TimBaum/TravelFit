@@ -25,6 +25,7 @@ import {
   useUpdateGymAccount,
 } from '@/services/gymAccountService'
 import { useEffect } from 'react'
+import { fetchJSON } from '@/services/utils'
 
 const phoneValidationRegex = /^\+?[1-9]\d{1,14}$/ // E.164 international phone number format
 
@@ -62,7 +63,9 @@ export const changeGymAccountFormSchema = z.object({
 
 export function ChangeGymAccountForm() {
   const { user } = useAuth()
+  console.log('useAuth() in changeGymAccountForm returns ', user, ' as user.')
   let gymAccountDataFromBackend = useReadGymAccount(user?._id ?? '').data
+  console.log('gymAccountDataFromBackend ist ', gymAccountDataFromBackend)
 
   const form = useForm<z.infer<typeof changeGymAccountFormSchema>>({
     resolver: zodResolver(changeGymAccountFormSchema),
@@ -95,8 +98,8 @@ export function ChangeGymAccountForm() {
   async function onSubmitSaveChanges(
     values: z.infer<typeof changeGymAccountFormSchema>,
   ) {
-    const newUserData = { ...values }
-    console.log('New gym account values: ', values)
+    const newGymAccountData = { ...values }
+    console.log('New gym account values for update HTTP request: ', values)
 
     try {
       /* const testString = config.BACKEND_URL + '/gymAccounts/update/' + user?._id
@@ -104,14 +107,11 @@ export function ChangeGymAccountForm() {
         'string that is sent to backend for changing gym account',
         testString,
       )*/
-      const response = await fetch(
+      const response = await fetchJSON(
         config.BACKEND_URL + '/gymAccounts/update/' + user?._id ?? '',
         {
           method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(newUserData),
+          body: JSON.stringify(newGymAccountData),
         },
       )
 
@@ -119,7 +119,7 @@ export function ChangeGymAccountForm() {
         throw new Error('Failed to change gym account')
       }
 
-      const data = await response.json()
+      const data = await response
       console.log('Gym account changed successfully:', data)
       gymAccountDataFromBackend = useReadGymAccount(user?._id ?? '').data
     } catch (error) {

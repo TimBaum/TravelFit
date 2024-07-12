@@ -60,7 +60,7 @@ export const readGymAccount = async (req: Request, res: Response) => {
       //address: gymAccount.address.toString() || '',
       phone: gymAccount.phone || '',
     }
-    return res.status(200).json({ publicGymAccount })
+    return res.status(200).json(publicGymAccount)
   } catch (err) {
     return res.status(500).json({ error })
   }
