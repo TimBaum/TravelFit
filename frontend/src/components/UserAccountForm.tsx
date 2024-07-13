@@ -20,6 +20,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { LucidePencil } from 'lucide-react'
 import { config } from '@/config'
+import { useNavigate } from 'react-router-dom'
 
 export const userAccountFormSchema = z
   .object({
@@ -58,20 +59,13 @@ export function UserAccountForm() {
     values: z.infer<typeof userAccountFormSchema>,
     accountType: string,
   ) {
-    let hasPremiumSubscription = false
-    if (accountType === 'premium') {
-      hasPremiumSubscription = true
-    }
-
-    const userData = { ...values, hasPremiumSubscription }
-
     try {
       const response = await fetch(config.BACKEND_URL + '/users/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(userData),
+        body: JSON.stringify(values),
       })
 
       if (!response.ok) {
@@ -80,6 +74,17 @@ export function UserAccountForm() {
 
       const data = await response.json()
       console.log('User created successfully:', data)
+
+      const navigate = useNavigate()
+      if (accountType === 'premium') {
+        console.log(
+          'premium account created - we will navigate to the login now',
+        )
+        navigate('/login')
+      } else {
+        console.log('basic account created - we will navigate to the login now')
+        navigate('/login')
+      }
     } catch (error) {
       console.error('Error creating user:', error)
     }
@@ -192,6 +197,16 @@ export function UserAccountForm() {
         <Button
           type="submit"
           variant="outline"
+          className="bg-emerald-500 text-white mt-4"
+          onClick={() =>
+            form.handleSubmit((values) => onSubmit(values, 'basic'))()
+          }
+        >
+          Create free account
+        </Button>
+        {/* <Button
+          type="submit"
+          variant="outline"
           className="mt-4 mr-4 mb-4"
           onClick={() =>
             form.handleSubmit((values) => onSubmit(values, 'basic'))()
@@ -199,7 +214,7 @@ export function UserAccountForm() {
         >
           Create basic account
         </Button>
-        <Button
+          <Button
           type="submit"
           variant="outline"
           className="bg-emerald-500 text-white"
@@ -208,7 +223,7 @@ export function UserAccountForm() {
           }
         >
           Create premium account
-        </Button>
+        </Button>*/}
       </form>
     </Form>
   )
