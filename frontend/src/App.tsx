@@ -23,6 +23,7 @@ import AuthProvider, { useAuth } from './provider/AuthProvider'
 import { Toaster } from './components/ui/sonner'
 import DeleteGymAccounts from './pages/DeleteGymAccounts'
 import Favourites from './pages/Favourites'
+import ChangeGymAccount from './pages/ChangeGymAccount'
 
 /* is the root component that accesses all other components */
 
@@ -51,6 +52,10 @@ const App: React.FC = () => {
                   path="/change-user-account/"
                   element={<ChangeUserAccount />}
                 />
+                <Route
+                  path="/change-gym-account/"
+                  element={<ChangeGymAccount />}
+                />
                 {/* DeleteUserAccounts is a page for us for testing that the user account deletion works. This option has to be removed in the final app. */}
                 <Route
                   path="/delete-gym-accounts/"
@@ -65,6 +70,7 @@ const App: React.FC = () => {
               <Route path="/add-gym/" element={<AddGym />} />
               {/* for outsourcing form problem */}
               <Route path="/create-gym/" element={<CreateGym />} />
+              <Route path="/edit-gym/:id" element={<CreateGym />} />
               <Route path="/gyms/:id" element={<GymOverview />} />
               <Route path="/favourites" element={<Favourites />} />
               {/* <Route path="*" element={<NoPage />} /> */}

@@ -5,6 +5,7 @@ interface DropzoneProps {
   onFilesSelected: (files: File[]) => void
 }
 
+// Accept callback function that will be triggered when files are dropped/selected
 function Dropzone({ onFilesSelected }: DropzoneProps) {
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
@@ -30,6 +31,7 @@ function Dropzone({ onFilesSelected }: DropzoneProps) {
             'dropzone w-full h-48 flex flex-col items-center justify-center border-2 border-dashed border-emerald-400 rounded-lg bg-emerald-100 cursor-pointer transition duration-300 ease-in-out hover:bg-emerald-200',
         })}
       >
+        {/* spread input props from useDropzone hook to handle file selection */}
         <input {...getInputProps()} />
         {isDragActive ? (
           <p>Drop the files here ...</p>

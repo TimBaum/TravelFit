@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { cancelSubscription } from '@/services/subscriptionService'
 import { useState } from 'react'
 
-function ChangeGymAccount() {
+function ChangeUserAccount() {
   const { hasActiveSubscription, checkSubscriptionStatus } = useAuth()
   const [isLoading, setIsLoading] = useState(false)
 
@@ -60,4 +60,4 @@ function ChangeGymAccount() {
   )
 }
 
-export default ChangeGymAccount
+export default ChangeUserAccount

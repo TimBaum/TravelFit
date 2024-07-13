@@ -21,7 +21,7 @@ import { config } from '@/config'
 
 const phoneValidationRegex = /^\+?[1-9]\d{1,14}$/ // E.164 international phone number format
 
-const formSchema = z
+export const gymAccountFormSchema = z
   .object({
     salutation: z.enum(['Mr.', 'Ms.', 'Diverse'], {
       required_error: 'Salutation is required.',
@@ -39,9 +39,25 @@ const formSchema = z
       .regex(phoneValidationRegex, {
         message: 'Please enter a valid phone number.',
       }),
-    address: z
-      .string()
-      .min(5, { message: 'Address must be at least 5 characters.' }),
+    // address: z.object({
+    //   street: z
+    //     .string()
+    //     .min(2, { message: 'Invalid street' })
+    //     .max(100, { message: 'Invalid street' }),
+    //   postalCode: z
+    //     .string()
+    //     .regex(/^\d+$/, { message: 'Please enter a number' })
+    //     .min(2, { message: 'Invalid code' })
+    //     .max(20, { message: 'Invalid code' }),
+    //   city: z
+    //     .string()
+    //     .min(2, { message: 'Invalid city' })
+    //     .max(50, { message: 'Invalid city' }),
+    //   country: z
+    //     .string()
+    //     .min(2, { message: 'Invalid country' })
+    //     .max(50, { message: 'Invalid country' }),
+    // }),
     password: z
       .string()
       .min(8, { message: 'Password must be at least 8 characters.' }),
@@ -55,30 +71,34 @@ const formSchema = z
   })
 
 export function GymAccountForm() {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof gymAccountFormSchema>>({
+    resolver: zodResolver(gymAccountFormSchema),
     defaultValues: {
       salutation: undefined,
       firstName: '',
       lastName: '',
       email: '',
       phone: '',
-      address: '',
+      // address: {
+      //   street: '',
+      //   postalCode: '',
+      //   city: '',
+      //   country: 'Germany',
+      // },
       password: '',
       confirmPassword: '',
     },
   })
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    const gymAccountData = { ...values }
-
+  async function onSubmit(values: z.infer<typeof gymAccountFormSchema>) {
+    console.log('onSubmit was called in GymAccountForm with value ', values)
     try {
       const response = await fetch(config.BACKEND_URL + '/gymAccounts/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(gymAccountData),
+        body: JSON.stringify(values),
       })
 
       if (!response.ok) {
@@ -95,7 +115,8 @@ export function GymAccountForm() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="mx-auto">
+      {/*<form onSubmit={form.handleSubmit(onSubmit)} className="mx-auto">*/}
+      <form className="mx-auto">
         <FormField
           control={form.control}
           name="salutation"
@@ -161,7 +182,7 @@ export function GymAccountForm() {
             )}
           />
         </div>
-        <FormField
+        {/* TODO: include address adhering to Address.schema <FormField
           control={form.control}
           name="address"
           render={({ field }) => (
@@ -175,7 +196,63 @@ export function GymAccountForm() {
               </FormMessage>
             </FormItem>
           )}
-        />
+        />*/}
+        {/* Address von Leon */}
+        {/* <div>
+          <FormField
+            control={form.control}
+            name="address.street"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Street and Number *</FormLabel>
+                <FormControl>
+                  <Input placeholder="Awesome street 12" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="address.postalCode"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Postal Code *</FormLabel>
+                <FormControl>
+                  <Input placeholder="12345" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="address.city"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>City *</FormLabel>
+                <FormControl>
+                  <Input placeholder="Awesometown" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="address.country"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Country *</FormLabel>
+                <FormControl>
+                  <Input placeholder="Germany" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div> */}
+
         <div className="flex">
           <FormField
             control={form.control}
@@ -246,6 +323,7 @@ export function GymAccountForm() {
           type="submit"
           variant="outline"
           className="mt-4 bg-emerald-500 text-white"
+          onClick={() => form.handleSubmit((values) => onSubmit(values))()}
         >
           Create partner account
         </Button>

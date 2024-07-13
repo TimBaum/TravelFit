@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import OfferTile from '@/components/OfferTile'
 import { IOffer } from '@models/offer'
 import { config } from '@/config'
@@ -19,6 +19,8 @@ import { Calendar } from '@/components/ui/calendar'
 import { format } from 'date-fns'
 import { cn } from '@/lib/utils'
 
+import { TrashIcon } from '@radix-ui/react-icons'
+import { ResetIcon } from '@radix-ui/react-icons'
 import {
   Form,
   FormControl,
@@ -50,6 +52,7 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover'
 import Dropzone from './Dropzone'
+import { useFetchImages, useGetGym } from '@/services/gymService'
 
 /* Form checks */
 const formSchema = z.object({
@@ -119,9 +122,29 @@ const offerFormSchema = z.object({
   endDate: z.coerce.date(),
 })
 
+interface CreateGymFormProps {
+  mode: 'create' | 'edit'
+}
+
 /* Component content */
-export function CreateGymForm() {
+export function CreateGymForm({ mode }: CreateGymFormProps) {
   const navigate = useNavigate()
+  // Leonie
+
+  const { id } = useParams<{ id: string }>()
+  const gymId = id || ''
+  const {
+    data: gym,
+    error: getGymError,
+    loading: getGymLoading,
+  } = useGetGym(gymId)
+
+  // FIXME: at the moment only pictures which public_id starts with gym are used. For some reason gym.name is not arriving on time.
+  const cleanedName = gym?.name?.replace(/\s+/g, '-') || 'gym'
+
+  // Use custom hook to fetch images
+  const { data: photos } = useFetchImages(cleanedName || '')
+
   /* Opening Times */
   const weekdays = [
     'Sunday',
@@ -146,34 +169,6 @@ export function CreateGymForm() {
     'Parking',
   ] as const
 
-  /* Pictures */
-  interface UploadResult {
-    public_id: string
-    secure_url: string
-    [key: string]: unknown // This line allows any additional attributes
-  }
-  const [acceptedFiles, setAcceptedFiles] = useState<File[]>([])
-  const handleFilesSelected = (files: File[]) => {
-    setAcceptedFiles(files)
-  }
-  const uploadFiles = async (public_id: string) => {
-    const uploadedFiles: UploadResult[] = []
-    for (const file of acceptedFiles) {
-      const formData = new FormData()
-      formData.append('file', file)
-      formData.append('upload_preset', 'test_preset')
-      formData.append('api_key', import.meta.env.VITE_CLOUDINARY_KEY)
-      formData.append('public_id', public_id + Date.now())
-      const results = await fetch(
-        'https://api.cloudinary.com/v1_1/travelfit/image/upload',
-        {
-          method: 'POST',
-          body: formData,
-        },
-      ).then((r) => r.json())
-      uploadedFiles.push(results)
-    }
-  }
   /* Offers */
   const [isDialogOpen, setIsDialogOpen] = React.useState(false)
   const types = ['Subscription', 'One time payment', 'Trial']
@@ -203,6 +198,46 @@ export function CreateGymForm() {
   })
   const watch = form.watch //watch is a function that returns the value of the fields being watched
 
+  /* 
+  Array of strings (public_ids of images) to be deleted after submission
+  Initiaizated with an empty array
+  setFlaggedForDeletion  takes a function as an argument, where the function's parameter represents the previous state.
+  */
+  const [flaggedForDeletion, setFlaggedForDeletion] = useState<string[]>([])
+
+  /*
+  Function to toggle flag for deletion of images:
+  - if image is already flagged, it is removed from the array
+  - if image is not flagged, it is added to the array 
+  */
+  const toggleFlagForDeletion = (
+    event: React.MouseEvent<HTMLButtonElement>,
+    photoId: string,
+  ) => {
+    // Prevent form submission (default behaviour for buttons in forms)
+    event.preventDefault()
+    setFlaggedForDeletion((prev) =>
+      prev.includes(photoId)
+        ? prev.filter((id) => id !== photoId)
+        : [...prev, photoId],
+    )
+  }
+
+  /* 
+  hook for prefill the form with the gyms data if in edit mode
+  runs before form is rendered  
+  pre-fills a form with a gym's data when the component is in "edit" mode and a gym object is provided
+  */
+  React.useEffect(() => {
+    if (mode === 'edit' && gym) {
+      form.reset({
+        name: gym.name,
+        websiteLink: gym.websiteLink,
+        address: gym.address,
+      })
+    }
+  }, [mode, gym, form])
+
   /* Dialog submission default values */
   const offerForm = useForm({
     resolver: zodResolver(offerFormSchema),
@@ -215,6 +250,46 @@ export function CreateGymForm() {
       endDate: new Date(new Date().setMonth(new Date().getMonth() + 1)),
     },
   })
+
+  /* Pictures: Response from cloudinary when image is uploaded successfully*/
+  interface UploadResult {
+    public_id: string
+    secure_url: string
+    [key: string]: unknown // This line allows any additional attributes
+  }
+
+  // Array of files that have been selected via the dropzone
+  const [acceptedFiles, setAcceptedFiles] = useState<File[]>([])
+
+  // Callback function that will be triggered when files are dropped/selected
+  const handleFilesSelected = (files: File[]) => {
+    setAcceptedFiles(files)
+  }
+
+  // Upload files to cloudinary (public_id is gym name and used for all images. To make it unique, a TimeStamp is added)
+  const uploadFiles = async (public_id: string, acceptedFiles: File[]) => {
+    const uploadedFiles: UploadResult[] = []
+    // Loop through all files and upload them one by one
+    for (const file of acceptedFiles) {
+      const formData = new FormData()
+      formData.append('file', file)
+      /* set of settings and configurations defined in Cloudinary account that specify how to handle the media files being uploaded */
+      formData.append('upload_preset', 'test_preset')
+      formData.append('api_key', import.meta.env.VITE_CLOUDINARY_KEY)
+      // Specify public_id to match gym id
+      formData.append('public_id', public_id + Date.now())
+
+      const results = await fetch(
+        'https://api.cloudinary.com/v1_1/travelfit/image/upload',
+        {
+          method: 'POST',
+          body: formData,
+        },
+      ).then((r) => r.json())
+
+      uploadedFiles.push(results)
+    }
+  }
 
   // Form workaround to get the dialog form to submit without submitting the main form
   function handleDialogSubmit() {
@@ -253,28 +328,70 @@ export function CreateGymForm() {
     /* send data to backend */
     const gymData = { offers, openingHours, ...values }
     console.log(gymData)
-    // Use gym name as image id without spaces
+    // set the image id to the gym name
     const image_id = values.name.replace(/\s+/g, '')
-    try {
-      const response = await fetch(config.BACKEND_URL + '/gyms/create', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(gymData),
-      })
-      if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.error || 'Failed to create gym')
+    /* send data to backend */
+    if (mode === 'create') {
+      try {
+        const response = await fetch(config.BACKEND_URL + '/gyms/create', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(gymData),
+        })
+        if (!response.ok) {
+          const errorData = await response.json()
+          throw new Error(errorData.error || 'Failed to create gym')
+        }
+        const data = await response.json()
+        console.log('Gym created:', data)
+        await uploadFiles(image_id, acceptedFiles)
+        form.control._reset()
+      } catch (error) {
+        console.log('Error creating gym:', error)
       }
-      const data = await response.json()
-      console.log('Gym created:', data)
-      await uploadFiles(image_id)
-      form.control._reset()
-    } catch (error) {
-      console.log('Error creating gym:', error)
+      navigate('/my-gyms')
+    } else if (mode === 'edit') {
+      try {
+        const response = await fetch(
+          config.BACKEND_URL + `/gyms/update/${gym?._id}`,
+          {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(gymData),
+          },
+        )
+        if (!response.ok) {
+          const errorData = await response.json()
+          throw new Error(errorData.error || 'Failed to create gym')
+        }
+        const data = await response.json()
+        console.log('Gym created:', data)
+        // Upload new images
+        await uploadFiles(image_id, acceptedFiles)
+        // Delete flagged photos
+        if (flaggedForDeletion.length > 0) {
+          await Promise.all(
+            flaggedForDeletion.map(async (photoId) => {
+              await fetch(
+                `${config.BACKEND_URL}/gyms/delete-image/${photoId}`,
+                {
+                  method: 'DELETE',
+                },
+              )
+            }),
+          )
+          setFlaggedForDeletion([]) // Reset flagged photos
+        }
+        form.control._reset()
+      } catch (error) {
+        console.log('Error creating gym:', error)
+      }
+      navigate('/my-gyms')
     }
-    navigate('/my-gyms')
   }
 
   /* Render */
@@ -396,11 +513,11 @@ export function CreateGymForm() {
                             ), // Setze weekday auf null
                               form.setValue(
                                 `openingTimes.${index}.openingTime`,
-                                'dudud',
+                                '',
                               ),
                               form.setValue(
                                 `openingTimes.${index}.closingTime`,
-                                'dududu',
+                                '',
                               )
                           }
                         }}
@@ -536,11 +653,50 @@ export function CreateGymForm() {
         <FormItem>
           <FormControl>
             <FormLabel className="font-normal">
+              {/* Dropzone accepts callback function that will be triggered when files are dropped/selected */}
               <Dropzone onFilesSelected={handleFilesSelected} />
             </FormLabel>
           </FormControl>
           <FormMessage />
         </FormItem>
+
+        {/* Display stored photos if edit mode*/}
+
+        {mode === 'edit' && (
+          <>
+            <FormLabel className="text-2xl font-bold">Current Photos</FormLabel>
+            <div className="grid grid-cols-3 gap-4 mt-4">
+              {photos && photos.length > 0 ? (
+                photos.map((photo, index) => (
+                  <div key={index} className="relative">
+                    <img
+                      src={photo.url}
+                      alt={`Gym Photo ${index}`}
+                      // If the photo is flagged for deletion, the image is greyed out
+                      className={`w-full h-full object-cover ${flaggedForDeletion.includes(photo.public_id) ? 'opacity-50' : ''}`}
+                    />
+                    <button
+                      className="absolute top-0 right-0 bg-red-500 text-white m-2 p-1"
+                      onClick={(event) =>
+                        // Toggles the flag for deletion: if the photo is already flagged, it is removed from the array. If it is not flagged, it is added to the array
+                        toggleFlagForDeletion(event, photo.public_id)
+                      }
+                    >
+                      {flaggedForDeletion.includes(photo.public_id) ? (
+                        <ResetIcon />
+                      ) : (
+                        <TrashIcon />
+                      )}
+                    </button>
+                  </div>
+                ))
+              ) : (
+                <p>No photos available</p>
+              )}
+            </div>
+          </>
+        )}
+
         {/* Offers: OfferTile maps over the offer-array filled from the dialog form */}
         <h1 className="text-2xl font-bold mb-2 mt-3">Offers</h1>
         {offers.map((offer, index) => (
