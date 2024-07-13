@@ -63,21 +63,24 @@ export function ChangeUserAccountForm() {
   async function onSubmitSaveChanges(
     values: z.infer<typeof changeUserAccountFormSchema>,
   ) {
-    const newUserData = { ...values }
     console.log('New user values for update HTTP request: ', values)
 
     try {
-      const response = await fetchJSON('/users/update/' + user?._id ?? '', {
+      const response = await fetchJSON('/users/update/' + user?._id, {
         method: 'PATCH',
-        body: JSON.stringify(newUserData),
+        body: JSON.stringify(values),
       })
 
       if (!response.ok) {
-        throw new Error('Failed to change user')
+        console.log('response in changeUserAccountForm was ', response)
+        console.log('response.ok in changeUserAccountForm was ', response.ok)
+        //for some reason response.ok is undefined. updating works correctly,
+        //the sent request is a PATCH request that returns status code 200
+        //and this problem does not occur in the other 3 classes
+        throw new Error('Problem changeing user because !response.ok')
       }
 
-      const data = await response
-      console.log('User changed successfully:', data)
+      console.log('User changed successfully:', await response)
       userDataFromBackend = useReadUser(user?._id ?? '').data
     } catch (error) {
       console.error('Error changing user:', error)
@@ -88,14 +91,15 @@ export function ChangeUserAccountForm() {
     return <h1>TODO: implement password change</h1>
   }
 
+  //without this, a GET instead of a POST request is sent
+  const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    form.handleSubmit((values) => onSubmitSaveChanges(values))()
+  }
+
   return (
     <Form {...form}>
-      <form
-      //onSubmit={form.handleSubmit((values) => {
-      //console.log('handleSubmit called with values:', values)
-      //onSubmitSaveChanges(values)
-      //})}
-      >
+      <form onSubmit={handleFormSubmit}>
         <div>
           <div className="flex justify-center items-center m-6">
             <div className="flex flex-col justify-center items-center p-6 border-2 border-gray-300 rounded-lg w-32 h-32">
@@ -165,13 +169,7 @@ export function ChangeUserAccountForm() {
           />
         </div>
         <div className="mt-6 space-x-4">
-          <Button
-            type="submit"
-            variant="outline"
-            onClick={() =>
-              form.handleSubmit((values) => onSubmitSaveChanges(values))()
-            }
-          >
+          <Button type="submit" variant="outline">
             Save changes
           </Button>
           <Button

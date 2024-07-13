@@ -98,7 +98,6 @@ export function ChangeGymAccountForm() {
   async function onSubmitSaveChanges(
     values: z.infer<typeof changeGymAccountFormSchema>,
   ) {
-    const newGymAccountData = { ...values }
     console.log('New gym account values for update HTTP request: ', values)
     /*const data = useUpdateGymAccount(
       user?._id ?? '',
@@ -110,15 +109,14 @@ export function ChangeGymAccountForm() {
     try {
       const response = await fetchJSON('/gymAccounts/update/' + user?._id, {
         method: 'PATCH',
-        body: JSON.stringify(newGymAccountData),
+        body: JSON.stringify(values),
       })
 
       if (!response.ok) {
         throw new Error('Failed to change gym account')
       }
 
-      const data = await response
-      console.log('Gym account changed successfully:', data)
+      console.log('Gym account changed successfully:', await response)
       gymAccountDataFromBackend = useReadGymAccount(user?._id ?? '').data
     } catch (error) {
       console.error('Error changing gym account:', error)

@@ -41,6 +41,7 @@ function useReadUser(id: string | null): User {
   return { data, error, loading }
 }
 
+//TODO: fix this method
 function useUpdateUser(id: string | null, newUserData: string): User {
   const [data, setData] = useState<PublicUser>()
   const [error, setError] = useState(null)
