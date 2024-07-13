@@ -18,6 +18,7 @@ import {
   DropdownMenuItem,
 } from '@/components/ui/dropdown-menu'
 import { config } from '@/config'
+import { useNavigate } from 'react-router-dom'
 
 const phoneValidationRegex = /^\+?[1-9]\d{1,14}$/ // E.164 international phone number format
 
@@ -71,6 +72,7 @@ export const gymAccountFormSchema = z
   })
 
 export function GymAccountForm() {
+  const navigate = useNavigate()
   const form = useForm<z.infer<typeof gymAccountFormSchema>>({
     resolver: zodResolver(gymAccountFormSchema),
     defaultValues: {
@@ -91,7 +93,6 @@ export function GymAccountForm() {
   })
 
   async function onSubmit(values: z.infer<typeof gymAccountFormSchema>) {
-    console.log('onSubmit was called in GymAccountForm with value ', values)
     try {
       const response = await fetch(config.BACKEND_URL + '/gymAccounts/create', {
         method: 'POST',
@@ -105,18 +106,22 @@ export function GymAccountForm() {
         throw new Error('Failed to create gym account')
       }
 
-      const data = await response.json()
-      console.log('Gym account created successfully:', data)
-      form.control._reset()
+      navigate('/login')
     } catch (error) {
       console.error('Error creating gym account:', error)
     }
   }
 
+  //without this, a GET instead of a POST request is sent
+  const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    form.handleSubmit((values) => onSubmit(values))()
+  }
+
   return (
     <Form {...form}>
       {/*<form onSubmit={form.handleSubmit(onSubmit)} className="mx-auto">*/}
-      <form>
+      <form onSubmit={handleFormSubmit}>
         <div className="mb-2">
           <FormField
             control={form.control}
@@ -325,7 +330,6 @@ export function GymAccountForm() {
           type="submit"
           variant="outline"
           className="mt-4 bg-emerald-500 text-white"
-          onClick={() => form.handleSubmit((values) => onSubmit(values))()}
         >
           Create partner account
         </Button>
