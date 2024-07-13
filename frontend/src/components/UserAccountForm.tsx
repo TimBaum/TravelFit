@@ -44,6 +44,7 @@ export const userAccountFormSchema = z
   })
 
 export function UserAccountForm() {
+  const navigate = useNavigate()
   const form = useForm<z.infer<typeof userAccountFormSchema>>({
     resolver: zodResolver(userAccountFormSchema),
     defaultValues: {
@@ -72,11 +73,8 @@ export function UserAccountForm() {
         throw new Error('Failed to create user')
       }
 
-      const data = await response.json()
-      console.log('User created successfully:', data)
-
-      const navigate = useNavigate()
-      if (accountType === 'premium') {
+      navigate('/login')
+      /* if (accountType === 'premium') {
         console.log(
           'premium account created - we will navigate to the login now',
         )
@@ -84,7 +82,7 @@ export function UserAccountForm() {
       } else {
         console.log('basic account created - we will navigate to the login now')
         navigate('/login')
-      }
+      }*/
     } catch (error) {
       console.error('Error creating user:', error)
     }
