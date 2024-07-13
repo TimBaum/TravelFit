@@ -90,7 +90,7 @@ export function UserAccountForm() {
 
   return (
     <Form {...form}>
-      <form>
+      <form onSubmit={form.handleSubmit((values) => onSubmit(values, 'basic'))}>
         <div className="flex justify-center items-center m-6">
           <div className="flex flex-col justify-center items-center p-6 border-2 border-gray-300 rounded-lg w-32 h-32">
             <LucidePencil size={20} />
@@ -196,9 +196,6 @@ export function UserAccountForm() {
           type="submit"
           variant="outline"
           className="bg-emerald-500 text-white mt-4"
-          onClick={() =>
-            form.handleSubmit((values) => onSubmit(values, 'basic'))()
-          }
         >
           Create free account
         </Button>
