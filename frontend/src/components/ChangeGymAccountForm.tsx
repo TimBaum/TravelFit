@@ -134,9 +134,15 @@ export function ChangeGymAccountForm() {
     return <h1>TODO: implement account deletion</h1>
   }*/
 
+  //without this, a GET instead of a POST request is sent
+  const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    form.handleSubmit((values) => onSubmitSaveChanges(values))()
+  }
+
   return (
     <Form {...form}>
-      <form>
+      <form onSubmit={handleFormSubmit}>
         <div className="border-2 border-gray-300 rounded-lg p-4">
           <FormField
             control={form.control}
@@ -246,13 +252,7 @@ export function ChangeGymAccountForm() {
             />
           </div>
           <div className="mt-6 space-x-4">
-            <Button
-              type="submit"
-              variant="outline"
-              onClick={() =>
-                form.handleSubmit((values) => onSubmitSaveChanges(values))()
-              }
-            >
+            <Button type="submit" variant="outline">
               Save changes
             </Button>
             <Button
