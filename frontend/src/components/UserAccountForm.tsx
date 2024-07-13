@@ -88,9 +88,15 @@ export function UserAccountForm() {
     }
   }
 
+  //without this, a GET instead of a POST request is sent
+  const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    form.handleSubmit((values) => onSubmit(values, 'basic'))()
+  }
+
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit((values) => onSubmit(values, 'basic'))}>
+      <form onSubmit={handleFormSubmit}>
         <div className="flex justify-center items-center m-6">
           <div className="flex flex-col justify-center items-center p-6 border-2 border-gray-300 rounded-lg w-32 h-32">
             <LucidePencil size={20} />
