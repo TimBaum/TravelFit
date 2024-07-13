@@ -130,7 +130,6 @@ interface CreateGymFormProps {
 export function CreateGymForm({ mode }: CreateGymFormProps) {
   const navigate = useNavigate()
   // Leonie
-
   const { id } = useParams<{ id: string }>()
   const gymId = id || ''
   const {
@@ -174,7 +173,10 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
   const types = ['Subscription', 'One time payment', 'Trial']
   const [isSpecial, setIsSpecial] = React.useState(false)
   const [offers, setOffers] = React.useState<IOffer[]>([])
-
+  const handleDeleteOffer = (index: number) => {
+    const updatedOffers = offers.filter((_, i) => i !== index)
+    setOffers(updatedOffers)
+  }
   /* form default values */
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -700,7 +702,17 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
         {/* Offers: OfferTile maps over the offer-array filled from the dialog form */}
         <h1 className="text-2xl font-bold mb-2 mt-3">Offers</h1>
         {offers.map((offer, index) => (
-          <OfferTile key={index} offer={offer} />
+          <>
+            <OfferTile key={index} offer={offer} />
+            <div className="flex justify-end">
+              <Button
+                variant="destructive"
+                onClick={() => handleDeleteOffer(index)}
+              >
+                Delete
+              </Button>
+            </div>
+          </>
         ))}
         {/* Dialog form that fills the offer array */}
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -777,19 +789,6 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
                       </FormItem>
                     )}
                   />
-                  {/* <FormField
-                    control={offerForm.control}
-                    name="validityDays"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Validity in days</FormLabel>
-                        <FormControl>
-                          <Input type="number" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  /> */}
                 </div>
                 <div className="grid grid-cols-2">
                   <FormField
