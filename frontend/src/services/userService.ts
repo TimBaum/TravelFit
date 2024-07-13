@@ -30,9 +30,8 @@ function useReadUser(id: string | null): User {
         'userReadUser was called and returned the response ',
         response,
       )
-      const publicUser = response
 
-      setData(publicUser)
+      setData(response)
       setLoading(false)
     }
 

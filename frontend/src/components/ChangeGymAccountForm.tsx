@@ -18,11 +18,11 @@ import {
   DropdownMenuTrigger,
   DropdownMenuItem,
 } from '@/components/ui/dropdown-menu'
-import { config } from '@/config'
 import { useAuth } from '@/provider/AuthProvider'
 import {
   useReadGymAccount,
   useUpdateGymAccount,
+  useDeleteGymAccount,
 } from '@/services/gymAccountService'
 import { useEffect } from 'react'
 import { fetchJSON } from '@/services/utils'
@@ -131,6 +131,11 @@ export function ChangeGymAccountForm() {
   async function onClickChangePassword() {
     return <h1>TODO: implement password change</h1>
   }
+  /*
+  async function onClickDeleteAccount() {
+    onClickChangePassword()
+    return <h1>TODO: implement account deletion</h1>
+  }*/
 
   return (
     <Form {...form}>
@@ -260,6 +265,13 @@ export function ChangeGymAccountForm() {
             >
               Change password
             </Button>
+            {/*  <Button
+              type="button"
+              variant="outline"
+              onClick={() => onClickDeleteAccount()}
+            >
+              Delete this account
+            </Button>*/}
           </div>
         </div>
       </form>

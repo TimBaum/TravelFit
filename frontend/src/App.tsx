@@ -34,6 +34,7 @@ const App: React.FC = () => {
         <AuthProvider>
           <Routes>
             <Route path="/" element={<Layout />}>
+              <Route path="login" element={<Login />} />
               <Route index element={<GymSearch />} />
               <Route path="/find-gyms/" element={<GymSearchResults />} />
               {/* TODO: exemplary routes, should be changed */}
@@ -46,7 +47,6 @@ const App: React.FC = () => {
                 path="/create-user-account/"
                 element={<CreateUserAccount />}
               />
-              <Route path="login" element={<Login />} />
               <Route element={<PrivateRoute />}>
                 <Route
                   path="/change-user-account/"
