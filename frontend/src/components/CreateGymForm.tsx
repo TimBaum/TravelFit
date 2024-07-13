@@ -14,7 +14,6 @@ import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
-import { Label } from '@/components/ui/label'
 import { CalendarIcon } from 'lucide-react'
 import { Calendar } from '@/components/ui/calendar'
 import { format } from 'date-fns'
@@ -78,30 +77,38 @@ const formSchema = z.object({
       .min(2, { message: 'Invalid country' })
       .max(50, { message: 'Invalid country' }),
   }),
-  openingHours: z.array(
+  openingTimes: z.array(
     z
       .object({
-        weekday: z.coerce.number().min(0).max(6).optional(), //0 = Sunday, 6 = Saturday
-        //open: z.boolean(),
+        weekday: z.coerce.number().min(0).max(6).nullable(), //0 = Sunday, 6 = Saturday
         openingTime: z.string(),
         closingTime: z.string(),
       })
-      .optional(),
+      .refine(
+        (data) =>
+          data.weekday === null || (data.openingTime && data.closingTime), //checks if opening and closing times are non-empty strings when the day is selected
+        {
+          message: 'Times must be provided',
+          path: ['closingTime'], // Pfad zur Fehlermeldung
+        },
+      )
+      .refine(
+        (data) => {
+          if (data.weekday === null) return true
+          if (!data.openingTime || !data.closingTime) return false
+          return data.openingTime < data.closingTime
+        },
+        {
+          message: 'Opening time must be before closing time',
+          path: ['closingTime'],
+        },
+      ),
   ),
   highlights: z.array(z.string()).optional(),
 })
 const simpleUrlRegex =
   /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/
-const weekdays = [
-  'Sunday',
-  'Monday',
-  'Tuesday',
-  'Wednesday',
-  'Thursday',
-  'Friday',
-  'Saturday',
-]
-const types = ['Subscription', 'One time payment', 'Trial']
+
 /* Dialog form checks */
 const offerFormSchema = z.object({
   title: z.string().min(2, { message: 'Field is required.' }),
@@ -115,12 +122,29 @@ const offerFormSchema = z.object({
 /* Component content */
 export function CreateGymForm() {
   const navigate = useNavigate()
-  const [isDialogOpen, setIsDialogOpen] = React.useState(false)
-  // state for the special offer checkbox
-  const [isSpecial, setIsSpecial] = React.useState(false)
+  /* Opening Times */
+  const weekdays = [
+    'Sunday',
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+  ]
+  const [isOpen, setIsOpen] = React.useState(Array(7).fill(false))
 
-  // offer array
-  const [offers, setOffers] = React.useState<IOffer[]>([])
+  /* highlight options */
+  const highlights = [
+    'Sauna',
+    'Posing room',
+    'Pool',
+    'Courses',
+    'Personal trainings',
+    'Nutrition bar',
+    'Outdoor',
+    'Parking',
+  ] as const
 
   /* Pictures */
   interface UploadResult {
@@ -140,7 +164,6 @@ export function CreateGymForm() {
       formData.append('upload_preset', 'test_preset')
       formData.append('api_key', import.meta.env.VITE_CLOUDINARY_KEY)
       formData.append('public_id', public_id + Date.now())
-
       const results = await fetch(
         'https://api.cloudinary.com/v1_1/travelfit/image/upload',
         {
@@ -148,22 +171,15 @@ export function CreateGymForm() {
           body: formData,
         },
       ).then((r) => r.json())
-
       uploadedFiles.push(results)
     }
   }
+  /* Offers */
+  const [isDialogOpen, setIsDialogOpen] = React.useState(false)
+  const types = ['Subscription', 'One time payment', 'Trial']
+  const [isSpecial, setIsSpecial] = React.useState(false)
+  const [offers, setOffers] = React.useState<IOffer[]>([])
 
-  //highlight options
-  const highlights = [
-    'Sauna',
-    'Posing room',
-    'Pool',
-    'Courses',
-    'Personal trainings',
-    'Nutrition bar',
-    'Outdoor',
-    'Parking',
-  ] as const
   /* form default values */
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -176,27 +192,16 @@ export function CreateGymForm() {
         city: '',
         country: 'Germany',
       },
-      openingHours: Array(7).fill({
+      openingTimes: Array(7).fill({
         weekday: null,
         openingTime: '',
         closingTime: '',
       }),
-      // [
-      //   {
-      //     weekday: 0, //0 = Sunday
-      //     openingTime: '09:00',
-      //     closingTime: '17:00',
-      //   },
-      //   {
-      //     weekday: 1,
-      //     openingTime: '09:00',
-      //     closingTime: '17:00',
-      //   },
-      // ],
       highlights: [],
       offers: [],
     },
   })
+  const watch = form.watch //watch is a function that returns the value of the fields being watched
 
   /* Dialog submission default values */
   const offerForm = useForm({
@@ -211,7 +216,7 @@ export function CreateGymForm() {
     },
   })
 
-  // workaround to get the dialog form to submit without submitting the main form
+  // Form workaround to get the dialog form to submit without submitting the main form
   function handleDialogSubmit() {
     return offerForm.handleSubmit(onDialogSubmit)()
   }
@@ -235,18 +240,18 @@ export function CreateGymForm() {
       endDate: values.endDate,
     }
     setOffers([...offers, newOffer])
-
     setIsDialogOpen(false)
   }
 
   /* Form submission */
   async function onSubmit(values: z.infer<typeof formSchema>) {
     //TODO: calc cheapest offer
-
     //  -> gymWithCheapestOffer = { cheapestOffer, ...values}
-
+    const openingHours = values.openingTimes.filter(
+      (day) => day?.weekday !== null, //checks if the day is selected and if not, excludes the day from the array
+    )
     /* send data to backend */
-    const gymData = { offers, ...values }
+    const gymData = { offers, openingHours, ...values }
     console.log(gymData)
     // Use gym name as image id without spaces
     const image_id = values.name.replace(/\s+/g, '')
@@ -292,6 +297,7 @@ export function CreateGymForm() {
             </FormItem>
           )}
         />
+
         {/* WebsiteLink */}
         <FormField
           control={form.control}
@@ -306,6 +312,7 @@ export function CreateGymForm() {
             </FormItem>
           )}
         />
+
         {/* Address */}
         <div>
           <FormField
@@ -366,88 +373,114 @@ export function CreateGymForm() {
 
         <FormLabel className="text-2xl font-bold">Opening Times</FormLabel>
         <div className="grid grid-cols-7">
-          {weekdays.map((day) => (
+          {weekdays.map((day, index) => (
             <div key={day} className="day-row">
               <FormField
                 control={form.control}
-                name={`openingHours.${weekdays.indexOf(day)}.weekday`}
+                name={`openingTimes.${index}.weekday`}
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>{day}: open</FormLabel>
                     <FormControl>
                       <Switch
-                        checked={field.value}
-                        onCheckedChange={(checked) => field.onChange(checked)}
+                        checked={isOpen[index]}
+                        onCheckedChange={(checked) => {
+                          const newIsOpen = [...isOpen]
+                          newIsOpen[index] = checked
+                          setIsOpen(newIsOpen)
+                          field.onChange(checked ? index : null)
+                          if (!checked) {
+                            form.setValue(
+                              `openingTimes.${index}.weekday`,
+                              null,
+                            ), // Setze weekday auf null
+                              form.setValue(
+                                `openingTimes.${index}.openingTime`,
+                                'dudud',
+                              ),
+                              form.setValue(
+                                `openingTimes.${index}.closingTime`,
+                                'dududu',
+                              )
+                          }
+                        }}
                       />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name={`openingHours.${weekdays.indexOf(day)}.openingTime`}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Opening Time</FormLabel>
-                    <FormControl>
-                      <Select onValueChange={(value) => field.onChange(value)}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select time" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {[...Array(24)].map((_, hour) =>
-                            [...Array(2)].map((_, half) => {
-                              const time = `${hour.toString().padStart(2, '0')}:${half === 0 ? '00' : '30'}`
-                              return (
-                                <SelectItem key={time} value={time}>
-                                  {time}
-                                </SelectItem>
-                              )
-                            }),
-                          )}
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name={`openingHours.${weekdays.indexOf(day)}.closingTime`}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Closing Time</FormLabel>
-                    <FormControl>
-                      <Select onValueChange={(value) => field.onChange(value)}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select time" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {[...Array(24)].map((_, hour) =>
-                            [...Array(2)].map((_, half) => {
-                              const time = `${hour.toString().padStart(2, '0')}:${half === 0 ? '00' : '30'}`
-                              return (
-                                <SelectItem key={time} value={time}>
-                                  {time}
-                                </SelectItem>
-                              )
-                            }),
-                          )}
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              {watch(`openingTimes.${index}.weekday`) !== null && (
+                <>
+                  <FormField
+                    control={form.control}
+                    name={`openingTimes.${weekdays.indexOf(day)}.openingTime`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Opening Time</FormLabel>
+                        <FormControl>
+                          <Select
+                            onValueChange={(value) => field.onChange(value)}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select time" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {[...Array(24)].map((_, hour) =>
+                                [...Array(2)].map((_, half) => {
+                                  const time = `${hour.toString().padStart(2, '0')}:${half === 0 ? '00' : '30'}`
+                                  return (
+                                    <SelectItem key={time} value={time}>
+                                      {time}
+                                    </SelectItem>
+                                  )
+                                }),
+                              )}
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name={`openingTimes.${index}.closingTime`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Closing Time</FormLabel>
+                        <FormControl>
+                          <Select
+                            onValueChange={(value) => field.onChange(value)}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select time" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {[...Array(24)].map((_, hour) =>
+                                [...Array(2)].map((_, half) => {
+                                  const time = `${hour.toString().padStart(2, '0')}:${half === 0 ? '00' : '30'}`
+                                  return (
+                                    <SelectItem key={time} value={time}>
+                                      {time}
+                                    </SelectItem>
+                                  )
+                                }),
+                              )}
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </>
+              )}
             </div>
           ))}
         </div>
 
         {/* Highlights: */}
-
         <FormLabel className="text-2xl font-bold">Highlights</FormLabel>
         <FormDescription>
           Select the highlights your gym offers.
