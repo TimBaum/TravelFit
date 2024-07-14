@@ -126,11 +126,17 @@ export function ChangeGymAccountForm() {
   async function onClickChangePassword() {
     return <h1>TODO: implement password change</h1>
   }
-  /*
-  async function onClickDeleteAccount() {
-    onClickChangePassword()
-    return <h1>TODO: implement account deletion</h1>
-  }*/
+
+  const handleDeleteAccount = async () => {
+    try {
+      // Assuming deleteGymAccount() returns a promise
+      await useDeleteGymAccount()
+      console.log('Account deleted successfully')
+      // Handle post-deletion logic here, like redirecting the user
+    } catch (error) {
+      console.error('Failed to delete account:', error)
+    }
+  }
 
   //without this, a GET instead of a POST request is sent
   const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -139,74 +145,75 @@ export function ChangeGymAccountForm() {
   }
 
   return (
-    <Form {...form}>
-      <form onSubmit={handleFormSubmit}>
-        <div className="border-2 border-gray-300 rounded-lg p-4">
-          <FormField
-            control={form.control}
-            name="salutation"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="mr-2">Salutation</FormLabel>
-                <FormControl>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="outline" className="justify-between">
-                        {field.value || 'Select'}
-                        <span className="ml-2">&#x25BC;</span>{' '}
-                        {/* Down arrow symbol */}
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent>
-                      {['Mr.', 'Ms.', 'Diverse'].map((option) => (
-                        <DropdownMenuItem
-                          key={option}
-                          onSelect={() => field.onChange(option)}
-                        >
-                          {option}
-                        </DropdownMenuItem>
-                      ))}
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </FormControl>
-                <FormMessage>
-                  {form.formState.errors.salutation?.message}
-                </FormMessage>
-              </FormItem>
-            )}
-          />
-          <div className="mt-4">
+    <div>
+      <Form {...form}>
+        <form onSubmit={handleFormSubmit}>
+          <div className="border-2 border-gray-300 rounded-lg p-4">
             <FormField
               control={form.control}
-              name="firstName"
+              name="salutation"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>First name</FormLabel>
+                  <FormLabel className="mr-2">Salutation</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="outline" className="justify-between">
+                          {field.value || 'Select'}
+                          <span className="ml-2">&#x25BC;</span>{' '}
+                          {/* Down arrow symbol */}
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent>
+                        {['Mr.', 'Ms.', 'Diverse'].map((option) => (
+                          <DropdownMenuItem
+                            key={option}
+                            onSelect={() => field.onChange(option)}
+                          >
+                            {option}
+                          </DropdownMenuItem>
+                        ))}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </FormControl>
                   <FormMessage>
-                    {form.formState.errors.firstName?.message}
+                    {form.formState.errors.salutation?.message}
                   </FormMessage>
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name="lastName"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Last name</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage>
-                    {form.formState.errors.lastName?.message}
-                  </FormMessage>
-                </FormItem>
-              )}
-            />
-            {/* <FormField
+            <div className="mt-4">
+              <FormField
+                control={form.control}
+                name="firstName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>First name</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage>
+                      {form.formState.errors.firstName?.message}
+                    </FormMessage>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="lastName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Last name</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage>
+                      {form.formState.errors.lastName?.message}
+                    </FormMessage>
+                  </FormItem>
+                )}
+              />
+              {/* <FormField
           control={form.control}
           name="address"
           render={({ field }) => (
@@ -221,56 +228,64 @@ export function ChangeGymAccountForm() {
             </FormItem>
           )}
         />*/}
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="phone"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Phone</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage>
-                    {form.formState.errors.phone?.message}
-                  </FormMessage>
-                </FormItem>
-              )}
-            />
-          </div>
-          <div className="mt-6 space-x-4">
-            <Button type="submit" variant="outline">
-              Save changes
-            </Button>
-            <Button
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="phone"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Phone</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage>
+                      {form.formState.errors.phone?.message}
+                    </FormMessage>
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div className="mt-6 space-x-4">
+              <Button type="submit" variant="outline">
+                Save changes
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => onClickChangePassword()}
+              >
+                Change password
+              </Button>
+              {/*  <Button
               type="button"
               variant="outline"
-              onClick={() => onClickChangePassword()}
-            >
-              Change password
-            </Button>
-            {/*  <Button
-              type="button"
-              variant="outline"
-              onClick={() => onClickDeleteAccount()}
+              onClick={() => useDeleteGymAccount()}
             >
               Delete this account
             </Button>*/}
+            </div>
           </div>
-        </div>
-      </form>
-    </Form>
+        </form>
+      </Form>
+      {/*<Button
+        type="button"
+        variant="outline"
+        onClick={() => handleDeleteAccount()}
+      >
+        Delete this account
+      </Button>*/}
+    </div>
   )
 }
 

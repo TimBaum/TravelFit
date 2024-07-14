@@ -2,6 +2,7 @@ import { PublicGymAccount } from '@models/gymAccount'
 import { useEffect, useState } from 'react'
 import { fetchJSON } from './utils'
 import { useAuth } from '@/provider/AuthProvider'
+import { useNavigate } from 'react-router-dom'
 
 interface GymAccount {
   data: PublicGymAccount | undefined
@@ -79,34 +80,37 @@ function useUpdateGymAccount(
 }
 
 function useDeleteGymAccount(): GymAccount {
+  const { logout } = useAuth()
   const [data, setData] = useState<PublicGymAccount>()
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(false)
   const id = useAuth().user?._id
 
-  useEffect(() => {
-    async function fetchData() {
-      if (!id) return
-      setLoading(true)
-      setError(null)
-      const response = await fetchJSON(`/gymAccounts/delete/${id}`, {
-        method: 'DELETE',
-      }).catch((error) => {
-        setError(error.message)
-        return []
-      })
-
-      console.log(
-        'useDeleteGymAccount was called and returned the response ',
-        response,
-      )
-
-      setData(response)
-      setLoading(false)
+  async function fetchData() {
+    if (!id) {
+      console.log('gym account can not be deleted as id was not there')
+      return
     }
+    setLoading(true)
+    setError(null)
+    const response = await fetchJSON(`/gymAccounts/delete/${id}`, {
+      method: 'DELETE',
+    }).catch((error) => {
+      setError(error.message)
+      return []
+    })
 
-    fetchData()
-  }, [id])
+    console.log(
+      'useDeleteGymAccount was called and returned the response ',
+      response,
+    )
+
+    setData(response)
+    setLoading(false)
+    logout()
+  }
+
+  fetchData()
 
   return { data, error, loading }
 }
