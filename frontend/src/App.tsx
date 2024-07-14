@@ -67,8 +67,9 @@ const App: React.FC = () => {
                   element={<DeleteUserAccounts />}
                 />
               </Route>
+              {/* add-gym is a sandbox page for outsourcing form problems */}
               <Route path="/add-gym/" element={<AddGym />} />
-              {/* for outsourcing form problem */}
+
               <Route path="/create-gym/" element={<CreateGym />} />
               <Route path="/edit-gym/:id" element={<CreateGym />} />
               <Route path="/gyms/:id" element={<GymOverview />} />
