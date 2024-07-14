@@ -2,6 +2,7 @@ import { config } from '@/config'
 import { toast } from 'sonner'
 
 export async function fetchJSON(url: string, options?: RequestInit) {
+  /* Token is send to the client with every request */
   const authToken = localStorage.getItem('token')
 
   const headers = new Headers()
