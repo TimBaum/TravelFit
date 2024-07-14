@@ -106,7 +106,7 @@ export function GymAccountForm() {
         throw new Error('Failed to create gym account')
       }
 
-      navigate('/login')
+      navigate('/my-gyms')
     } catch (error) {
       console.error('Error creating gym account:', error)
     }
