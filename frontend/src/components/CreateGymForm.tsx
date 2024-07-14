@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
-import OfferTile from '@/components/Offer'
+import OfferTile from '@/components/OfferTile'
 import { IOffer } from '@models/offer'
 import { config } from '@/config'
 
@@ -13,6 +13,12 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Switch } from '@/components/ui/switch'
+import { CalendarIcon } from 'lucide-react'
+import { Calendar } from '@/components/ui/calendar'
+import { format } from 'date-fns'
+import { cn } from '@/lib/utils'
+
 import { TrashIcon } from '@radix-ui/react-icons'
 import { ResetIcon } from '@radix-ui/react-icons'
 import {
@@ -33,6 +39,18 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover'
 import Dropzone from './Dropzone'
 import { useFetchImages, useGetGym } from '@/services/gymService'
 
@@ -42,19 +60,17 @@ const formSchema = z.object({
     .string()
     .min(2, { message: 'Invalid name' })
     .max(50, { message: 'Invalid name' }),
-  websiteLink: z.string().refine((value) => simpleUrlRegex.test(value), {
-    message: 'Invalid URL',
-  }),
+  websiteLink: z
+    .string()
+    .refine((value) => simpleUrlRegex.test(value), { message: 'Invalid URL' }),
   address: z.object({
     street: z
       .string()
       .min(2, { message: 'Invalid street' })
       .max(100, { message: 'Invalid street' }),
-    postalCode: z
-      .string()
-      .regex(/^\d+$/, { message: 'Please enter a number' })
-      .min(2, { message: 'Invalid code' })
-      .max(20, { message: 'Invalid code' }),
+    postalCode: z.string().regex(/^\d{5}$/, {
+      message: 'Invalid postal code. It should be exactly 5 digits.',
+    }),
     city: z
       .string()
       .min(2, { message: 'Invalid city' })
@@ -64,16 +80,33 @@ const formSchema = z.object({
       .min(2, { message: 'Invalid country' })
       .max(50, { message: 'Invalid country' }),
   }),
-  weekday1: z
-    .string()
-    .min(2, { message: 'Invalid code' })
-    .max(20, { message: 'Invalid code' }),
-  weekday2: z
-    .string()
-    .min(2, { message: 'Invalid code' })
-    .max(20, { message: 'Invalid code' }),
-  openingHour: z.string().regex(/^\d+$/, { message: 'Please enter a number' }),
-  closingHour: z.string().regex(/^\d+$/, { message: 'Please enter a number' }),
+  openingTimes: z.array(
+    z
+      .object({
+        weekday: z.coerce.number().min(0).max(6).nullable(), //0 = Sunday, 6 = Saturday
+        openingTime: z.string(),
+        closingTime: z.string(),
+      })
+      .refine(
+        (data) =>
+          data.weekday === null || (data.openingTime && data.closingTime), //checks if opening and closing times are non-empty strings when the day is selected
+        {
+          message: 'Times must be provided',
+          path: ['closingTime'], // Pfad zur Fehlermeldung
+        },
+      )
+      .refine(
+        (data) => {
+          if (data.weekday === null) return true
+          if (!data.openingTime || !data.closingTime) return false
+          return data.openingTime < data.closingTime
+        },
+        {
+          message: 'Opening time must be before closing time',
+          path: ['closingTime'],
+        },
+      ),
+  ),
   highlights: z.array(z.string()).optional(),
 })
 const simpleUrlRegex =
@@ -83,19 +116,10 @@ const simpleUrlRegex =
 const offerFormSchema = z.object({
   title: z.string().min(2, { message: 'Field is required.' }),
   description: z.string().min(2, { message: 'Field is required.' }),
-  type: z
-    .string()
-    .refine(
-      (val) =>
-        ['Subscription', 'OneTime', 'FreeTrial', 'Special', '...'].includes(
-          val,
-        ),
-      {
-        message: 'Invalid type',
-      },
-    ),
-  priceEuro: z.number(),
-  validityDays: z.number(),
+  type: z.string(),
+  isSpecial: z.boolean(),
+  priceEuro: z.coerce.number(),
+  endDate: z.coerce.date(),
 })
 
 interface CreateGymFormProps {
@@ -105,7 +129,7 @@ interface CreateGymFormProps {
 /* Component content */
 export function CreateGymForm({ mode }: CreateGymFormProps) {
   const navigate = useNavigate()
-  const [isDialogOpen, setIsDialogOpen] = React.useState(false)
+  // Leonie
   const { id } = useParams<{ id: string }>()
   const gymId = id || ''
   const {
@@ -120,10 +144,19 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
   // Use custom hook to fetch images
   const { data: photos } = useFetchImages(cleanedName || '')
 
-  // offer array
-  const [offers, setOffers] = React.useState<IOffer[]>([])
+  /* Opening Times */
+  const weekdays = [
+    'Sunday',
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+  ]
+  const [isOpen, setIsOpen] = React.useState(Array(7).fill(false))
 
-  //highlight options
+  /* highlight options */
   const highlights = [
     'Sauna',
     'Posing room',
@@ -135,6 +168,15 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
     'Parking',
   ] as const
 
+  /* Offers */
+  const [isDialogOpen, setIsDialogOpen] = React.useState(false)
+  const types = ['Subscription', 'One time payment', 'Trial']
+  const [isSpecial, setIsSpecial] = React.useState(false)
+  const [offers, setOffers] = React.useState<IOffer[]>([])
+  const handleDeleteOffer = (index: number) => {
+    const updatedOffers = offers.filter((_, i) => i !== index)
+    setOffers(updatedOffers)
+  }
   /* form default values */
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -147,15 +189,16 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
         city: '',
         country: 'Germany',
       },
-      openingHours: [],
-      weekday1: '',
-      weekday2: '',
-      openingHour: '',
-      closingHour: '',
+      openingTimes: Array(7).fill({
+        weekday: null,
+        openingTime: '',
+        closingTime: '',
+      }),
       highlights: [],
       offers: [],
     },
   })
+  const watch = form.watch //watch is a function that returns the value of the fields being watched
 
   /* 
   Array of strings (public_ids of images) to be deleted after submission
@@ -203,13 +246,14 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
     defaultValues: {
       title: '',
       type: 'Subscription',
+      isSpecial: false,
       description: '',
-      priceEuro: 0,
-      validityDays: 0,
+      priceEuro: 5,
+      endDate: new Date(new Date().setMonth(new Date().getMonth() + 1)),
     },
   })
 
-  /* Response from cloudinary when image is uploaded successfully*/
+  /* Pictures: Response from cloudinary when image is uploaded successfully*/
   interface UploadResult {
     public_id: string
     secure_url: string
@@ -248,36 +292,43 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
       uploadedFiles.push(results)
     }
   }
-  // wierd workaround to get the dialog form to submit without submitting the main form lol
+
+  // Form workaround to get the dialog form to submit without submitting the main form
   function handleDialogSubmit() {
     return offerForm.handleSubmit(onDialogSubmit)()
   }
   async function onDialogSubmit(values: z.infer<typeof offerFormSchema>) {
     console.log(values)
+    if (!values.isSpecial) {
+      values.endDate = new Date(
+        new Date().setFullYear(new Date().getFullYear() + 50),
+      )
+    }
     // TODO:
     // const offerData: IOffer = { ...values}
     // mock offer, can be deleted later
     const newOffer: IOffer = {
       title: values.title,
-      type: 'Special',
+      type: values.type,
+      isSpecial: values.isSpecial,
       description: values.description,
-      priceEuro: 99.99,
-      validityDays: 7,
+      priceEuro: values.priceEuro,
       startDate: new Date(),
-      endDate: new Date('2222-06-04T11:00:12.070Z'),
+      endDate: values.endDate,
     }
     setOffers([...offers, newOffer])
-
     setIsDialogOpen(false)
   }
 
   /* Form submission */
   async function onSubmit(values: z.infer<typeof formSchema>) {
     //TODO: calc cheapest offer
-
     //  -> gymWithCheapestOffer = { cheapestOffer, ...values}
-
-    const gymData = { offers, ...values }
+    const openingHours = values.openingTimes.filter(
+      (day) => day?.weekday !== null, //checks if the day is selected and if not, excludes the day from the array
+    )
+    /* send data to backend */
+    const gymData = { offers, openingHours, ...values }
     console.log(gymData)
     // set the image id to the gym name
     const image_id = values.name.replace(/\s+/g, '')
@@ -365,6 +416,7 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
             </FormItem>
           )}
         />
+
         {/* WebsiteLink */}
         <FormField
           control={form.control}
@@ -379,6 +431,7 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
             </FormItem>
           )}
         />
+
         {/* Address */}
         <div>
           <FormField
@@ -435,60 +488,116 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
           />
         </div>
 
-        {/* OpeningHours */}
-        <FormLabel>Opening Hours</FormLabel>
-        <FormField
-          control={form.control}
-          name="weekday1"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>From</FormLabel>
-              <FormControl>
-                <Input placeholder="Monday" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="weekday2"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>To</FormLabel>
-              <FormControl>
-                <Input placeholder="Friday" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="openingHour"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Opening Hour</FormLabel>
-              <FormControl>
-                <Input type="number" placeholder="6" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="closingHour"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Closing Hour</FormLabel>
-              <FormControl>
-                <Input type="number" placeholder="22" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        {/* Opening Times */}
+
+        <FormLabel className="text-2xl font-bold">Opening Times</FormLabel>
+        <div className="grid grid-cols-7">
+          {weekdays.map((day, index) => (
+            <div key={day} className="day-row">
+              <FormField
+                control={form.control}
+                name={`openingTimes.${index}.weekday`}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{day}: open</FormLabel>
+                    <FormControl>
+                      <Switch
+                        checked={isOpen[index]}
+                        onCheckedChange={(checked) => {
+                          const newIsOpen = [...isOpen]
+                          newIsOpen[index] = checked
+                          setIsOpen(newIsOpen)
+                          field.onChange(checked ? index : null)
+                          if (!checked) {
+                            form.setValue(
+                              `openingTimes.${index}.weekday`,
+                              null,
+                            ), // Setze weekday auf null
+                              form.setValue(
+                                `openingTimes.${index}.openingTime`,
+                                '',
+                              ),
+                              form.setValue(
+                                `openingTimes.${index}.closingTime`,
+                                '',
+                              )
+                          }
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              {watch(`openingTimes.${index}.weekday`) !== null && (
+                <>
+                  <FormField
+                    control={form.control}
+                    name={`openingTimes.${weekdays.indexOf(day)}.openingTime`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Opening Time</FormLabel>
+                        <FormControl>
+                          <Select
+                            onValueChange={(value) => field.onChange(value)}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select time" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {[...Array(24)].map((_, hour) =>
+                                [...Array(2)].map((_, half) => {
+                                  const time = `${hour.toString().padStart(2, '0')}:${half === 0 ? '00' : '30'}`
+                                  return (
+                                    <SelectItem key={time} value={time}>
+                                      {time}
+                                    </SelectItem>
+                                  )
+                                }),
+                              )}
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name={`openingTimes.${index}.closingTime`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Closing Time</FormLabel>
+                        <FormControl>
+                          <Select
+                            onValueChange={(value) => field.onChange(value)}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select time" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {[...Array(24)].map((_, hour) =>
+                                [...Array(2)].map((_, half) => {
+                                  const time = `${hour.toString().padStart(2, '0')}:${half === 0 ? '00' : '30'}`
+                                  return (
+                                    <SelectItem key={time} value={time}>
+                                      {time}
+                                    </SelectItem>
+                                  )
+                                }),
+                              )}
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </>
+              )}
+            </div>
+          ))}
+        </div>
 
         {/* Highlights: */}
         <FormLabel className="text-2xl font-bold">Highlights</FormLabel>
@@ -540,8 +649,7 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
             </FormItem>
           )}
         />
-
-        {/* TODO: Pictures */}
+        {/* Pictures */}
         <FormLabel className="text-2xl font-bold">Photos</FormLabel>
         <FormDescription>Show your gym!</FormDescription>
         <FormItem>
@@ -594,11 +702,19 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
         {/* Offers: OfferTile maps over the offer-array filled from the dialog form */}
         <h1 className="text-2xl font-bold mb-2 mt-3">Offers</h1>
         {offers.map((offer, index) => (
-          <OfferTile key={index} offer={offer} />
+          <>
+            <OfferTile key={index} offer={offer} />
+            <div className="flex justify-end">
+              <Button
+                variant="destructive"
+                onClick={() => handleDeleteOffer(index)}
+              >
+                Delete
+              </Button>
+            </div>
+          </>
         ))}
-
         {/* Dialog form that fills the offer array */}
-
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
             <Button
@@ -640,62 +756,106 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
                     <FormItem>
                       <FormLabel>Type</FormLabel>
                       <FormControl>
-                        <Input {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={offerForm.control}
-                  name="priceEuro"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Price (€)</FormLabel>
-                      <FormControl>
-                        <Input {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={offerForm.control}
-                  name="validityDays"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Validity in days</FormLabel>
-                      <FormControl>
-                        <Input {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                {/* Offer Type: Irgendein kack rekursionsproblem */}
-
-                {/* <FormField
-                  control={offerForm.control}
-                  name="type"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Offer Type</FormLabel>
-                      <Select onValueChange={handleChange} defaultValue={ }>
-                        <FormControl>
+                        <Select
+                          onValueChange={(value) => field.onChange(value)}
+                        >
                           <SelectTrigger>
-                            <SelectValue placeholder="Select a verified email to display" />
+                            <SelectValue placeholder="Subscription" />
                           </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="m@example.com">m@example.com</SelectItem>
-                        </SelectContent>
-                      </Select>
+                          <SelectContent>
+                            {types.map((type) => (
+                              <SelectItem key={type} value={type}>
+                                {type}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
-                /> */}
+                />
+                <div className="grid grid-cols-2">
+                  <FormField
+                    control={offerForm.control}
+                    name="priceEuro"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Price (€)</FormLabel>
+                        <FormControl>
+                          <Input type="number" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div className="grid grid-cols-2">
+                  <FormField
+                    control={offerForm.control}
+                    name="isSpecial"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          Special (time limited) offer?{field.value}
+                        </FormLabel>
+                        <FormControl>
+                          <Checkbox
+                            className={cn('grid ml-5')}
+                            checked={field.value}
+                            onCheckedChange={() => {
+                              const newValue = !field.value
+                              setIsSpecial(newValue)
+                              field.onChange(newValue)
+                            }}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
+                  <FormField
+                    control={offerForm.control}
+                    name="endDate"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Special Offer ends on:</FormLabel>
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <FormControl>
+                              <Button
+                                disabled={!isSpecial}
+                                variant={'outline'}
+                                className={cn(
+                                  'w-[240px] text-left',
+                                  !field.value && 'text-muted-foreground',
+                                )}
+                              >
+                                {field.value ? (
+                                  format(field.value, 'PPP')
+                                ) : (
+                                  <span>Pick a date</span>
+                                )}
+                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                              </Button>
+                            </FormControl>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-auto p-0" align="start">
+                            <Calendar
+                              mode="single"
+                              selected={field.value}
+                              onSelect={field.onChange}
+                              disabled={(date) => date < new Date()}
+                              initialFocus
+                            />
+                          </PopoverContent>
+                        </Popover>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
                 <FormField
                   control={offerForm.control}
                   name="description"
@@ -705,7 +865,7 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
                       <FormControl>
                         <Textarea
                           {...field}
-                          placeholder="Type your offer description here."
+                          placeholder="Describe your offer here. What is included and what is not? What are the benefits?"
                         />
                       </FormControl>
                       <FormMessage />
@@ -722,15 +882,12 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
                   <Button type="button" onClick={() => handleDialogSubmit()}>
                     Save
                   </Button>
-                  {/* <Button type="submit">Submit</Button> */}
                 </DialogFooter>
               </form>
             </Form>
           </DialogContent>
         </Dialog>
-
         {/* Submit Button for the whole form */}
-
         <Button className="mt-4" type="submit">
           Submit
         </Button>

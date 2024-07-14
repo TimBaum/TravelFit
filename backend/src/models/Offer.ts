@@ -4,12 +4,14 @@ import mongoose from 'mongoose'
 
 const offerSchema = new mongoose.Schema({
   title: String,
-  type: {
-    type: String,
-    enum: ['Subscription', 'OneTime', 'FreeTrial', 'Special', '...'],
-  },
+  type: String,
+  isSpecial: Boolean,
+  // {
+  //   type: String,
+  //   enum: ['Subscription', 'OneTime', 'FreeTrial', 'Special'],
+  // },
   description: String,
-  validityDays: Number,
+  // validityDays: Number,
   priceEuro: Number,
   startDate: Date,
   endDate: Date,
