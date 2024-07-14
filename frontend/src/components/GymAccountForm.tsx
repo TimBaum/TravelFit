@@ -19,6 +19,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { config } from '@/config'
 import { useNavigate } from 'react-router-dom'
+import AuthProvider, { useAuth } from '@/provider/AuthProvider'
 
 const phoneValidationRegex = /^\+?[1-9]\d{1,14}$/ // E.164 international phone number format
 
@@ -73,6 +74,7 @@ export const gymAccountFormSchema = z
 
 export function GymAccountForm() {
   const navigate = useNavigate()
+  const { login } = useAuth()
   const form = useForm<z.infer<typeof gymAccountFormSchema>>({
     resolver: zodResolver(gymAccountFormSchema),
     defaultValues: {
@@ -106,6 +108,7 @@ export function GymAccountForm() {
         throw new Error('Failed to create gym account')
       }
 
+      login(values.email, values.password)
       navigate('/my-gyms')
     } catch (error) {
       console.error('Error creating gym account:', error)

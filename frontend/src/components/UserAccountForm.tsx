@@ -21,6 +21,7 @@ import {
 import { LucidePencil } from 'lucide-react'
 import { config } from '@/config'
 import { useNavigate } from 'react-router-dom'
+import { useAuth } from '@/provider/AuthProvider'
 
 export const userAccountFormSchema = z
   .object({
@@ -45,6 +46,7 @@ export const userAccountFormSchema = z
 
 export function UserAccountForm() {
   const navigate = useNavigate()
+  const { login } = useAuth()
   const form = useForm<z.infer<typeof userAccountFormSchema>>({
     resolver: zodResolver(userAccountFormSchema),
     defaultValues: {
@@ -73,7 +75,8 @@ export function UserAccountForm() {
         throw new Error('Failed to create user')
       }
 
-      navigate('/login')
+      login(values.email, values.password)
+      navigate('/')
       /* if (accountType === 'premium') {
         console.log(
           'premium account created - we will navigate to the login now',
