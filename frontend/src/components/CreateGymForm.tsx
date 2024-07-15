@@ -271,11 +271,18 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
   */
   React.useEffect(() => {
     if (mode === 'edit' && gym) {
-      form.reset({
-        name: gym.name,
-        websiteLink: gym.websiteLink,
-        addressFields: gym.address,
-      })
+      console.log('gym.address:', gym.address), // Kontrollpunkt
+        form.reset({
+          name: gym.name,
+          websiteLink: gym.websiteLink,
+          addressFields: {
+            street: gym.address.street,
+            postalCode: gym.address.postalCode,
+            city: gym.address.city,
+            country: gym.address.country,
+          },
+          //TODO: Add all fields
+        })
     }
   }, [mode, gym, form])
 
