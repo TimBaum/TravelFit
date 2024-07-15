@@ -85,8 +85,8 @@ const formSchema = z.object({
     z
       .object({
         weekday: z.coerce.number().min(0).max(6).nullable(), //0 = Sunday, 6 = Saturday
-        openingTime: z.string(),
-        closingTime: z.string(),
+        openingTime: z.string().optional(),
+        closingTime: z.string().optional(),
       })
       .refine(
         (data) =>
@@ -271,11 +271,18 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
   */
   React.useEffect(() => {
     if (mode === 'edit' && gym) {
-      form.reset({
-        name: gym.name,
-        websiteLink: gym.websiteLink,
-        addressFields: gym.address,
-      })
+      console.log('gym.address:', gym.address), // Kontrollpunkt
+        form.reset({
+          name: gym.name,
+          websiteLink: gym.websiteLink,
+          addressFields: {
+            street: gym.address.street,
+            postalCode: gym.address.postalCode,
+            city: gym.address.city,
+            country: gym.address.country,
+          },
+          //TODO: Add all fields
+        })
     }
   }, [mode, gym, form])
 
@@ -413,7 +420,7 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
         const data = await response.json()
         console.log('Gym created:', data)
         await uploadFiles(image_id, acceptedFiles)
-        form.control._reset()
+        form.reset()
         console.log('Gym-id:', data.gym._id) //works
       } catch (error) {
         console.log('Error creating gym:', error)

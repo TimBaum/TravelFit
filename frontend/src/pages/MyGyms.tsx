@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { LucidePencil as Pencil } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
@@ -36,9 +36,9 @@ import { IGymWithId } from '@models/gym'
 import NoGyms from '@/assets/illustrations/NoGyms.svg'
 import { Input } from '@/components/ui/input'
 
-const MyGyms: React.FC = () => {
-  const [gyms, setGyms] = useState<IGymWithId[]>([])
-  const [searchQuery, setSearchQuery] = useState<string>('')
+function MyGyms() {
+  const [gyms, setGyms] = React.useState<IGymWithId[]>([])
+  const [searchQuery, setSearchQuery] = React.useState<string>('')
 
   const navigate = useNavigate()
 
