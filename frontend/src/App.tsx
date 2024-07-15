@@ -50,13 +50,14 @@ const App: React.FC = () => {
                   path="/change-user-account/"
                   element={<ChangeUserAccount />}
                 />
+
+                <Route path="/favourites" element={<Favourites />} />
+              </Route>
+              <Route element={<PrivateGymRoute />}>
                 <Route
                   path="/change-gym-account/"
                   element={<ChangeGymAccount />}
                 />
-                <Route path="/favourites" element={<Favourites />} />
-              </Route>
-              <Route element={<PrivateGymRoute />}>
                 <Route path="/create-gym/" element={<CreateGym />} />
                 <Route path="/edit-gym/:id" element={<CreateGym />} />
               </Route>
