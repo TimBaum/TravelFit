@@ -19,11 +19,7 @@ import {
   DropdownMenuItem,
 } from '@/components/ui/dropdown-menu'
 import { useAuth } from '@/provider/AuthProvider'
-import {
-  useReadGymAccount,
-  useUpdateGymAccount,
-  useDeleteGymAccount,
-} from '@/services/gymAccountService'
+import { useReadGymAccount } from '@/services/gymAccountService'
 import { useEffect } from 'react'
 import { fetchJSON } from '@/services/utils'
 
@@ -125,17 +121,6 @@ export function ChangeGymAccountForm() {
 
   async function onClickChangePassword() {
     return <h1>TODO: implement password change</h1>
-  }
-
-  const handleDeleteAccount = async () => {
-    try {
-      // Assuming deleteGymAccount() returns a promise
-      await useDeleteGymAccount()
-      console.log('Account deleted successfully')
-      // Handle post-deletion logic here, like redirecting the user
-    } catch (error) {
-      console.error('Failed to delete account:', error)
-    }
   }
 
   //without this, a GET instead of a POST request is sent
@@ -270,24 +255,10 @@ export function ChangeGymAccountForm() {
               >
                 Change password
               </Button>
-              {/*  <Button
-              type="button"
-              variant="outline"
-              onClick={() => useDeleteGymAccount()}
-            >
-              Delete this account
-            </Button>*/}
             </div>
           </div>
         </form>
       </Form>
-      {/*<Button
-        type="button"
-        variant="outline"
-        onClick={() => handleDeleteAccount()}
-      >
-        Delete this account
-      </Button>*/}
     </div>
   )
 }
