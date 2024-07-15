@@ -70,7 +70,7 @@ function AddReviewDialog({ gym }: { gym: IGymWithId | undefined }) {
         method: 'PATCH',
         body: JSON.stringify({ review }),
       })
-      if (response.ok) toast.success('Review added successfully')
+      toast.success('Review added successfully')
       console.log('Succesfully added review: ', response)
     } catch (error) {
       toast.error('Error adding review')
