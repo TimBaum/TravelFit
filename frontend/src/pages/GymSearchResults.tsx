@@ -66,8 +66,6 @@ function GymSearchResults() {
     page,
   )
 
-  console.log(error)
-
   const filters = [
     // { text: 'Date', icon: <CalendarIcon />, state: defaultFilters.weekday },
     { text: 'Rating', icon: <StarIcon />, state: filterState.rating },
@@ -94,7 +92,7 @@ function GymSearchResults() {
     },
   ]
 
-  if (!searchString) return
+  if (searchString === null) return
 
   return (
     <div className="mb-10">
