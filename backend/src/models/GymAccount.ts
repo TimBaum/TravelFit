@@ -1,5 +1,4 @@
 import mongoose from 'mongoose'
-import Address from './Address'
 import Gym from './Gym.js'
 import { ObjectId } from 'mongodb'
 
@@ -9,7 +8,7 @@ const gymAccountSchema = new mongoose.Schema({
   salutation: { type: String, required: true, enum: ['Mr.', 'Ms.', 'Diverse'] },
   firstName: { type: String, required: true },
   lastName: { type: String, required: true },
-  //address: { type: Address.schema, required: false }, // TODO: set to required:true. I set this to required:false because of errors since change from string to Address.schema
+  address: { type: String, required: true }, // TODO: use address.Schema
   phone: { type: String, required: true },
   favourites: { type: [ObjectId], ref: 'Gym' },
   gyms: { type: [Gym.schema], required: true },

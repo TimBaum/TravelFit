@@ -28,9 +28,9 @@ function Main() {
 }
 
 function Advertisement() {
-  const { hasActiveSubscription } = useAuth()
+  const { hasActiveSubscription, accountType } = useAuth()
 
-  const showAds = !hasActiveSubscription
+  const showAds = !hasActiveSubscription && accountType !== 'GYM_USER'
 
   return (
     <div className="flex-1 px-6 w-full pb-10">

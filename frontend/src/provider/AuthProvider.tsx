@@ -1,6 +1,6 @@
 import { config } from '@/config'
 import { fetchJSON } from '@/services/utils'
-import { PublicUser } from '@models/user'
+import { PublicUser, AccountType } from '@models/user'
 import { PublicGymAccount } from '@models/gymAccount'
 import {
   useContext,
@@ -40,18 +40,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     boolean | null
   >(false)
 
-  let accountType: 'GYM_USER' | 'USER' | 'NOT_LOGGED_IN'
-
-  if (!user) {
-    accountType = 'NOT_LOGGED_IN'
-  } else if ('displayName' in user) {
-    accountType = 'USER'
-    checkSubscriptionStatus()
-  } // 'displayName' exists in PublicUser but not in PublicGymAccount
-  else {
-    accountType = 'GYM_USER'
-  }
-  console.log('accountType is ', accountType)
+  const [accountType, setAccountType] = useState<AccountType>('NOT_LOGGED_IN')
 
   async function checkSubscriptionStatus() {
     return fetchJSON('/subscriptions/active')
@@ -66,20 +55,20 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     if (!user) {
-      accountType = 'NOT_LOGGED_IN'
+      setAccountType('NOT_LOGGED_IN')
       setHasActiveSubscription(false)
       return
     } else if ('displayName' in user) {
-      accountType = 'USER'
+      setAccountType('USER')
       checkSubscriptionStatus()
     } // 'displayName' exists in PublicUser but not in PublicGymAccount
     else {
-      accountType = 'GYM_USER'
+      setAccountType('GYM_USER')
       setHasActiveSubscription(false)
       return
     }
     console.log('accountType is ', accountType)
-  }, [user])
+  }, [user, accountType])
 
   const navigate = useNavigate()
 

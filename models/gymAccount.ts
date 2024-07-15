@@ -1,12 +1,10 @@
-//import Address from './Address'
-
 export interface PublicGymAccount {
   _id: string
   email: string
   salutation: string
   firstName: string
   lastName: string
-  //address: string
+  address: string
   phone: string
   favourites: string[]
   gyms: string[]
@@ -18,7 +16,7 @@ export interface IGymAccount {
   salutation: string
   firstName: string
   lastName: string
-  //  address: Address.schema
+  address: string
   phone: string
   favourites: string[]
   gyms: string[]

@@ -19,7 +19,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { config } from '@/config'
 import { useNavigate } from 'react-router-dom'
-import AuthProvider, { useAuth } from '@/provider/AuthProvider'
+import { useAuth } from '@/provider/AuthProvider'
 
 const phoneValidationRegex = /^\+?[1-9]\d{1,14}$/ // E.164 international phone number format
 
@@ -41,25 +41,9 @@ export const gymAccountFormSchema = z
       .regex(phoneValidationRegex, {
         message: 'Please enter a valid phone number.',
       }),
-    // address: z.object({
-    //   street: z
-    //     .string()
-    //     .min(2, { message: 'Invalid street' })
-    //     .max(100, { message: 'Invalid street' }),
-    //   postalCode: z
-    //     .string()
-    //     .regex(/^\d+$/, { message: 'Please enter a number' })
-    //     .min(2, { message: 'Invalid code' })
-    //     .max(20, { message: 'Invalid code' }),
-    //   city: z
-    //     .string()
-    //     .min(2, { message: 'Invalid city' })
-    //     .max(50, { message: 'Invalid city' }),
-    //   country: z
-    //     .string()
-    //     .min(2, { message: 'Invalid country' })
-    //     .max(50, { message: 'Invalid country' }),
-    // }),
+    address: z
+      .string()
+      .min(5, { message: 'Address must be at least 5 characters.' }),
     password: z
       .string()
       .min(8, { message: 'Password must be at least 8 characters.' }),
@@ -83,12 +67,7 @@ export function GymAccountForm() {
       lastName: '',
       email: '',
       phone: '',
-      // address: {
-      //   street: '',
-      //   postalCode: '',
-      //   city: '',
-      //   country: 'Germany',
-      // },
+      address: '',
       password: '',
       confirmPassword: '',
     },
@@ -192,7 +171,8 @@ export function GymAccountForm() {
             )}
           />
         </div>
-        {/* TODO: include address adhering to Address.schema <FormField
+
+        <FormField
           control={form.control}
           name="address"
           render={({ field }) => (
@@ -206,63 +186,7 @@ export function GymAccountForm() {
               </FormMessage>
             </FormItem>
           )}
-        />*/}
-        {/* Address von Leon */}
-        {/* <div>
-          <FormField
-            control={form.control}
-            name="address.street"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Street and Number *</FormLabel>
-                <FormControl>
-                  <Input placeholder="Awesome street 12" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="address.postalCode"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Postal Code *</FormLabel>
-                <FormControl>
-                  <Input placeholder="12345" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="address.city"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>City *</FormLabel>
-                <FormControl>
-                  <Input placeholder="Awesometown" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="address.country"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Country *</FormLabel>
-                <FormControl>
-                  <Input placeholder="Germany" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div> */}
-
+        />
         <div className="flex space-x-4">
           <FormField
             control={form.control}

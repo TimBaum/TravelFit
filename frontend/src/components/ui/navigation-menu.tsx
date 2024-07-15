@@ -161,7 +161,7 @@ function NavigationMenuManager({ className }: { className: string }) {
             Find gyms
           </NavigationMenuLink>
         </NavigationMenuItem>
-        {user && (
+        {user && accountType === 'USER' && (
           <NavigationMenuItem>
             <NavigationMenuLink
               className={navigationMenuTriggerStyle()}
