@@ -61,10 +61,11 @@ const App: React.FC = () => {
               <Route element={<PrivateGymRoute />}>
                 <Route path="/create-gym/" element={<CreateGym />} />
                 <Route path="/edit-gym/:id" element={<CreateGym />} />
-                <Route path="/gyms/:id" element={<GymOverview />} />
               </Route>
               {/* TODO: delete: add-gym is a sandbox page for outsourcing form problems */}
               <Route path="/add-gym/" element={<AddGym />} />
+              <Route path="/gyms/:id" element={<GymOverview />} />
+
               <Route path="*" element={<GymOverview />} />
             </Route>
           </Routes>
