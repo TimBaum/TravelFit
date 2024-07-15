@@ -47,7 +47,7 @@ const App: React.FC = () => {
                 path="/create-user-account/"
                 element={<CreateUserAccount />}
               />
-              <Route element={<PrivateRoute />}>
+              <Route element={<PrivateUserRoute />}>
                 <Route
                   path="/change-user-account/"
                   element={<ChangeUserAccount />}
@@ -56,15 +56,16 @@ const App: React.FC = () => {
                   path="/change-gym-account/"
                   element={<ChangeGymAccount />}
                 />
+                <Route path="/favourites" element={<Favourites />} />
               </Route>
-              {/* add-gym is a sandbox page for outsourcing form problems */}
+              <Route element={<PrivateGymRoute />}>
+                <Route path="/create-gym/" element={<CreateGym />} />
+                <Route path="/edit-gym/:id" element={<CreateGym />} />
+                <Route path="/gyms/:id" element={<GymOverview />} />
+              </Route>
+              {/* TODO: delete: add-gym is a sandbox page for outsourcing form problems */}
               <Route path="/add-gym/" element={<AddGym />} />
-
-              <Route path="/create-gym/" element={<CreateGym />} />
-              <Route path="/edit-gym/:id" element={<CreateGym />} />
-              <Route path="/gyms/:id" element={<GymOverview />} />
-              <Route path="/favourites" element={<Favourites />} />
-              {/* <Route path="*" element={<NoPage />} /> */}
+              <Route path="*" element={<GymOverview />} />
             </Route>
           </Routes>
         </AuthProvider>
@@ -74,11 +75,19 @@ const App: React.FC = () => {
   )
 }
 
-const PrivateRoute = () => {
+const PrivateUserRoute = () => {
   // If the user is not logged in, redirect to the login page
-  // TODO: add functionality, which user type should see which page
-  const { user } = useAuth()
-  if (!user) return <Navigate to="/login" />
+  const { user, accountType } = useAuth()
+  if (!user || accountType !== 'USER') return <Navigate to="/login" />
+  console.log(accountType)
+  console.log('here')
+  return <Outlet />
+}
+
+const PrivateGymRoute = () => {
+  // If a gym account is not logged in, redirect to the login page
+  const { user, accountType } = useAuth()
+  if (!user || accountType !== 'GYM_USER') return <Navigate to="/login" />
   return <Outlet />
 }
 

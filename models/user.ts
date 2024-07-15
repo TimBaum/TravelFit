@@ -24,3 +24,5 @@ export interface IUser {
 export interface IUserWithId extends IUser {
   _id: string
 }
+
+export type AccountType = 'USER' | 'GYM_USER' | 'NOT_LOGGED_IN'
