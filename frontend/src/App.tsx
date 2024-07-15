@@ -17,11 +17,9 @@ import CreateGym from './pages/CreateGym'
 import Layout from './components/Layout'
 import '../app/globals.css'
 import GymOverview from './pages/GymOverview'
-import DeleteUserAccounts from './pages/DeleteUserAccounts'
 import Login from './pages/Login'
 import AuthProvider, { useAuth } from './provider/AuthProvider'
 import { Toaster } from './components/ui/sonner'
-import DeleteGymAccounts from './pages/DeleteGymAccounts'
 import Favourites from './pages/Favourites'
 import ChangeGymAccount from './pages/ChangeGymAccount'
 
@@ -65,7 +63,6 @@ const App: React.FC = () => {
               {/* TODO: delete: add-gym is a sandbox page for outsourcing form problems */}
               <Route path="/add-gym/" element={<AddGym />} />
               <Route path="/gyms/:id" element={<GymOverview />} />
-
               <Route path="*" element={<GymOverview />} />
             </Route>
           </Routes>
@@ -78,17 +75,16 @@ const App: React.FC = () => {
 
 const PrivateUserRoute = () => {
   // If the user is not logged in, redirect to the login page
-  const { user, accountType } = useAuth()
-  if (!user || accountType !== 'USER') return <Navigate to="/login" />
-  console.log(accountType)
-  console.log('here')
+  const { user, getAccountType } = useAuth()
+  if (!user || getAccountType() !== 'USER') return <Navigate to="/login" />
+  console.log(user.accountType)
   return <Outlet />
 }
 
 const PrivateGymRoute = () => {
   // If a gym account is not logged in, redirect to the login page
-  const { user, accountType } = useAuth()
-  if (!user || accountType !== 'GYM_USER') return <Navigate to="/login" />
+  const { user, getAccountType } = useAuth()
+  if (!user || getAccountType() !== 'GYM_USER') return <Navigate to="/login" />
   return <Outlet />
 }
 

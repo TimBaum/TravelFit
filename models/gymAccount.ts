@@ -8,6 +8,7 @@ export interface PublicGymAccount {
   phone: string
   favourites: string[]
   gyms: string[]
+  accountType: AccountType
 }
 
 export interface IGymAccount {
@@ -27,3 +28,6 @@ export interface IGymAccount {
 export interface IGymAccountWithId extends IGymAccount {
   _id: string
 }
+
+//TODO: deduplicate code
+export type AccountType = 'USER' | 'GYM_USER' | 'NOT_LOGGED_IN'

@@ -1,6 +1,6 @@
 import { config } from '@/config'
 import { fetchJSON } from '@/services/utils'
-import { PublicUser, AccountType } from '@models/user'
+import { AccountType, PublicUser } from '@models/user'
 import { PublicGymAccount } from '@models/gymAccount'
 import {
   useContext,
@@ -14,19 +14,19 @@ import { useNavigate } from 'react-router-dom'
 interface AuthContextType {
   user: PublicUser | PublicGymAccount | null
   hasActiveSubscription: boolean | null
-  accountType: 'GYM_USER' | 'USER' | 'NOT_LOGGED_IN'
   login: (email: string, password: string) => Promise<void>
   logout: () => void
   checkSubscriptionStatus: () => Promise<void>
+  getAccountType: () => AccountType
 }
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
   hasActiveSubscription: false,
-  accountType: 'NOT_LOGGED_IN',
   login: async () => {},
   logout: () => {},
   checkSubscriptionStatus: async () => {},
+  getAccountType: () => 'NOT_LOGGED_IN',
 })
 
 const AuthProvider = ({ children }: { children: ReactNode }) => {
@@ -39,8 +39,6 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [hasActiveSubscription, setHasActiveSubscription] = useState<
     boolean | null
   >(false)
-
-  const [accountType, setAccountType] = useState<AccountType>('NOT_LOGGED_IN')
 
   async function checkSubscriptionStatus() {
     return fetchJSON('/subscriptions/active')
@@ -55,22 +53,22 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     if (!user) {
-      setAccountType('NOT_LOGGED_IN')
       setHasActiveSubscription(false)
       return
-    } else if ('displayName' in user) {
-      setAccountType('USER')
+    } else if (user.accountType === 'USER') {
       checkSubscriptionStatus()
     } // 'displayName' exists in PublicUser but not in PublicGymAccount
     else {
-      setAccountType('GYM_USER')
       setHasActiveSubscription(false)
       return
     }
-    console.log('accountType is ', accountType)
-  }, [user, accountType])
+  }, [user])
 
   const navigate = useNavigate()
+
+  function getAccountType(): AccountType {
+    return user?.accountType ?? 'NOT_LOGGED_IN'
+  }
 
   async function login(email: string, password: string) {
     const res = await fetch(`${config.BACKEND_URL}/login`, {
@@ -82,14 +80,12 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     })
     const data = await res.json()
     if (data.error) throw new Error(data.error)
+
     // Store token in local storage
     localStorage.setItem('token', data.token)
-    console.log('this token was stored in local storage: ', data.token)
+
     const decodedToken = decodeToken(data.token)
-    console.log(
-      'this decoded token was set as the user in the context: ',
-      decodedToken,
-    )
+
     setUser(decodedToken)
   }
 
@@ -104,11 +100,11 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     <AuthContext.Provider
       value={{
         user,
-        accountType,
         login,
         logout,
         hasActiveSubscription,
         checkSubscriptionStatus,
+        getAccountType,
       }}
     >
       {children}
