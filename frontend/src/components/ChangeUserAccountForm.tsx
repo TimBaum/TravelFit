@@ -20,7 +20,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { LucidePencil } from 'lucide-react'
 import { useAuth } from '@/provider/AuthProvider'
-import { useReadUser, useUpdateUser } from '@/services/userService'
+import { useReadUser } from '@/services/userService'
 import { useEffect } from 'react'
 import { fetchJSON } from '@/services/utils'
 
@@ -35,8 +35,8 @@ export const changeUserAccountFormSchema = z.object({
 })
 
 export function ChangeUserAccountForm() {
-  const { user } = useAuth()
-  let userDataFromBackend = useReadUser(user?._id ?? '').data
+  const { user, getAccountType } = useAuth()
+  let userDataFromBackend = useReadUser(user?._id ?? '', getAccountType()).data
 
   const form = useForm<z.infer<typeof changeUserAccountFormSchema>>({
     resolver: zodResolver(changeUserAccountFormSchema),
@@ -81,7 +81,7 @@ export function ChangeUserAccountForm() {
       }
 
       console.log('User changed successfully:', await response)
-      userDataFromBackend = useReadUser(user?._id ?? '').data
+      userDataFromBackend = useReadUser(user?._id ?? '', getAccountType()).data //TODO: refactor
     } catch (error) {
       console.error('Error changing user:', error)
     }

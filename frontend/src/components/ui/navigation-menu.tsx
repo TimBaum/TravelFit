@@ -131,7 +131,9 @@ function NavigationMenuManager({ className }: { className: string }) {
 
   const navigate = useNavigate()
 
-  const { user, accountType, hasActiveSubscription, logout } = useAuth()
+  const { user, hasActiveSubscription, logout, getAccountType } = useAuth()
+
+  const accountType = getAccountType()
 
   console.log('User has active subscription: ', hasActiveSubscription)
   console.log('AccountType is: ', accountType)

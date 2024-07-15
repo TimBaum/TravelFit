@@ -33,6 +33,7 @@ export const login = async (req: Request, res: Response) => {
         displayName: user.displayName,
         salutation: user.salutation,
         favourites: [], //TODO: implement favorites if they should be inside the token @leonie
+        accountType: 'USER',
       }
 
       token = jwt.sign(userBody, config.JWT_SECRET, {
@@ -57,6 +58,9 @@ export const login = async (req: Request, res: Response) => {
         salutation: gymAccount.salutation,
         favourites: [], //TODO: implement favorites if they should be inside the token @leonie
         gyms: [], //TODO: implement gyms if they should be inside the token @leon
+        address: gymAccount.address,
+        phone: gymAccount.phone,
+        accountType: 'GYM_USER',
       }
 
       token = jwt.sign(gymAccountBody, config.JWT_SECRET, {

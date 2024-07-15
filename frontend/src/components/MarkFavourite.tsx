@@ -21,8 +21,8 @@ function MarkFavourite({ gym }: { gym: IGymWithId | undefined }) {
   const navigate = useNavigate()
   const gymId = gym?._id || ''
 
-  const { user } = useAuth()
-  const { data: userData } = useReadUser(user?._id ?? '')
+  const { user, getAccountType } = useAuth()
+  const { data: userData } = useReadUser(user?._id ?? '', getAccountType())
   const userFavourites = userData?.favourites
 
   const [isFavourite, setIsFavourite] = useState(false)
