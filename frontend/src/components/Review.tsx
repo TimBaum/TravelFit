@@ -66,7 +66,7 @@ function AddReviewDialog({ gym }: { gym: IGymWithId | undefined }) {
     }
 
     try {
-      const response = await fetchJSON(`/gyms/${gym?._id}/reviews`, {
+      const response = await fetch(`/gyms/${gym?._id}/reviews`, {
         method: 'PATCH',
         body: JSON.stringify({ review }),
       })
