@@ -37,7 +37,7 @@ function Advertisement() {
       {showAds && (
         <img
           className="sticky top-20 w-full"
-          src="src/assets/placeholder_ad.svg"
+          src="/src/assets/placeholder_ad.svg"
           alt="Advertisement"
         />
       )}
