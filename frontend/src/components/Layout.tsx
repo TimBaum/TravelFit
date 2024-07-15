@@ -18,7 +18,7 @@ function Main() {
     <main className="flex">
       <Advertisement />
 
-      <div className="w-3/5">
+      <div className="w-3/5" style={{ minHeight: '60vh' }}>
         <Outlet />
       </div>
 
