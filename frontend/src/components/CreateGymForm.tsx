@@ -394,7 +394,7 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
     console.log(gymData)
 
     // set the image id to the gym name
-    const image_id = values.name.replace(/\s+/g, '')
+    const image_id = 'gym' + values.name.replace(/\s+/g, '')
 
     /* send data to backend */
     if (mode === 'create') {
