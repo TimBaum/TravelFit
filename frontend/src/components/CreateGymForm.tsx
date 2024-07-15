@@ -7,6 +7,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import OfferTile from '@/components/OfferTile'
 import { IOffer } from '@models/offer'
 import { config } from '@/config'
+import { fetchJSON } from '@/services/utils'
 import axios from 'axios' // API used for finding the coordinates of the gym-address
 
 /* shadcn UI imports */
@@ -406,18 +407,13 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
     /* send data to backend */
     if (mode === 'create') {
       try {
-        const response = await fetch(config.BACKEND_URL + '/gyms/create', {
+        const data = await fetchJSON('/gyms/create', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(gymData),
         })
-        if (!response.ok) {
-          const errorData = await response.json()
-          throw new Error(errorData.error || 'Failed to create gym')
-        }
-        const data = await response.json()
         console.log('Gym created:', data)
         await uploadFiles(image_id, acceptedFiles)
         form.reset()

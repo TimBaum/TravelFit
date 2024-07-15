@@ -4,7 +4,7 @@ export interface PublicGymAccount {
   salutation: string
   firstName: string
   lastName: string
-  address: string
+  // address: string
   phone: string
   favourites: string[]
   gyms: string[]
@@ -17,7 +17,7 @@ export interface IGymAccount {
   salutation: string
   firstName: string
   lastName: string
-  address: string
+  // address: string
   phone: string
   favourites: string[]
   gyms: string[]
