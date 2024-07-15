@@ -35,7 +35,7 @@ function GymOverview() {
   const GymId = id || ''
 
   const { data, error, loading } = useGetGym(GymId)
-  const cleanedName = data?.name?.replace(/\s+/g, '-') || 'gym'
+  const cleanedName = data?.name?.replace(/\s+/g, '') || 'gym'
   const { data: images } = useFetchImages(cleanedName)
   const gymname = data?.name
   const previousPage = useLocation().state?.from
