@@ -11,10 +11,12 @@ import { useReadUser } from '@/services/userService'
 import { GymTile } from './GymTile'
 
 function Favourites() {
-  const { user } = useAuth()
+  const { user, accountType } = useAuth()
   //TODO: replace useReadAll with something like useReadFavourites to avoid loading all gyms
   const { data, error, loading } = useReadAll()
-  const userFavourites = useReadUser(user?._id ?? '').data?.favourites
+
+  const userFavourites = useReadUser(user?._id ?? '', accountType).data
+    ?.favourites
 
   const filteredGyms = data?.filter(
     (gym) =>

@@ -1,4 +1,4 @@
-import { PublicUser } from '@models/user'
+import { AccountType, PublicUser } from '@models/user'
 import { useEffect, useState } from 'react'
 import { fetchJSON } from './utils'
 
@@ -8,14 +8,14 @@ interface User {
   error: string | null
 }
 
-function useReadUser(id: string | null): User {
+function useReadUser(id: string | null, accountType: AccountType): User {
   const [data, setData] = useState<PublicUser>()
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     async function fetchData() {
-      if (!id) return
+      if (!id || accountType === 'GYM_USER') return
       setLoading(true)
       setError(null)
       const response = await fetchJSON(`/users/get/${id}`, {
@@ -35,7 +35,7 @@ function useReadUser(id: string | null): User {
     }
 
     fetchData()
-  }, [id])
+  }, [id, accountType])
 
   return { data, error, loading }
 }

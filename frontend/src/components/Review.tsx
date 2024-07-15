@@ -127,7 +127,7 @@ function ReviewTile({ review }: { review: IReview }) {
     setShowFullText(!showFullText)
   }
 
-  const author = useReadUser(review.author).data?.displayName
+  const author = useReadUser(review.author, 'USER').data?.displayName
 
   return (
     <div className="flex h-46 w-full rounded p-2 relative m-2">

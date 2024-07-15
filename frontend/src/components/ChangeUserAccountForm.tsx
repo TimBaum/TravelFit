@@ -35,8 +35,8 @@ export const changeUserAccountFormSchema = z.object({
 })
 
 export function ChangeUserAccountForm() {
-  const { user } = useAuth()
-  let userDataFromBackend = useReadUser(user?._id ?? '').data
+  const { user, accountType } = useAuth()
+  let userDataFromBackend = useReadUser(user?._id ?? '', accountType).data
 
   const form = useForm<z.infer<typeof changeUserAccountFormSchema>>({
     resolver: zodResolver(changeUserAccountFormSchema),
@@ -81,7 +81,7 @@ export function ChangeUserAccountForm() {
       }
 
       console.log('User changed successfully:', await response)
-      userDataFromBackend = useReadUser(user?._id ?? '').data
+      userDataFromBackend = useReadUser(user?._id ?? '', accountType).data //TODO: refactor
     } catch (error) {
       console.error('Error changing user:', error)
     }
