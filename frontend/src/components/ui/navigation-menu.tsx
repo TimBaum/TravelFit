@@ -140,10 +140,7 @@ function NavigationMenuManager({ className }: { className: string }) {
       className={`navigationmenu w-full bg-emerald-500 text-black ${className} flex align-center justify-between drop-shadow-md sticky top-0 z-50`}
     >
       <NavigationMenuList>
-        <NavigationMenuLink
-          href="https://www.instagram.com/leonie_popk/"
-          className="pr-8 flex items-center gap-2"
-        >
+        <NavigationMenuLink href="/" className="pr-8 flex items-center gap-2">
           <img src="/src/assets/TravelFitIcon.svg" className="w-8 h-8 " />
           <div className="text-xl font-bold">TravelFit</div>
         </NavigationMenuLink>

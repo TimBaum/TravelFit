@@ -7,6 +7,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import OfferTile from '@/components/OfferTile'
 import { IOffer } from '@models/offer'
 import { config } from '@/config'
+import axios from 'axios' // API used for finding the coordinates of the gym-address
 
 /* shadcn UI imports */
 import { Checkbox } from '@/components/ui/checkbox'
@@ -63,7 +64,7 @@ const formSchema = z.object({
   websiteLink: z
     .string()
     .refine((value) => simpleUrlRegex.test(value), { message: 'Invalid URL' }),
-  address: z.object({
+  addressFields: z.object({
     street: z
       .string()
       .min(2, { message: 'Invalid street' })
@@ -144,6 +145,44 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
   // Use custom hook to fetch images
   const { data: photos } = useFetchImages(cleanedName || '')
 
+  /* fetch coordinates of the address */
+  const fetchCoordinates = async (addressFields: {
+    street: string
+    postalCode: string
+    city: string
+    country: string
+  }): Promise<{ type: string; coordinates: [number, number] }> => {
+    console.log('fetchCoordinates called with addressFields:', addressFields) // Kontrollpunkt
+    try {
+      const fullAddress = `${addressFields.street}, ${addressFields.postalCode} ${addressFields.city}, ${addressFields.country}`
+      console.log('Full addressFields:', fullAddress) // Kontrollpunkt
+      const response = await axios.get(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(fullAddress)}`,
+      )
+      console.log('API response:', response.data) // Kontrollpunkt
+      if (response.data.length > 0) {
+        const { lat, lon } = response.data[0]
+        console.log('lat+lon:', lat, lon) // Kontrollpunkt
+        return {
+          type: 'Point',
+          coordinates: [parseFloat(lon), parseFloat(lat)] as [number, number],
+        }
+      } else {
+        console.error('Error fetching coordinates.')
+        return {
+          type: 'Point',
+          coordinates: [0, 0] as [number, number],
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching coordinates.', error)
+      return {
+        type: 'Point',
+        coordinates: [0, 0] as [number, number],
+      }
+    }
+  }
+
   /* Opening Times */
   const weekdays = [
     'Sunday',
@@ -183,7 +222,7 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
     defaultValues: {
       name: '',
       websiteLink: '',
-      address: {
+      addressFields: {
         street: '',
         postalCode: '',
         city: '',
@@ -235,7 +274,7 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
       form.reset({
         name: gym.name,
         websiteLink: gym.websiteLink,
-        address: gym.address,
+        addressFields: gym.address,
       })
     }
   }, [mode, gym, form])
@@ -253,7 +292,7 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
     },
   })
 
-  /* Pictures: Response from cloudinary when image is uploaded successfully*/
+  /* Pictures: Response from cloudinary when image is uploaded successfully */
   interface UploadResult {
     public_id: string
     secure_url: string
@@ -324,14 +363,39 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     //TODO: calc cheapest offer
     //  -> gymWithCheapestOffer = { cheapestOffer, ...values}
+
+    /*add coordinates */
+    let location: { type: string; coordinates: [number, number] } | null = null
+    try {
+      location = await fetchCoordinates(values.addressFields)
+      if (location.coordinates[0] === 0 && location.coordinates[1] === 0) {
+        location = null // Setze location auf null, wenn die Koordinaten beide 0 sind
+      }
+    } catch (error) {
+      alert('Error fetching coordinates')
+    }
+    console.log(
+      'values.addressFields & location:',
+      values.addressFields,
+      location,
+    )
+
+    const address = {
+      ...values.addressFields,
+      location,
+    }
+
+    /* Opening Times */
     const openingHours = values.openingTimes.filter(
       (day) => day?.weekday !== null, //checks if the day is selected and if not, excludes the day from the array
     )
-    /* send data to backend */
-    const gymData = { offers, openingHours, ...values }
+    console.log('CompleteAddress2:', address)
+    const gymData = { offers, address, openingHours, ...values }
     console.log(gymData)
+
     // set the image id to the gym name
-    const image_id = values.name.replace(/\s+/g, '')
+    const image_id = 'gym' + values.name.replace(/\s+/g, '')
+
     /* send data to backend */
     if (mode === 'create') {
       try {
@@ -350,6 +414,7 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
         console.log('Gym created:', data)
         await uploadFiles(image_id, acceptedFiles)
         form.control._reset()
+        console.log('Gym-id:', data.gym._id) //works
       } catch (error) {
         console.log('Error creating gym:', error)
       }
@@ -432,11 +497,11 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
           )}
         />
 
-        {/* Address */}
+        {/* addressFields */}
         <div>
           <FormField
             control={form.control}
-            name="address.street"
+            name="addressFields.street"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Street and Number *</FormLabel>
@@ -449,7 +514,7 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
           />
           <FormField
             control={form.control}
-            name="address.postalCode"
+            name="addressFields.postalCode"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Postal Code *</FormLabel>
@@ -462,7 +527,7 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
           />
           <FormField
             control={form.control}
-            name="address.city"
+            name="addressFields.city"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>City *</FormLabel>
@@ -475,7 +540,7 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
           />
           <FormField
             control={form.control}
-            name="address.country"
+            name="addressFields.country"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Country *</FormLabel>
