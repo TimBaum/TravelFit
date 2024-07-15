@@ -60,20 +60,20 @@ export const readGymAccount = async (req: Request, res: Response) => {
       //address: gymAccount.address.toString() || '',
       phone: gymAccount.phone || '',
     }
-    return res.status(200).json({ publicGymAccount })
+    return res.status(200).json(publicGymAccount)
   } catch (err) {
     return res.status(500).json({ error })
   }
 }
 
-export const readAllGymAccounts = async (req: Request, res: Response) => {
+/*export const readAllGymAccounts = async (req: Request, res: Response) => {
   try {
     const gymAccounts = await GymAccount.find()
     return res.status(200).json({ gymAccounts })
   } catch (err) {
     return res.status(500).json({ error })
   }
-}
+}*/
 
 export const updateGymAccount = async (req: Request, res: Response) => {
   console.log(

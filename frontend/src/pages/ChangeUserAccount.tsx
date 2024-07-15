@@ -5,58 +5,78 @@ import { useAuth } from '@/provider/AuthProvider'
 import { Button } from '@/components/ui/button'
 import { cancelSubscription } from '@/services/subscriptionService'
 import { useState } from 'react'
+import { Crown } from 'lucide-react'
 
 function ChangeUserAccount() {
   const { hasActiveSubscription, checkSubscriptionStatus } = useAuth()
   const [isLoading, setIsLoading] = useState(false)
 
-  const hasPremium = hasActiveSubscription ?? false
+  //const hasPremium = hasActiveSubscription ?? false
 
   return (
-    <>
+    <div>
       <h1 className="mb-2 font-bold text-5xl">Account</h1>
-      <Tabs defaultValue="account" className="w-[400px]">
+      <Tabs defaultValue="account" className="w-full">
         <TabsList>
           <TabsTrigger value="account">Account</TabsTrigger>
           <TabsTrigger value="subscription">Subscription</TabsTrigger>
         </TabsList>
-        <TabsContent value="account">
-          <ChangeUserAccountForm />
+        <TabsContent value="account" className="w-full">
+          <div className="border-2 border-gray-300 rounded-lg p-4">
+            <ChangeUserAccountForm />
+          </div>
         </TabsContent>
-        <TabsContent value="subscription">
-          <div className="p-6 m-6 text-center">
+        <TabsContent value="subscription" className="w-full">
+          <div className="text-center border-2 border-gray-300 rounded-lg p-4">
             <p className="text-2xl font-bold mb-4">Active subscription</p>
-            <div className="flex justify-center items-baseline">
-              <p className="p-4 text-3xl font-bold">
-                {hasActiveSubscription ? (
-                  'TravelFit Premium'
-                ) : (
-                  <span className="flex items-center gap-2">
-                    TravelFit basic{' '}
-                    <span className="text-gray-500 text-2xl">free</span>
-                  </span>
-                )}
-              </p>
+            <div className="flex justify-center items-baseline w-full">
+              {hasActiveSubscription ? (
+                <div>
+                  <div className="text-3xl font-bold flex items-center justify-center border-2 border-gray-300 rounded-lg">
+                    <Crown size={48} className="text-yellow-500" />
+                    <span>TravelFitPremium</span>
+                    <Crown size={48} className="text-yellow-500" />
+                  </div>
+                  <p className="text-xl mb-4 text-xs">
+                    Monthly payments of 2,99€ via PayPal
+                  </p>
+                  <Button
+                    variant={isLoading ? 'loading' : 'outline'}
+                    onClick={async () => {
+                      setIsLoading(true)
+                      await cancelSubscription().finally(
+                        checkSubscriptionStatus,
+                      )
+                      setIsLoading(false)
+                    }}
+                  >
+                    Cancel your subscription
+                  </Button>
+                </div>
+              ) : (
+                <div>
+                  <div className="p-4 text-3xl font-bold mb-6 border-2 border-gray-300 rounded-lg">
+                    <span className="flex items-center gap-2">
+                      TravelFit Basic{' '}
+                      <span className="text-gray-500 text-2xl">free</span>
+                    </span>
+                  </div>
+                  <p className="text-xs">
+                    Switch to{' '}
+                    <Crown className="text-yellow-500 inline align-middle" />
+                    TravelFit Premium
+                    <Crown className="text-yellow-500 inline align-middle" />{' '}
+                    for only 2,99€ per month to remove all ads by clicking the
+                    PayPal-button below!
+                  </p>
+                  <PayPalButton />
+                </div>
+              )}
             </div>
-            <p className="text-xl mb-4">Pay via PayPal:</p>
-            {hasPremium ? (
-              <Button
-                variant={isLoading ? 'loading' : 'outline'}
-                onClick={async () => {
-                  setIsLoading(true)
-                  await cancelSubscription().finally(checkSubscriptionStatus)
-                  setIsLoading(false)
-                }}
-              >
-                Cancel your subscription
-              </Button>
-            ) : (
-              <PayPalButton />
-            )}
           </div>
         </TabsContent>
       </Tabs>
-    </>
+    </div>
   )
 }
 

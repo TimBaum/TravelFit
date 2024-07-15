@@ -19,7 +19,6 @@ import {
   DropdownMenuItem,
 } from '@/components/ui/dropdown-menu'
 import { LucidePencil } from 'lucide-react'
-import { config } from '@/config'
 import { useAuth } from '@/provider/AuthProvider'
 import { useReadUser, useUpdateUser } from '@/services/userService'
 import { useEffect } from 'react'
@@ -64,25 +63,24 @@ export function ChangeUserAccountForm() {
   async function onSubmitSaveChanges(
     values: z.infer<typeof changeUserAccountFormSchema>,
   ) {
-    const newUserData = { ...values }
     console.log('New user values for update HTTP request: ', values)
 
     try {
-      const response = await fetchJSON('/users/update/' + user?._id ?? '', {
+      const response = await fetchJSON('/users/update/' + user?._id, {
         method: 'PATCH',
-        body: JSON.stringify(newUserData),
+        body: JSON.stringify(values),
       })
 
       if (!response.ok) {
-        throw new Error('Failed to change user')
+        console.log('response in changeUserAccountForm was ', response)
+        console.log('response.ok in changeUserAccountForm was ', response.ok)
+        //for some reason response.ok is undefined. updating works correctly,
+        //the sent request is a PATCH request that returns status code 200
+        //and this problem does not occur in the other 3 classes
+        throw new Error('Problem changeing user because !response.ok')
       }
 
-      const data = await response
-      /* const data = await useUpdateUser(
-      user?._id ?? '',
-      JSON.stringify(newUserData),
-    ).data*/
-      console.log('User changed successfully:', data)
+      console.log('User changed successfully:', await response)
       userDataFromBackend = useReadUser(user?._id ?? '').data
     } catch (error) {
       console.error('Error changing user:', error)
@@ -93,94 +91,95 @@ export function ChangeUserAccountForm() {
     return <h1>TODO: implement password change</h1>
   }
 
+  //without this, a GET instead of a POST request is sent
+  const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    form.handleSubmit((values) => onSubmitSaveChanges(values))()
+  }
+
   return (
     <Form {...form}>
-      <form
-      //onSubmit={form.handleSubmit((values) => {
-      //console.log('handleSubmit called with values:', values)
-      //onSubmitSaveChanges(values)
-      //})}
-      >
-        <div className="flex flex-col items-center mb-5">
-          <LucidePencil size={20} />
-          <span>Foto</span>
+      <form onSubmit={handleFormSubmit}>
+        <div>
+          <div className="flex justify-center items-center m-6">
+            <div className="flex flex-col justify-center items-center p-6 border-2 border-gray-300 rounded-lg w-32 h-32">
+              <LucidePencil size={20} />
+              <span>Foto</span>
+            </div>
+          </div>
+          <FormField
+            control={form.control}
+            name="salutation"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="mr-2">Salutation</FormLabel>
+                <FormControl>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="outline" className="justify-between">
+                        {field.value || 'Select'}
+                        <span className="ml-2">&#x25BC;</span>{' '}
+                        {/* Down arrow symbol */}
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                      {['Mr.', 'Ms.', 'Diverse'].map((option) => (
+                        <DropdownMenuItem
+                          key={option}
+                          onSelect={() => field.onChange(option)}
+                        >
+                          {option}
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </FormControl>
+                <FormMessage>
+                  {form.formState.errors.salutation?.message}
+                </FormMessage>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="displayName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Name</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+                <FormMessage>
+                  {form.formState.errors.displayName?.message}
+                </FormMessage>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Email</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
         </div>
-        <FormField
-          control={form.control}
-          name="salutation"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Salutation</FormLabel>
-              <FormControl>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="outline" className="justify-between">
-                      {field.value || 'Select'}
-                      <span className="ml-2">&#x25BC;</span>{' '}
-                      {/* Down arrow symbol */}
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    {['Mr.', 'Ms.', 'Diverse'].map((option) => (
-                      <DropdownMenuItem
-                        key={option}
-                        onSelect={() => field.onChange(option)}
-                      >
-                        {option}
-                      </DropdownMenuItem>
-                    ))}
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </FormControl>
-              <FormMessage>
-                {form.formState.errors.salutation?.message}
-              </FormMessage>
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="displayName"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Name</FormLabel>
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
-              <FormMessage>
-                {form.formState.errors.displayName?.message}
-              </FormMessage>
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email</FormLabel>
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
-            </FormItem>
-          )}
-        />
-        <Button
-          type="submit"
-          variant="outline"
-          onClick={() =>
-            form.handleSubmit((values) => onSubmitSaveChanges(values))()
-          }
-        >
-          Save changes
-        </Button>
-        <Button
-          type="button"
-          variant="outline"
-          onClick={() => onClickChangePassword()}
-        >
-          Change password
-        </Button>
+        <div className="mt-6 space-x-4">
+          <Button type="submit" variant="outline">
+            Save changes
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => onClickChangePassword()}
+          >
+            Change password
+          </Button>
+        </div>
       </form>
     </Form>
   )

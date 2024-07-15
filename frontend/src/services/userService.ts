@@ -1,6 +1,7 @@
 import { config } from '@/config'
-import { IUser, PublicUser } from '@models/user'
+import { PublicUser } from '@models/user'
 import { useEffect, useState } from 'react'
+import { fetchJSON } from './utils'
 
 interface User {
   data: PublicUser | undefined
@@ -8,7 +9,6 @@ interface User {
   error: string | null
 }
 
-//TODO: test if this works
 function useReadUser(id: string | null): User {
   const [data, setData] = useState<PublicUser>()
   const [error, setError] = useState(null)
@@ -18,16 +18,19 @@ function useReadUser(id: string | null): User {
     async function fetchData() {
       if (!id) return
       setLoading(true)
-      const response = await fetch(`${config.BACKEND_URL}/users/get/${id}`, {
+      setError(null)
+      const response = await fetchJSON(`/users/get/${id}`, {
         method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+      }).catch((error) => {
+        setError(error.message)
+        return []
       })
-        .then((response) => response.json())
-        .catch((error) => {
-          setError(error)
-        })
+
+      console.log(
+        'userReadUser was called and returned the response ',
+        response,
+      )
+
       setData(response)
       setLoading(false)
     }
@@ -38,7 +41,7 @@ function useReadUser(id: string | null): User {
   return { data, error, loading }
 }
 
-//TODO: test if this works
+//TODO: fix this method
 function useUpdateUser(id: string | null, newUserData: string): User {
   const [data, setData] = useState<PublicUser>()
   const [error, setError] = useState(null)
