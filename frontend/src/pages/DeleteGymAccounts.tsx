@@ -1,9 +1,9 @@
 import { Button } from '@/components/ui/button'
-import { config } from '@/config'
 import { Input } from '@/components/ui/input'
 import { useState } from 'react'
+import { useDeleteGymAccount } from '@/services/gymAccountService'
 
-async function deleteGymAccount(id: string) {
+/*async function deleteGymAccount(id: string) {
   try {
     const response = await fetch(
       config.BACKEND_URL + '/gymAccounts/delete/' + id,
@@ -21,7 +21,7 @@ async function deleteGymAccount(id: string) {
   } catch (error) {
     console.error('Error deleting gym account:', error)
   }
-}
+}*/
 
 function DeleteGymAccounts() {
   const [inputValue, setInputValue] = useState('')
@@ -44,7 +44,7 @@ function DeleteGymAccounts() {
           type="submit"
           variant="outline"
           className="mt-4 bg-primary"
-          onClick={() => deleteGymAccount(inputValue)}
+          onClick={() => useDeleteGymAccount(inputValue)}
         >
           Delete gym account with Id {inputValue}
         </Button>

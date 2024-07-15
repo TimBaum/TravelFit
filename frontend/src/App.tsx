@@ -34,6 +34,7 @@ const App: React.FC = () => {
         <AuthProvider>
           <Routes>
             <Route path="/" element={<Layout />}>
+              <Route path="login" element={<Login />} />
               <Route index element={<GymSearch />} />
               <Route path="/find-gyms/" element={<GymSearchResults />} />
               {/* TODO: exemplary routes, should be changed */}
@@ -46,7 +47,6 @@ const App: React.FC = () => {
                 path="/create-user-account/"
                 element={<CreateUserAccount />}
               />
-              <Route path="login" element={<Login />} />
               <Route element={<PrivateRoute />}>
                 <Route
                   path="/change-user-account/"
@@ -56,12 +56,12 @@ const App: React.FC = () => {
                   path="/change-gym-account/"
                   element={<ChangeGymAccount />}
                 />
-                {/* DeleteUserAccounts is a page for us for testing that the user account deletion works. This option has to be removed in the final app. */}
+                {/* TODO: Remove. DeleteGymAccounts is a page for us for testing that the gym account deletion works. */}
                 <Route
                   path="/delete-gym-accounts/"
                   element={<DeleteGymAccounts />}
                 />
-                {/* DeleteGymAccounts is a page for us for testing that the gym account deletion works. This option has to be removed in the final app. */}
+                {/* TODO: Remove. DeleteUserAccounts is a page for us for testing that the user account deletion works. */}
                 <Route
                   path="/delete-user-accounts/"
                   element={<DeleteUserAccounts />}

@@ -2,18 +2,16 @@ import express from 'express'
 import {
   readGymAccount,
   createGymAccount,
-  readAllGymAccounts,
   updateGymAccount,
   deleteGymAccount,
 } from '../controllers/gymAccountController'
+import auth from '../middleware/auth'
 
 const router = express.Router()
 
-// TODO: add authentication
 router.post('/create', createGymAccount)
-router.get('/get/:id', readGymAccount)
-router.get('/get', readAllGymAccounts)
-router.patch('/update/:id', updateGymAccount)
-router.delete('/delete/:id', deleteGymAccount)
+router.get('/get/:id', auth.isAuthorized, readGymAccount)
+router.patch('/update/:id', auth.isAuthorized, updateGymAccount)
+router.delete('/delete/:id', auth.isAuthorized, deleteGymAccount)
 
 export default router
