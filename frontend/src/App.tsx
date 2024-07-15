@@ -56,16 +56,6 @@ const App: React.FC = () => {
                   path="/change-gym-account/"
                   element={<ChangeGymAccount />}
                 />
-                {/* TODO: Remove. DeleteGymAccounts is a page for us for testing that the gym account deletion works. */}
-                <Route
-                  path="/delete-gym-accounts/"
-                  element={<DeleteGymAccounts />}
-                />
-                {/* TODO: Remove. DeleteUserAccounts is a page for us for testing that the user account deletion works. */}
-                <Route
-                  path="/delete-user-accounts/"
-                  element={<DeleteUserAccounts />}
-                />
               </Route>
               {/* add-gym is a sandbox page for outsourcing form problems */}
               <Route path="/add-gym/" element={<AddGym />} />
