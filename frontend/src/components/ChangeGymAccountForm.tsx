@@ -237,6 +237,9 @@ export function ChangeGymAccountForm() {
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
+                    <FormMessage>
+                      {form.formState.errors.email?.message}
+                    </FormMessage>
                   </FormItem>
                 )}
               />
