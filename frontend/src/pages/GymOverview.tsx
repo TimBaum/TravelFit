@@ -127,7 +127,11 @@ function GymOverview() {
           {/* right side */}
           <div className="w-1/3 m-2">
             <Button asChild className="w-full">
-              <Link to={data?.websiteLink ?? '/default-url'}>
+              <Link
+                to={data?.websiteLink ?? '/default-url'}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 Visit gym website
               </Link>
             </Button>
