@@ -66,11 +66,11 @@ function AddReviewDialog({ gym }: { gym: IGymWithId | undefined }) {
     }
 
     try {
-      const response = await fetch(`/gyms/${gym?._id}/reviews`, {
+      const response = await fetchJSON(`/gyms/${gym?._id}/reviews`, {
         method: 'PATCH',
         body: JSON.stringify({ review }),
       })
-      toast.success('Review added successfully')
+      if (response.ok) toast.success('Review added successfully')
       console.log('Succesfully added review: ', response)
     } catch (error) {
       toast.error('Error adding review')
