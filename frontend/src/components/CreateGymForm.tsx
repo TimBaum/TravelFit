@@ -135,8 +135,8 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
   const gymId = id || ''
   const {
     data: gym,
-    error: getGymError,
-    loading: getGymLoading,
+    //error: getGymError,
+    //loading: getGymLoading,
   } = useGetGym(gymId)
 
   // FIXME: at the moment only pictures which public_id starts with gym are used. For some reason gym.name is not arriving on time.
@@ -658,6 +658,9 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
                                   )
                                 }),
                               )}
+                              <SelectItem key="24:00" value="24:00">
+                                24:00
+                              </SelectItem>
                             </SelectContent>
                           </Select>
                         </FormControl>
