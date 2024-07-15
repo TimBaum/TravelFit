@@ -1,22 +1,33 @@
 import { NextFunction, Request, Response } from 'express'
-import mongoose, { FilterQuery } from 'mongoose'
+import mongoose, { FilterQuery, ObjectId } from 'mongoose'
 import Gym from '../models/Gym'
 import Review from '../models/Review'
 import { FilterState } from '@models/filter'
 import cache from '../cache'
 import cloudinary from 'cloudinary'
+import GymAccount from '../models/GymAccount'
 
 const createGym = (req: Request, res: Response, next: NextFunction) => {
+  const { ctx } = req
+  console.log('ctx: ', ctx)
+  if (!ctx) return res.status(401).json({ error: 'Unauthorized' })
   const gymData = req.body
+  const gymId = new mongoose.Types.ObjectId()
 
   const gym = new Gym({
-    _id: new mongoose.Types.ObjectId(),
+    _id: gymId,
     ...gymData,
   })
 
   return gym
     .save()
-    .then((gym) => res.status(201).json({ gym }))
+    .then(async () => {
+      await GymAccount.findById(ctx._id).then(async (gymAccount) => {
+        gymAccount?.gyms.push(gymId)
+        await gymAccount?.save()
+      })
+      res.status(201).json({ gym })
+    })
     .catch((error) => {
       console.error('Error saving gym:', error) // Detaillierte Fehlermeldung
       res.status(500).json({ error: error.message })
