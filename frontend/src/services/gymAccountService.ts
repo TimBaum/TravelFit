@@ -1,7 +1,6 @@
 import { PublicGymAccount } from '@models/gymAccount'
 import { useEffect, useState } from 'react'
 import { fetchJSON } from './utils'
-import { useAuth } from '@/provider/AuthProvider'
 
 interface GymAccount {
   data: PublicGymAccount | undefined

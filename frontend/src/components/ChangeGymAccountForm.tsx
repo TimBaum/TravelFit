@@ -36,26 +36,16 @@ export const changeGymAccountFormSchema = z.object({
     .string()
     .min(2, { message: 'Last name must be at least 2 characters.' }),
   email: z.string().email({ message: 'Invalid email address.' }),
+  address: z
+    .string()
+    .min(5, { message: 'Address must be at least 5 characters.' }),
   phone: z
     .string()
     .min(10, { message: 'Phone number must be at least 10 characters.' })
     .regex(phoneValidationRegex, {
       message: 'Please enter a valid phone number.',
     }),
-  /*address: z
-    .string()
-    .min(5, { message: 'Address must be at least 5 characters.' }),*/
-  /* password: z
-      .string()
-      .min(8, { message: 'Password must be at least 8 characters.' }),
-    confirmPassword: z
-      .string()
-      .min(8, { message: 'Confirm Password must be at least 8 characters.' }),*/
 })
-/* .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords don't match",
-    path: ['confirmPassword'],
-  })*/
 
 export function ChangeGymAccountForm() {
   const { user } = useAuth()
@@ -71,7 +61,7 @@ export function ChangeGymAccountForm() {
         'Diverse',
       firstName: gymAccountDataFromBackend?.firstName ?? '',
       lastName: gymAccountDataFromBackend?.lastName ?? '',
-      //address: gymAccountDataFromBackend?.address ?? '',
+      address: gymAccountDataFromBackend?.address ?? '',
       email: gymAccountDataFromBackend?.email ?? '',
       phone: gymAccountDataFromBackend?.phone ?? '',
     },
@@ -85,7 +75,7 @@ export function ChangeGymAccountForm() {
         'Diverse',
       firstName: gymAccountDataFromBackend?.firstName ?? '',
       lastName: gymAccountDataFromBackend?.lastName ?? '',
-      // address: oldData?.address,
+      address: gymAccountDataFromBackend?.address ?? '',
       email: gymAccountDataFromBackend?.email ?? '',
       phone: gymAccountDataFromBackend?.phone ?? '',
     })
@@ -95,12 +85,6 @@ export function ChangeGymAccountForm() {
     values: z.infer<typeof changeGymAccountFormSchema>,
   ) {
     console.log('New gym account values for update HTTP request: ', values)
-    /*const data = useUpdateGymAccount(
-      user?._id ?? '',
-      JSON.stringify(newGymAccountData),
-    )
-    console.log('Gym account changed successfully:', data)
-    gymAccountDataFromBackend = useReadGymAccount(user?._id ?? '').data*/
 
     try {
       const response = await fetchJSON('/gymAccounts/update/' + user?._id, {
@@ -198,21 +182,21 @@ export function ChangeGymAccountForm() {
                   </FormItem>
                 )}
               />
-              {/* <FormField
-          control={form.control}
-          name="address"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Address</FormLabel>
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
-              <FormMessage>
-                {form.formState.errors.address?.message}
-              </FormMessage>
-            </FormItem>
-          )}
-        />*/}
+              <FormField
+                control={form.control}
+                name="address"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Address</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage>
+                      {form.formState.errors.address?.message}
+                    </FormMessage>
+                  </FormItem>
+                )}
+              />
               <FormField
                 control={form.control}
                 name="email"
