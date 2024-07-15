@@ -20,6 +20,8 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { LucidePencil } from 'lucide-react'
 import { config } from '@/config'
+import { useNavigate } from 'react-router-dom'
+import { useAuth } from '@/provider/AuthProvider'
 
 export const userAccountFormSchema = z
   .object({
@@ -43,6 +45,8 @@ export const userAccountFormSchema = z
   })
 
 export function UserAccountForm() {
+  const navigate = useNavigate()
+  const { login } = useAuth()
   const form = useForm<z.infer<typeof userAccountFormSchema>>({
     resolver: zodResolver(userAccountFormSchema),
     defaultValues: {
@@ -58,46 +62,56 @@ export function UserAccountForm() {
     values: z.infer<typeof userAccountFormSchema>,
     accountType: string,
   ) {
-    let hasPremiumSubscription = false
-    if (accountType === 'premium') {
-      hasPremiumSubscription = true
-    }
-
-    const userData = { ...values, hasPremiumSubscription }
-
     try {
       const response = await fetch(config.BACKEND_URL + '/users/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(userData),
+        body: JSON.stringify(values),
       })
 
       if (!response.ok) {
         throw new Error('Failed to create user')
       }
 
-      const data = await response.json()
-      console.log('User created successfully:', data)
+      login(values.email, values.password)
+      navigate('/')
+      /* if (accountType === 'premium') {
+        console.log(
+          'premium account created - we will navigate to the login now',
+        )
+        navigate('/login')
+      } else {
+        console.log('basic account created - we will navigate to the login now')
+        navigate('/login')
+      }*/
     } catch (error) {
       console.error('Error creating user:', error)
     }
   }
 
+  //without this, a GET instead of a POST request is sent
+  const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    form.handleSubmit((values) => onSubmit(values, 'basic'))()
+  }
+
   return (
     <Form {...form}>
-      <form className="mx-auto">
-        <div className="flex flex-col items-center mb-5">
-          <LucidePencil size={20} />
-          <span>Foto</span>
+      <form onSubmit={handleFormSubmit}>
+        <div className="flex justify-center items-center m-6">
+          <div className="flex flex-col justify-center items-center p-6 border-2 border-gray-300 rounded-lg w-32 h-32">
+            <LucidePencil size={20} />
+            <span>Foto</span>
+          </div>
         </div>
         <FormField
           control={form.control}
           name="salutation"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Salutation</FormLabel>
+              <FormLabel className="mr-2">Salutation</FormLabel>
               <FormControl>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -190,14 +204,21 @@ export function UserAccountForm() {
         <Button
           type="submit"
           variant="outline"
-          className="mt-4"
+          className="bg-emerald-500 text-white mt-4"
+        >
+          Create free account
+        </Button>
+        {/* <Button
+          type="submit"
+          variant="outline"
+          className="mt-4 mr-4 mb-4"
           onClick={() =>
             form.handleSubmit((values) => onSubmit(values, 'basic'))()
           }
         >
           Create basic account
         </Button>
-        <Button
+          <Button
           type="submit"
           variant="outline"
           className="bg-emerald-500 text-white"
@@ -206,7 +227,7 @@ export function UserAccountForm() {
           }
         >
           Create premium account
-        </Button>
+        </Button>*/}
       </form>
     </Form>
   )

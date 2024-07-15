@@ -18,6 +18,8 @@ import {
   DropdownMenuItem,
 } from '@/components/ui/dropdown-menu'
 import { config } from '@/config'
+import { useNavigate } from 'react-router-dom'
+import AuthProvider, { useAuth } from '@/provider/AuthProvider'
 
 const phoneValidationRegex = /^\+?[1-9]\d{1,14}$/ // E.164 international phone number format
 
@@ -71,6 +73,8 @@ export const gymAccountFormSchema = z
   })
 
 export function GymAccountForm() {
+  const navigate = useNavigate()
+  const { login } = useAuth()
   const form = useForm<z.infer<typeof gymAccountFormSchema>>({
     resolver: zodResolver(gymAccountFormSchema),
     defaultValues: {
@@ -91,7 +95,6 @@ export function GymAccountForm() {
   })
 
   async function onSubmit(values: z.infer<typeof gymAccountFormSchema>) {
-    console.log('onSubmit was called in GymAccountForm with value ', values)
     try {
       const response = await fetch(config.BACKEND_URL + '/gymAccounts/create', {
         method: 'POST',
@@ -105,57 +108,64 @@ export function GymAccountForm() {
         throw new Error('Failed to create gym account')
       }
 
-      const data = await response.json()
-      console.log('Gym account created successfully:', data)
-      form.control._reset()
+      login(values.email, values.password)
+      navigate('/my-gyms')
     } catch (error) {
       console.error('Error creating gym account:', error)
     }
   }
 
+  //without this, a GET instead of a POST request is sent
+  const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    form.handleSubmit((values) => onSubmit(values))()
+  }
+
   return (
     <Form {...form}>
       {/*<form onSubmit={form.handleSubmit(onSubmit)} className="mx-auto">*/}
-      <form className="mx-auto">
-        <FormField
-          control={form.control}
-          name="salutation"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Salutation</FormLabel>
-              <FormControl>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="outline" className="justify-between">
-                      {field.value || 'Select'}
-                      <span className="ml-2">&#x25BC;</span>{' '}
-                      {/* Down arrow symbol */}
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    {['Mr.', 'Ms.', 'Diverse'].map((option) => (
-                      <DropdownMenuItem
-                        key={option}
-                        onSelect={() => field.onChange(option)}
-                      >
-                        {option}
-                      </DropdownMenuItem>
-                    ))}
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </FormControl>
-              <FormMessage>
-                {form.formState.errors.salutation?.message}
-              </FormMessage>
-            </FormItem>
-          )}
-        />
-        <div className="flex">
+      <form onSubmit={handleFormSubmit}>
+        <div className="mb-2">
+          <FormField
+            control={form.control}
+            name="salutation"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="mr-2">Salutation</FormLabel>
+                <FormControl>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="outline" className="justify-between">
+                        {field.value || 'Select'}
+                        <span className="ml-2">&#x25BC;</span>{' '}
+                        {/* Down arrow symbol */}
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                      {['Mr.', 'Ms.', 'Diverse'].map((option) => (
+                        <DropdownMenuItem
+                          key={option}
+                          onSelect={() => field.onChange(option)}
+                        >
+                          {option}
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </FormControl>
+                <FormMessage>
+                  {form.formState.errors.salutation?.message}
+                </FormMessage>
+              </FormItem>
+            )}
+          />
+        </div>
+        <div className="flex space-x-4">
           <FormField
             control={form.control}
             name="firstName"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="w-1/2">
                 <FormLabel>First name</FormLabel>
                 <FormControl>
                   <Input placeholder="first name" {...field} />
@@ -170,7 +180,7 @@ export function GymAccountForm() {
             control={form.control}
             name="lastName"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="w-1/2">
                 <FormLabel>Last name</FormLabel>
                 <FormControl>
                   <Input placeholder="last name" {...field} />
@@ -253,12 +263,12 @@ export function GymAccountForm() {
           />
         </div> */}
 
-        <div className="flex">
+        <div className="flex space-x-4">
           <FormField
             control={form.control}
             name="email"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="w-1/2">
                 <FormLabel>Email</FormLabel>
                 <FormControl>
                   <Input placeholder="email" {...field} />
@@ -273,7 +283,7 @@ export function GymAccountForm() {
             control={form.control}
             name="phone"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="w-1/2">
                 <FormLabel>Phone</FormLabel>
                 <FormControl>
                   <Input placeholder="phone" {...field} />
@@ -323,7 +333,6 @@ export function GymAccountForm() {
           type="submit"
           variant="outline"
           className="mt-4 bg-emerald-500 text-white"
-          onClick={() => form.handleSubmit((values) => onSubmit(values))()}
         >
           Create partner account
         </Button>
