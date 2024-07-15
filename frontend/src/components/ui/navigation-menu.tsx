@@ -3,12 +3,21 @@ import * as NavigationMenuPrimitive from '@radix-ui/react-navigation-menu'
 import { cva } from 'class-variance-authority'
 import { ChevronDown } from 'lucide-react'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
-import { PersonIcon } from '@radix-ui/react-icons'
+import { AvatarIcon, PersonIcon } from '@radix-ui/react-icons'
 import '@/index.css'
 import { cn } from '@/lib/utils'
 import { Button } from './button'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '@/provider/AuthProvider'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from './dropdown-menu'
 
 const NavigationMenu = React.forwardRef<
   React.ElementRef<typeof NavigationMenuPrimitive.Root>,
@@ -195,20 +204,24 @@ function NavigationMenuManager({ className }: { className: string }) {
       )}
       {accountType !== 'NOT_LOGGED_IN' && (
         <NavigationMenuList>
-          <Button
-            className="text-white bg-emerald-500 hover:text-white hover:bg-emerald-600"
-            onClick={() => logout()}
-          >
-            Logout
-          </Button>
-          <NavigationMenuItem onClick={() => navigateToAccount()}>
-            <NavigationMenuTrigger>
-              <Avatar>
-                <AvatarFallback>
-                  <PersonIcon className="icon" />
-                </AvatarFallback>
-              </Avatar>
-            </NavigationMenuTrigger>
+          <NavigationMenuItem>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <PersonIcon className="h-6 w-6" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-52">
+                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuGroup>
+                  <DropdownMenuItem onClick={() => navigateToAccount()}>
+                    Manage your account
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => logout()}>
+                    Log out
+                  </DropdownMenuItem>
+                </DropdownMenuGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </NavigationMenuItem>
         </NavigationMenuList>
       )}

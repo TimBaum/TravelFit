@@ -18,7 +18,7 @@ function Main() {
     <main className="flex">
       <Advertisement />
 
-      <div className="w-3/5">
+      <div className="w-3/5" style={{ minHeight: '60vh' }}>
         <Outlet />
       </div>
 
@@ -37,7 +37,7 @@ function Advertisement() {
       {showAds && (
         <img
           className="sticky top-20 w-full"
-          src="src/assets/placeholder_ad.svg"
+          src="/src/assets/placeholder_ad.svg"
           alt="Advertisement"
         />
       )}

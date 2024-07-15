@@ -24,7 +24,7 @@ const Map = ({
     lat: number
     lng: number
     gymName: string
-    averageRating: number
+    averageRating?: number
   }[]
   center: [number, number]
   enablePopups?: boolean
@@ -56,7 +56,7 @@ const Map = ({
                   <div>{marker.gymName}</div>
                   <div className="flex gap-1 items-center">
                     <StarFilledIcon />
-                    {marker.averageRating.toFixed(1)}
+                    {(marker.averageRating ?? 5.0).toFixed(1)}
                   </div>
                 </div>
                 <Button
