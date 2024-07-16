@@ -432,22 +432,14 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
       navigate('/my-gyms')
     } else if (mode === 'edit') {
       try {
-        const response = await fetch(
-          config.BACKEND_URL + `/gyms/update/${gym?._id}`,
-          {
-            method: 'PATCH',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(gymData),
+        await fetchJSON(`/gyms/update/${gym?._id}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
           },
-        )
-        if (!response.ok) {
-          const errorData = await response.json()
-          throw new Error(errorData.error || 'Failed to create gym')
-        }
-        const data = await response.json()
-        console.log('Gym created:', data)
+          body: JSON.stringify(gymData),
+        })
+
         // Upload new images
         await uploadFiles(image_id, acceptedFiles)
         // Delete flagged photos

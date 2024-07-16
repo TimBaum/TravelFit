@@ -3,6 +3,7 @@ import Payment from '../models/Payment'
 import { PayPalSubscription } from '@models/payment'
 import { config } from '../config/config'
 import User from '../models/User'
+import { IUserWithId } from '@models/user'
 
 async function hasActiveSubscription(req: Request, res: Response) {
   const ctx = req.ctx
@@ -10,28 +11,30 @@ async function hasActiveSubscription(req: Request, res: Response) {
     return res.status(401).json({ message: 'Unauthorized' })
   }
 
-  const hasPremiumSubscription = ctx.payments.some((subscription) => {
-    if (subscription.status === 'ACTIVE') return true
+  const hasPremiumSubscription = (ctx as IUserWithId).payments.some(
+    (subscription) => {
+      if (subscription.status === 'ACTIVE') return true
 
-    const gracePeriod = false
+      const gracePeriod = false
 
-    if (
-      gracePeriod &&
-      subscription.status === 'CANCELLED' &&
-      subscription.cancelledAt
-    ) {
-      const cancelledDate = new Date(subscription.cancelledAt)
-      const thirtyDaysAfterCancellation = new Date(
-        cancelledDate.setDate(cancelledDate.getDate() + 30),
-      )
+      if (
+        gracePeriod &&
+        subscription.status === 'CANCELLED' &&
+        subscription.cancelledAt
+      ) {
+        const cancelledDate = new Date(subscription.cancelledAt)
+        const thirtyDaysAfterCancellation = new Date(
+          cancelledDate.setDate(cancelledDate.getDate() + 30),
+        )
 
-      if (thirtyDaysAfterCancellation > new Date()) {
-        return true
+        if (thirtyDaysAfterCancellation > new Date()) {
+          return true
+        }
       }
-    }
 
-    return false
-  })
+      return false
+    },
+  )
 
   return res.status(200).json({ hasPremiumSubscription })
 }
@@ -91,13 +94,10 @@ async function createSubscription(req: Request, res: Response) {
 }
 
 async function cancelSubscription(req: Request, res: Response) {
-  const ctx = req.ctx
-  if (!ctx) {
-    return res.status(401).json({ message: 'Unauthorized' })
-  }
+  const ctx = req.ctx! as IUserWithId
 
   // Get the active subscription
-  const payPalId = ctx.payments.find(
+  const payPalId = (ctx as IUserWithId).payments.find(
     (subscription) => subscription.status == 'ACTIVE',
   )?.payPalId
 

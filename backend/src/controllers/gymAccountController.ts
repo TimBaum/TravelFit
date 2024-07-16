@@ -25,8 +25,6 @@ export const createGymAccount = async (req: Request, res: Response) => {
 
   const userWithSameMail = await User.findOne({ email: email }).exec()
 
-  console.log(userWithSameMail)
-
   if (userWithSameMail) {
     return res
       .status(400)
@@ -59,8 +57,12 @@ export const createGymAccount = async (req: Request, res: Response) => {
 }
 
 export const readGymAccount = async (req: Request, res: Response) => {
+  const gymAccountId = req.ctx!._id
+
   try {
-    const gymAccount = await GymAccount.findById(req.params.id)
+    // could technically be skipped since we already fetch the account in the middleware
+    // but for potential future modifications, it is left here
+    const gymAccount = await GymAccount.findById(gymAccountId)
     if (!gymAccount) {
       return res.status(404).json({ message: 'Gym account not found' })
     }
@@ -74,7 +76,6 @@ export const readGymAccount = async (req: Request, res: Response) => {
       gyms: gymAccount.gyms.map((gym) => gym.toString()),
       //address: gymAccount.address || '',
       phone: gymAccount.phone || '',
-      accountType: 'GYM_USER',
     }
     return res.status(200).json(publicGymAccount)
   } catch (err) {
@@ -83,14 +84,12 @@ export const readGymAccount = async (req: Request, res: Response) => {
 }
 
 export const updateGymAccount = async (req: Request, res: Response) => {
-  console.log(
-    'updateGymAccount was called in controller with request body ',
-    req.body,
-    ' and req.params ',
-    req.params,
-  )
+  const gymAccountId = req.ctx!._id
+
   try {
-    const gymAccount = await GymAccount.findById(req.params.id)
+    // could technically be skipped since we already fetch the account in the middleware
+    // but for potential future modifications, it is left here
+    const gymAccount = await GymAccount.findById(gymAccountId)
     console.log('This user will be updated: ', gymAccount)
     if (!gymAccount) {
       return res.status(404).json({ message: 'Gym account not found' })
@@ -108,7 +107,6 @@ export const updateGymAccount = async (req: Request, res: Response) => {
       gyms: gymAccount.gyms.map((gym) => gym.toString()),
       //address: gymAccount.address || '',
       phone: gymAccount.phone || '',
-      accountType: 'GYM_USER', //maybe not needed anymore later one
     }
     return res.status(201).json({ updatedPublicGymAccount })
   } catch (err) {
@@ -133,7 +131,6 @@ export const addFavourite = async (req: Request, res: Response) => {
       gyms: gymAccount.gyms.map((gym) => gym.toString()),
       //address: gymAccount.address || '',
       phone: gymAccount.phone || '',
-      accountType: 'GYM_USER', //maybe not needed anymore later one
     }
     gymAccount.favourites.push(req.body.gymId)
     await gymAccount.save()
@@ -167,9 +164,8 @@ export const deleteFavourite = async (req: Request, res: Response) => {
 }
 
 export const deleteGymAccount = async (req: Request, res: Response) => {
-  console.log('deleteGymAccount was called in controller')
   try {
-    const gymAccount = await GymAccount.findByIdAndDelete(req.params.id)
+    const gymAccount = await GymAccount.findByIdAndDelete(req.ctx!._id)
     if (!gymAccount) {
       return res.status(404).json({ message: 'Gym account not found' })
     }
