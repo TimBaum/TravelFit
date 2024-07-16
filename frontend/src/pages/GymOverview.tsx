@@ -104,6 +104,11 @@ function GymOverview() {
       <div>
         {/* Basic structure for the rest of the page */}
         <PhotoGallery photos={images || []} />
+        {!images || images.length === 0 ? (
+          <div className="text-center mt-10 mb-10">
+            No gym photos are provided.
+          </div>
+        ) : null}
         <div className="flex gap-2">
           {/* left side */}
           <div className="w-2/3 mr-10">
