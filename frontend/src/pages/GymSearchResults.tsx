@@ -40,7 +40,8 @@ function GymSearchResults() {
 
   const [showMapView, setShowMapView] = useState(false)
 
-  const [sortBy, setSortBy] = useState('-averageRating')
+  // default search by distance descending
+  const [sortBy, setSortBy] = useState('+distance')
   const [page, setPage] = useState(1)
 
   const defaultFilters: FilterState = {
@@ -74,6 +75,7 @@ function GymSearchResults() {
   ]
 
   const sortOptions = [
+    { text: 'Closest distance', value: '+distance' },
     {
       text: 'Highest rating',
       value: '-averageRating',
