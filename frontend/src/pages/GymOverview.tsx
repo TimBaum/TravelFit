@@ -112,6 +112,35 @@ function GymOverview() {
                 <HighlightBadge key={element} name={element} />
               ))}
             </div>
+            {/* Opening Hours Section */}
+            <div className="mt-3 w-1/3">
+              <h1 className="mt-2 text-3xl font-bold mb-2">Opening Hours</h1>
+              {!loading && (
+                <div className="mt-2 ml-3">
+                  {data?.openingHours.map((timeRange, index) => (
+                    <div key={index} className="flex justify-between py-1">
+                      <span className="font-medium mr-4">
+                        {
+                          [
+                            'Monday',
+                            'Tuesday',
+                            'Wednesday',
+                            'Thursday',
+                            'Friday',
+                            'Saturday',
+                            'Sunday',
+                          ][timeRange.weekday]
+                        }
+                        :
+                      </span>
+                      <span className="flex-grow text-right">
+                        {timeRange.openingTime} - {timeRange.closingTime}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
             <div className="mt-3">
               {/* Offers Component */}
               <h1 className="mt-2 text-3xl font-bold">Offers</h1>
