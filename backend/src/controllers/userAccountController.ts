@@ -5,6 +5,7 @@ import { PublicUser } from '@models/user'
 import { Request, Response } from 'express'
 import mongoose from 'mongoose'
 import bcryptjs from 'bcryptjs'
+import GymAccount from '../models/GymAccount'
 
 export const createUser = async (req: Request, res: Response) => {
   console.log(
@@ -16,6 +17,17 @@ export const createUser = async (req: Request, res: Response) => {
   const { email, displayName, salutation, password } = req.body
 
   const hashedPassword = await bcryptjs.hash(password, 10)
+
+  const gymAccountWithSameEmail = await GymAccount.findOne({
+    email: email,
+  }).exec()
+
+  console.log(gymAccountWithSameEmail)
+
+  if (gymAccountWithSameEmail)
+    return res
+      .status(400)
+      .json({ message: 'Email already exists. Try another email address' })
 
   try {
     const newUser = new User({

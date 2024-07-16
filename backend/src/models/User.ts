@@ -3,7 +3,7 @@ import Payment from './Payment'
 import { ObjectId } from 'mongodb'
 
 const userSchema = new mongoose.Schema({
-  email: { type: String, required: true, index: true },
+  email: { type: String, required: true, index: true, unique: true },
   displayName: { type: String, required: true },
   salutation: { type: String, required: true, enum: ['Mr.', 'Ms.', 'Diverse'] },
   password: { type: String, required: true },
@@ -13,6 +13,8 @@ const userSchema = new mongoose.Schema({
   updatedAt: { type: Date, default: Date.now },
   favourites: { type: [ObjectId], ref: 'Gym' },
 })
+
+userSchema.index({ email: 1 }, { unique: true })
 
 const User = mongoose.model('User', userSchema)
 
