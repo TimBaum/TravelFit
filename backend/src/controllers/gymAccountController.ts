@@ -59,6 +59,7 @@ export const readGymAccount = async (req: Request, res: Response) => {
       gyms: gymAccount.gyms.map((gym) => gym.toString()),
       //address: gymAccount.address || '',
       phone: gymAccount.phone || '',
+      accountType: 'GYM_USER',
     }
     return res.status(200).json(publicGymAccount)
   } catch (err) {
@@ -92,6 +93,7 @@ export const updateGymAccount = async (req: Request, res: Response) => {
       gyms: gymAccount.gyms.map((gym) => gym.toString()),
       //address: gymAccount.address || '',
       phone: gymAccount.phone || '',
+      accountType: 'GYM_USER', //maybe not needed anymore later one
     }
     return res.status(201).json({ updatedPublicGymAccount })
   } catch (err) {
@@ -116,6 +118,7 @@ export const addFavourite = async (req: Request, res: Response) => {
       gyms: gymAccount.gyms.map((gym) => gym.toString()),
       //address: gymAccount.address || '',
       phone: gymAccount.phone || '',
+      accountType: 'GYM_USER', //maybe not needed anymore later one
     }
     gymAccount.favourites.push(req.body.gymId)
     await gymAccount.save()
