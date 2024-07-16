@@ -1,8 +1,6 @@
-import React from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
-import axios from 'axios'
 import { Button } from '@/components/ui/button'
 
 import {
@@ -15,8 +13,13 @@ import {
 } from '@/components/ui/form'
 
 import { Input } from '@/components/ui/input'
+import { AddressFields } from './AddressFields'
 
 const formSchema = z.object({
+  name: z
+    .string()
+    .min(2, { message: 'Invalid name' })
+    .max(50, { message: 'Invalid name' }),
   address: z.object({
     street: z
       .string()
@@ -44,6 +47,7 @@ export function AddGym() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      name: '',
       address: {
         street: '',
         postalCode: '',
@@ -57,57 +61,28 @@ export function AddGym() {
     },
   })
 
-  const fetchCoordinates = async (address: {
-    street: string
-    postalCode: string
-    city: string
-    country: string
-  }) => {
-    console.log('fetchCoordinates called with address:', address) // Kontrollpunkt
-    try {
-      const fullAddress = `${address.street}, ${address.postalCode} ${address.city}, ${address.country}`
-      console.log('Full address:', fullAddress) // Kontrollpunkt
-      const response = await axios.get(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(fullAddress)}`,
-      )
-      console.log('API response:', response.data) // Kontrollpunkt
-      if (response.data.length > 0) {
-        const { lat, lon } = response.data[0]
-        return {
-          type: 'Point',
-          coordinates: [parseFloat(lon), parseFloat(lat)] as [number, number],
-        }
-      } else {
-        throw new Error('Address not found')
-      }
-    } catch (error) {
-      console.error('Error fetching coordinates:', error)
-      throw error
-    }
-  }
-
   async function onSubmit(values: z.infer<typeof formSchema>) {
     console.log('onSubmit called with values:', values) // Kontrollpunkt
-    try {
-      const location = await fetchCoordinates(values.address)
-      const completeValues = {
-        ...values,
-        address: {
-          ...values.address,
-          location,
-        },
-      }
-      console.log('Complete values:', completeValues) // Kontrollpunkt
-      // Hier kannst du die kompletten Werte weiterverarbeiten oder senden
-    } catch (error) {
-      alert('Error fetching coordinates')
-    }
   }
 
   return (
     <>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
+          <FormLabel className="text-2xl font-bold">Name</FormLabel>
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Gym Name</FormLabel>
+                <FormControl>
+                  <Input placeholder="Cool Gym" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           <FormLabel className="text-2xl font-bold">Address</FormLabel>
           <FormField
             control={form.control}
@@ -122,7 +97,6 @@ export function AddGym() {
               </FormItem>
             )}
           />
-          <FormLabel className="text-2xl font-bold">Address</FormLabel>
           <FormField
             control={form.control}
             name="address.postalCode"
@@ -162,6 +136,7 @@ export function AddGym() {
               </FormItem>
             )}
           />
+          <AddressFields /> {/* Use the new AddressFields component */}
           <Button className="mt-4" type="submit">
             Submit
           </Button>

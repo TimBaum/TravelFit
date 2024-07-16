@@ -27,8 +27,6 @@ export function GymTile({ gym }: { gym: IGymWithId }) {
     }, '00:00')
 
     return maxClosingTime
-
-    // return openingHoursToday.slice(-1)[0].closingTime
   }
 
   function findCheapestOffer() {
@@ -85,11 +83,6 @@ export function GymTile({ gym }: { gym: IGymWithId }) {
               ? 'Closed today'
               : `Open today until ${maxOpeningHourToday}`}
           </div>
-          {/* <div>
-            {maxOpeningHourToday === 'Closed'
-              ? 'Closed today'
-              : `Open today until ${maxOpeningHourToday.hour}:${maxOpeningHourToday.minute.toString().padStart(2, '0')}`}
-          </div> */}
         </div>
         <div className="flex flex-col justify-between items-end w-1/3">
           <div className="flex items-center gap-1 text-nowrap">
