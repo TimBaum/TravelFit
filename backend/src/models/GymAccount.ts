@@ -4,7 +4,7 @@ import { ObjectId } from 'mongodb'
 
 const gymAccountSchema = new mongoose.Schema({
   password: { type: String, required: true },
-  email: { type: String, required: true, index: true, unique: true },
+  email: { type: String, required: true, unique: true },
   salutation: { type: String, required: true, enum: ['Mr.', 'Ms.', 'Diverse'] },
   firstName: { type: String, required: true },
   lastName: { type: String, required: true },
@@ -19,5 +19,9 @@ const gymAccountSchema = new mongoose.Schema({
 gymAccountSchema.index({ email: 1 }, { unique: true })
 
 const GymAccount = mongoose.model('GymAccount', gymAccountSchema)
+
+GymAccount.init().catch((err) => {
+  console.error('Error creating indexes for GymAccount:', err)
+})
 
 export default GymAccount

@@ -5,6 +5,8 @@ import { Request, Response } from 'express'
 import mongoose from 'mongoose'
 import { PublicGymAccount } from '@models/gymAccount'
 import bcryptjs from 'bcryptjs'
+import User from '../models/User'
+import { isMongoError } from './errors'
 
 export const createGymAccount = async (req: Request, res: Response) => {
   console.log(
@@ -21,12 +23,22 @@ export const createGymAccount = async (req: Request, res: Response) => {
     gyms,
   } = req.body
 
+  const userWithSameMail = await User.findOne({ email: email }).exec()
+
+  console.log(userWithSameMail)
+
+  if (userWithSameMail) {
+    return res
+      .status(400)
+      .json({ message: 'Email already exists. Try another email address' })
+  }
+
   const hashedPassword = await bcryptjs.hash(password, 10)
 
   try {
     const newGymAccount = new GymAccount({
       _id: new mongoose.Types.ObjectId(),
-      email, // TODO: check if email already exists
+      email,
       firstName,
       lastName,
       phone,
@@ -38,6 +50,9 @@ export const createGymAccount = async (req: Request, res: Response) => {
     await newGymAccount.save()
     return res.status(201).json({ newGymAccount })
   } catch (err) {
+    if (isMongoError(err) && err.code === 11000) {
+      return res.status(400).json({ message: 'Email already exists' })
+    }
     console.log('Error creating gym account:', err)
     return res.status(500).json({ error })
   }
