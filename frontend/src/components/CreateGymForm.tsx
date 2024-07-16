@@ -959,6 +959,16 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
           </DialogContent>
         </Dialog>
         {/* Submit Button for the whole form */}
+        {/* If someone is bored they can build in that button, but its a bit tricky */}
+        {/* <Button
+          variant={isLoading ? 'loading' : 'outline'}
+          onClick={async () => {
+            setIsLoading(true)
+            await functionCall()
+            setIsLoading(false)
+          }}
+        > 
+        </Button> */}
         <Button className="mt-4" type="submit">
           Submit
         </Button>
