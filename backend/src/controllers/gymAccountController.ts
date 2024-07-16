@@ -60,6 +60,8 @@ export const readGymAccount = async (req: Request, res: Response) => {
   const gymAccountId = req.ctx!._id
 
   try {
+    // could technically be skipped since we already fetch the account in the middleware
+    // but for potential future modifications, it is left here
     const gymAccount = await GymAccount.findById(gymAccountId)
     if (!gymAccount) {
       return res.status(404).json({ message: 'Gym account not found' })
@@ -86,6 +88,8 @@ export const updateGymAccount = async (req: Request, res: Response) => {
   const gymAccountId = req.ctx!._id
 
   try {
+    // could technically be skipped since we already fetch the account in the middleware
+    // but for potential future modifications, it is left here
     const gymAccount = await GymAccount.findById(gymAccountId)
     console.log('This user will be updated: ', gymAccount)
     if (!gymAccount) {
