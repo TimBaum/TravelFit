@@ -231,8 +231,8 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
       },
       openingTimes: Array(7).fill({
         weekday: null,
-        openingTime: '',
-        closingTime: '',
+        openingTime: '00:00',
+        closingTime: '24:00',
       }),
       highlights: [],
       offers: [],
@@ -282,7 +282,6 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
             city: gym.address.city,
             country: gym.address.country,
           },
-          //TODO: Add all fields
         })
     }
   }, [mode, gym, form])
@@ -607,6 +606,7 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
                         <FormLabel>Opening Time</FormLabel>
                         <FormControl>
                           <Select
+                            value={field.value || '00:00'}
                             onValueChange={(value) => field.onChange(value)}
                           >
                             <SelectTrigger>
@@ -638,6 +638,7 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
                         <FormLabel>Closing Time</FormLabel>
                         <FormControl>
                           <Select
+                            value={field.value || '24:00'}
                             onValueChange={(value) => field.onChange(value)}
                           >
                             <SelectTrigger>
