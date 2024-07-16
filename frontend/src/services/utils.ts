@@ -16,7 +16,7 @@ export async function fetchJSON(url: string, options?: RequestInit) {
     .then(async (res) => {
       if (!res.ok) {
         const error = await res.json()
-        throw new Error(error.error)
+        throw new Error(error.message ? error.message : error.error)
       }
       return res.json()
     })

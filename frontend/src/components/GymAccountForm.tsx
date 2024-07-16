@@ -20,10 +20,12 @@ import {
 import { config } from '@/config'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '@/provider/AuthProvider'
+import { useState } from 'react'
+import { fetchJSON } from '@/services/utils'
 
 const phoneValidationRegex = /^\+?[1-9]\d{1,14}$/ // E.164 international phone number format
 
-export const gymAccountFormSchema = z
+const gymAccountFormSchema = z
   .object({
     salutation: z.enum(['Mr.', 'Ms.', 'Diverse'], {
       required_error: 'Salutation is required.',
@@ -59,6 +61,7 @@ export const gymAccountFormSchema = z
 export function GymAccountForm() {
   const navigate = useNavigate()
   const { login } = useAuth()
+  const [isLoading, setIsLoading] = useState(false)
   const form = useForm<z.infer<typeof gymAccountFormSchema>>({
     resolver: zodResolver(gymAccountFormSchema),
     defaultValues: {
@@ -75,7 +78,8 @@ export function GymAccountForm() {
 
   async function onSubmit(values: z.infer<typeof gymAccountFormSchema>) {
     try {
-      const response = await fetch(config.BACKEND_URL + '/gymAccounts/create', {
+      setIsLoading(true)
+      await fetchJSON('/gymAccounts/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -83,14 +87,12 @@ export function GymAccountForm() {
         body: JSON.stringify(values),
       })
 
-      if (!response.ok) {
-        throw new Error('Failed to create gym account')
-      }
-
       login(values.email, values.password)
       navigate('/my-gyms')
     } catch (error) {
       console.error('Error creating gym account:', error)
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -255,7 +257,7 @@ export function GymAccountForm() {
         />
         <Button
           type="submit"
-          variant="outline"
+          variant={isLoading ? 'loading' : 'outline'}
           className="mt-4 bg-emerald-500 text-white"
         >
           Create partner account

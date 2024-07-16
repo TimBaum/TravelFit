@@ -133,6 +133,8 @@ function useFetchImages(prefix: string | null) {
     async function fetchData() {
       setLoading(true)
       setError(null)
+      console.log('Prefix:', prefix)
+
       const response = await fetchJSON(`/gyms/fetch-images/${prefix}`, {
         method: 'GET',
       }).catch((error) => {
@@ -153,7 +155,7 @@ function useFetchImages(prefix: string | null) {
     }
 
     fetchData()
-  }, [])
+  }, [prefix])
 
   return { data, error, loading }
 }

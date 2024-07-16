@@ -58,11 +58,31 @@ function AddReviewDialog({ gym }: { gym: IGymWithId | undefined }) {
     resolver: zodResolver(FormSchema),
   })
 
+  async function checkIfUserHasReviewed() {
+    const reviews = gym?.reviews
+
+    if (reviews) {
+      const hasUserReviewed = reviews.some(
+        (review) => review.author === user?._id,
+      )
+      return hasUserReviewed
+    }
+
+    return false
+  }
+
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     const review = {
       author: user?._id,
       rating: filledStars.filter(Boolean).length,
       text: data.reviewText,
+    }
+
+    const hasUserReviewed = await checkIfUserHasReviewed()
+
+    if (hasUserReviewed) {
+      toast.error('You have already reviewed this gym')
+      return
     }
 
     try {

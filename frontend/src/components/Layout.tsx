@@ -66,15 +66,39 @@ function Footer() {
           </div>
           <div className="flex flex-col">
             <div className="font-bold">Users</div>
-            <a onClick={() => navigate('/')}>Find gyms</a>
-            <a onClick={() => navigate('/favourites')}>Favorites</a>
-            <a onClick={() => navigate('/change-user-account')}>Your profile</a>
+            <a className="cursor-pointer" onClick={() => navigate('/')}>
+              Find gyms
+            </a>
+            <a
+              className="cursor-pointer"
+              onClick={() => navigate('/favourites')}
+            >
+              Favorites
+            </a>
+            <a
+              className="cursor-pointer"
+              onClick={() => navigate('/change-user-account')}
+            >
+              Your profile
+            </a>
           </div>
           <div className="flex flex-col">
             <div className="font-bold">Business partners</div>
-            <a onClick={() => navigate('/my-gyms')}>My gyms</a>
-            <a onClick={() => navigate('/favourites')}>Favorites</a>
-            <a onClick={() => navigate('/change-user-account')}>Your profile</a>
+            <a className="cursor-pointer" onClick={() => navigate('/my-gyms')}>
+              My gyms
+            </a>
+            <a
+              className="cursor-pointer"
+              onClick={() => navigate('/favourites')}
+            >
+              Favorites
+            </a>
+            <a
+              className="cursor-pointer"
+              onClick={() => navigate('/change-user-account')}
+            >
+              Your profile
+            </a>
           </div>
         </div>
       </div>
