@@ -216,7 +216,9 @@ function NavigationMenuManager({ className }: { className: string }) {
                 <PersonIcon className="h-6 w-6" />
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-52">
-                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuLabel>
+                  <h1 className="text-xl font-bold">My Account</h1>
+                </DropdownMenuLabel>
                 <DropdownMenuGroup>
                   <DropdownMenuItem onClick={() => navigateToAccount()}>
                     Manage your account

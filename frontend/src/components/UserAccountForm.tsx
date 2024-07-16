@@ -22,6 +22,8 @@ import { LucidePencil } from 'lucide-react'
 import { config } from '@/config'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '@/provider/AuthProvider'
+import { useState } from 'react'
+import { fetchJSON } from '@/services/utils'
 
 export const userAccountFormSchema = z
   .object({
@@ -47,6 +49,7 @@ export const userAccountFormSchema = z
 export function UserAccountForm() {
   const navigate = useNavigate()
   const { login } = useAuth()
+  const [isLoading, setIsLoading] = useState(false)
   const form = useForm<z.infer<typeof userAccountFormSchema>>({
     resolver: zodResolver(userAccountFormSchema),
     defaultValues: {
@@ -63,17 +66,14 @@ export function UserAccountForm() {
     accountType: string,
   ) {
     try {
-      const response = await fetch(config.BACKEND_URL + '/users/create', {
+      setIsLoading(true)
+      await fetchJSON('/users/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(values),
       })
-
-      if (!response.ok) {
-        throw new Error('Failed to create user')
-      }
 
       login(values.email, values.password)
       navigate('/')
@@ -88,6 +88,8 @@ export function UserAccountForm() {
       }*/
     } catch (error) {
       console.error('Error creating user:', error)
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -203,7 +205,7 @@ export function UserAccountForm() {
         />
         <Button
           type="submit"
-          variant="outline"
+          variant={isLoading ? 'loading' : 'outline'}
           className="bg-emerald-500 text-white mt-4"
         >
           Create free account
