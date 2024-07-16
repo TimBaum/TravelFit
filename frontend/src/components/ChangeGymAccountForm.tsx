@@ -87,16 +87,11 @@ export function ChangeGymAccountForm() {
     console.log('New gym account values for update HTTP request: ', values)
 
     try {
-      const response = await fetchJSON('/gymAccounts/update', {
+      await fetchJSON('/gymAccounts/update', {
         method: 'PATCH',
         body: JSON.stringify(values),
       })
 
-      if (!response.ok) {
-        throw new Error('Failed to change gym account')
-      }
-
-      console.log('Gym account changed successfully:', await response)
       gymAccountDataFromBackend = useReadGymAccount(user?._id ?? '').data
     } catch (error) {
       console.error('Error changing gym account:', error)
