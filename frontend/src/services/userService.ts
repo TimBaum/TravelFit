@@ -1,6 +1,7 @@
-import { AccountType, PublicUser } from '@models/user'
+import { PublicUser } from '@models/user'
 import { useEffect, useState } from 'react'
 import { fetchJSON } from './utils'
+import { AccountType } from '@models/token'
 
 interface User {
   data: PublicUser | undefined
