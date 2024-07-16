@@ -247,6 +247,9 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
   */
   const [flaggedForDeletion, setFlaggedForDeletion] = useState<string[]>([])
 
+  // State to set at beginning and end of onSubmit to show loading animation
+  const [pageLoading, setPageLoading] = useState(false)
+
   /*
   Function to toggle flag for deletion of images:
   - if image is already flagged, it is removed from the array
@@ -372,6 +375,8 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
     //TODO: calc cheapest offer
     //  -> gymWithCheapestOffer = { cheapestOffer, ...values}
 
+    setPageLoading(true)
+
     /*add coordinates */
     let location: { type: string; coordinates: [number, number] } | null = null
     try {
@@ -420,6 +425,8 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
         console.log('Gym-id:', data.gym._id) //works
       } catch (error) {
         console.log('Error creating gym:', error)
+      } finally {
+        setPageLoading(false)
       }
       navigate('/my-gyms')
     } else if (mode === 'edit') {
@@ -459,6 +466,8 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
         form.control._reset()
       } catch (error) {
         console.log('Error creating gym:', error)
+      } finally {
+        setPageLoading(false)
       }
       navigate('/my-gyms')
     }
