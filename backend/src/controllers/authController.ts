@@ -14,6 +14,7 @@ export const login = async (req: Request, res: Response) => {
   try {
     let user = await User.findOne({ email: email }).exec() // email could belong to a user account or a gym account
     let gymAccount = await GymAccount.findOne({ email: email }).exec() // email could belong to a user account or a gym account
+    let token
 
     if (user) {
       // create token for the user if a user account exists
