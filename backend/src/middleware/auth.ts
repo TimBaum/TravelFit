@@ -1,11 +1,11 @@
 import User from '../models/User'
 import GymAccount from '../models/GymAccount'
-import { AccountType, IUserWithId, PublicUser } from '@models/user'
-import { IGymAccountWithId, PublicGymAccount } from '@models/gymAccount'
+import { IUserWithId } from '@models/user'
+import { IGymAccountWithId } from '@models/gymAccount'
 import { Request, Response, NextFunction } from 'express'
 import jwt from 'jsonwebtoken'
 import { config } from '../config/config'
-import { TokenPayload } from '@models/token'
+import { TokenPayload, AccountType } from '@models/token'
 
 declare global {
   namespace Express {

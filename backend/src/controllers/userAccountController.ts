@@ -61,7 +61,6 @@ export const readUser = async (req: Request, res: Response) => {
       salutation: user.salutation || '',
       email: user.email || '',
       favourites: user.favourites.map((fav) => fav.toString()),
-      accountType: 'USER', //maybe not needed anymore later one
     }
     return res.status(200).json(publicUser)
   } catch (err) {
@@ -87,7 +86,6 @@ export const updateUser = async (req: Request, res: Response) => {
       salutation: user.salutation || '',
       email: user.email || '',
       favourites: user.favourites.map((fav) => fav.toString()),
-      accountType: 'USER', //maybe not needed anymore later one
     }
     return res.status(200).json({ updatedPublicUser })
   } catch (err) {
@@ -108,7 +106,6 @@ export const addFavourite = async (req: Request, res: Response) => {
       salutation: user.salutation || '',
       email: user.email || '',
       favourites: user.favourites.map((fav) => fav.toString()),
-      accountType: 'USER', //maybe not needed anymore later one
     }
 
     user.favourites.push(req.body.gymId)
