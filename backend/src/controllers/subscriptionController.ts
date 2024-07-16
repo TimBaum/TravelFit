@@ -3,6 +3,7 @@ import Payment from '../models/Payment'
 import { PayPalSubscription } from '@models/payment'
 import { config } from '../config/config'
 import User from '../models/User'
+import { IUserWithId } from '@models/user'
 
 async function hasActiveSubscription(req: Request, res: Response) {
   const ctx = req.ctx
@@ -91,10 +92,7 @@ async function createSubscription(req: Request, res: Response) {
 }
 
 async function cancelSubscription(req: Request, res: Response) {
-  const ctx = req.ctx
-  if (!ctx) {
-    return res.status(401).json({ message: 'Unauthorized' })
-  }
+  const ctx = req.ctx! as IUserWithId
 
   // Get the active subscription
   const payPalId = ctx.payments.find(

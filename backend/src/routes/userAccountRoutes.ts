@@ -12,14 +12,15 @@ import auth from '../middleware/auth'
 const router = express.Router()
 
 router.post('/create', createUser)
-router.get('/get/:id', auth.isAuthorizedUser, readUser)
-router.patch('/update/:id', auth.isAuthorizedUser, updateUser)
-router.patch('/:id/favourites/add', auth.isAuthorizedUser, addFavourite)
+//TODO: refactor
+router.get('/get/:id', readUser)
+router.patch('/update', auth.isAuthorizedUser, updateUser)
+router.patch('/favourites/add', auth.isAuthorizedUser, addFavourite)
 router.patch(
-  '/:id/favourites/delete/:favourite',
+  '/favourites/delete/:favourite',
   auth.isAuthorizedUser,
   deleteFavourite,
 )
-router.delete('/delete/:id', auth.isAuthorizedUser, deleteUser)
+router.delete('/delete', auth.isAuthorizedUser, deleteUser)
 
 export default router

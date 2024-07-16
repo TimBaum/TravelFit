@@ -32,7 +32,7 @@ export const createUser = async (req: Request, res: Response) => {
   try {
     const newUser = new User({
       _id: new mongoose.Types.ObjectId(),
-      email, // TODO: check if email already exists
+      email,
       displayName,
       salutation,
       password: hashedPassword,
@@ -70,14 +70,10 @@ export const readUser = async (req: Request, res: Response) => {
 }
 
 export const updateUser = async (req: Request, res: Response) => {
-  console.log(
-    'updateUser was called in controller with request body ',
-    req.body,
-    ' and req.params ',
-    req.params,
-  )
   try {
-    const user = await User.findById(req.params.id)
+    // could technically be skipped since we already fetch the account in the middleware
+    // but for potential future modifications, it is left here
+    const user = await User.findById(req.ctx!._id)
     console.log('This user will be updated: ', user)
     if (!user) {
       return res.status(404).json({ message: 'User not found' })
@@ -101,7 +97,7 @@ export const updateUser = async (req: Request, res: Response) => {
 
 export const addFavourite = async (req: Request, res: Response) => {
   try {
-    const user = await User.findById(req.params.id)
+    const user = await User.findById(req.ctx!._id)
     if (!user) {
       return res.status(404).json({ message: 'User not found' })
     }
@@ -125,7 +121,7 @@ export const addFavourite = async (req: Request, res: Response) => {
 
 export const deleteFavourite = async (req: Request, res: Response) => {
   try {
-    const user = await User.findById(req.params.id)
+    const user = await User.findById(req.ctx!._id)
     const favouriteId = new mongoose.Types.ObjectId(req.params.favourite)
     if (!user) {
       return res.status(404).json({ message: 'User not found' })
@@ -147,9 +143,8 @@ export const deleteFavourite = async (req: Request, res: Response) => {
 }
 
 export const deleteUser = async (req: Request, res: Response) => {
-  console.log('deleteUser was called in controller')
   try {
-    const user = await User.findByIdAndDelete(req.params.id)
+    const user = await User.findByIdAndDelete(req.ctx!._id)
     if (!user) {
       return res.status(404).json({ message: 'User not found' })
     }
