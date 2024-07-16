@@ -18,7 +18,7 @@ function useReadGymAccount(id: string | null): GymAccount {
       if (!id) return
       setLoading(true)
       setError(null)
-      const response = await fetchJSON(`/gymAccounts/get/${id}`, {
+      const response = await fetchJSON(`/gymAccounts/get`, {
         method: 'GET',
       }).catch((error) => {
         setError(error.message)

@@ -87,7 +87,7 @@ export function ChangeGymAccountForm() {
     console.log('New gym account values for update HTTP request: ', values)
 
     try {
-      const response = await fetchJSON('/gymAccounts/update/' + user?._id, {
+      const response = await fetchJSON('/gymAccounts/update', {
         method: 'PATCH',
         body: JSON.stringify(values),
       })

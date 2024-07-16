@@ -10,8 +10,8 @@ import auth from '../middleware/auth'
 const router = express.Router()
 
 router.post('/create', createGymAccount)
-router.get('/get/:id', auth.isAuthorized, readGymAccount)
-router.patch('/update/:id', auth.isAuthorized, updateGymAccount)
-router.delete('/delete/:id', auth.isAuthorized, deleteGymAccount)
+router.get('/get', auth.isAuthorizedGymAccount, readGymAccount)
+router.patch('/update', auth.isAuthorizedGymAccount, updateGymAccount)
+router.delete('/delete', auth.isAuthorizedGymAccount, deleteGymAccount)
 
 export default router

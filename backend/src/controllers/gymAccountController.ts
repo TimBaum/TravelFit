@@ -25,8 +25,6 @@ export const createGymAccount = async (req: Request, res: Response) => {
 
   const userWithSameMail = await User.findOne({ email: email }).exec()
 
-  console.log(userWithSameMail)
-
   if (userWithSameMail) {
     return res
       .status(400)
@@ -59,8 +57,10 @@ export const createGymAccount = async (req: Request, res: Response) => {
 }
 
 export const readGymAccount = async (req: Request, res: Response) => {
+  const gymAccountId = req.ctx!._id
+
   try {
-    const gymAccount = await GymAccount.findById(req.params.id)
+    const gymAccount = await GymAccount.findById(gymAccountId)
     if (!gymAccount) {
       return res.status(404).json({ message: 'Gym account not found' })
     }
@@ -83,14 +83,10 @@ export const readGymAccount = async (req: Request, res: Response) => {
 }
 
 export const updateGymAccount = async (req: Request, res: Response) => {
-  console.log(
-    'updateGymAccount was called in controller with request body ',
-    req.body,
-    ' and req.params ',
-    req.params,
-  )
+  const gymAccountId = req.ctx!._id
+
   try {
-    const gymAccount = await GymAccount.findById(req.params.id)
+    const gymAccount = await GymAccount.findById(gymAccountId)
     console.log('This user will be updated: ', gymAccount)
     if (!gymAccount) {
       return res.status(404).json({ message: 'Gym account not found' })
@@ -167,9 +163,8 @@ export const deleteFavourite = async (req: Request, res: Response) => {
 }
 
 export const deleteGymAccount = async (req: Request, res: Response) => {
-  console.log('deleteGymAccount was called in controller')
   try {
-    const gymAccount = await GymAccount.findByIdAndDelete(req.params.id)
+    const gymAccount = await GymAccount.findByIdAndDelete(req.ctx!._id)
     if (!gymAccount) {
       return res.status(404).json({ message: 'Gym account not found' })
     }
