@@ -87,6 +87,7 @@ function Login() {
 
               <Button
                 variant={'outline'}
+                className="mt-2"
                 onClick={() => navigate('/create-gym-account')}
               >
                 Become a partner

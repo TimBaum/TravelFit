@@ -48,7 +48,7 @@ export function GymTile({ gym }: { gym: IGymWithId }) {
     <div className="flex h-48 w-full border rounded p-2 items-stretch">
       {/* Section left side */}
       {/* TODO: exchange pictures */}
-      <div className="h-full flex gap-2 pr-2">
+      <div className="h-full w-1/3 flex gap-2 pr-2">
         <img
           className="h-full shrink object-cover aspect-square rounded"
           src={`src/assets/img${Math.floor(Math.random() * 4) + 1}.png`}
