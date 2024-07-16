@@ -1,10 +1,11 @@
-// the "return" statements could be left out at some places, but for clarity I added them.
 import { error } from 'console'
 import User from '../models/User'
 import { PublicUser } from '@models/user'
 import { Request, Response } from 'express'
 import mongoose from 'mongoose'
 import bcryptjs from 'bcryptjs'
+import GymAccount from '../models/GymAccount'
+import { isMongoError } from './errors'
 
 export const createUser = async (req: Request, res: Response) => {
   console.log(
@@ -16,6 +17,17 @@ export const createUser = async (req: Request, res: Response) => {
   const { email, displayName, salutation, password } = req.body
 
   const hashedPassword = await bcryptjs.hash(password, 10)
+
+  const gymAccountWithSameEmail = await GymAccount.findOne({
+    email: email,
+  }).exec()
+
+  console.log(gymAccountWithSameEmail)
+
+  if (gymAccountWithSameEmail)
+    return res
+      .status(400)
+      .json({ message: 'Email already exists. Try another email address' })
 
   try {
     const newUser = new User({
@@ -29,6 +41,9 @@ export const createUser = async (req: Request, res: Response) => {
     await newUser.save()
     return res.status(201).json({ newUser })
   } catch (err) {
+    if (isMongoError(err) && err.code === 11000) {
+      return res.status(400).json({ message: 'Email already exists' })
+    }
     console.log('Error creating user:', err)
     return res.status(500).json({ error })
   }
