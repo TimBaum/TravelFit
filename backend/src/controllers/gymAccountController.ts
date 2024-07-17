@@ -13,7 +13,7 @@ export const createGymAccount = async (req: Request, res: Response) => {
   try {
     const accData = req.body
 
-    // Check if email already exists
+    // Check if email already exists. TODO: this actually does nothing
     const userWithSameMail = await User.findOne({ email: accData.email }).exec()
     if (userWithSameMail) {
       return res
@@ -43,8 +43,11 @@ export const createGymAccount = async (req: Request, res: Response) => {
     })
     await acc.save()
     res.status(201).json({ message: 'Account created successfully', acc })
-  } catch (error) {
-    console.error('Error creating acc:', error)
+  } catch (err) {
+    if (isMongoError(err) && err.code === 11000) {
+      return res.status(400).json({ message: 'Email already exists' })
+    }
+    console.error('Error creating acc:', err)
     return res.status(500).json({ error })
   }
 }
