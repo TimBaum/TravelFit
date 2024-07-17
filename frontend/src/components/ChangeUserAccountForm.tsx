@@ -23,16 +23,7 @@ import { useAuth } from '@/provider/AuthProvider'
 import { useReadUser } from '@/services/userService'
 import { useEffect } from 'react'
 import { fetchJSON } from '@/services/utils'
-
-export const changeUserAccountFormSchema = z.object({
-  salutation: z.enum(['Mr.', 'Ms.', 'Diverse'], {
-    required_error: 'Salutation is required.',
-  }),
-  displayName: z
-    .string()
-    .min(2, { message: 'Name must be at least 2 characters.' }),
-  email: z.string().email({ message: 'Invalid email address.' }),
-})
+import { changeUserAccountFormSchema } from '@/schemas/changeUserAccountSchema'
 
 export function ChangeUserAccountForm() {
   const { user, getAccountType } = useAuth()
