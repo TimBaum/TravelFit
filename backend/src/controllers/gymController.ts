@@ -8,18 +8,28 @@ import GymAccount from '../models/GymAccount'
 import { IGymAccountWithId } from '@models/gymAccount'
 import axios from 'axios'
 
-const createGym = (req: Request, res: Response, next: NextFunction) => {
+const createGym = async (req: Request, res: Response, next: NextFunction) => {
   const { ctx } = req
   console.log('ctx: ', ctx)
   if (!ctx) return res.status(401).json({ error: 'Unauthorized' })
   const gymData = req.body
   const gymId = new mongoose.Types.ObjectId()
-
+  const coordinates = await getCoordinates(gymData.address)
+  const fullAddress = {
+    ...gymData.address,
+    location: coordinates
+      ? {
+          type: 'Point',
+          coordinates: coordinates,
+        }
+      : null,
+  }
+  console.log('CompleteAddress2:', fullAddress)
   const gym = new Gym({
     _id: gymId,
     ...gymData,
+    address: fullAddress,
   })
-
   return gym
     .save()
     .then(async () => {
@@ -30,7 +40,7 @@ const createGym = (req: Request, res: Response, next: NextFunction) => {
       res.status(201).json({ gym })
     })
     .catch((error) => {
-      console.error('Error saving gym:', error) // Detaillierte Fehlermeldung
+      console.error('Error saving gym:', error)
       res.status(500).json({ error: error.message })
     })
 }

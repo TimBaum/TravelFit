@@ -9,6 +9,7 @@ import { IOffer } from '@models/offer'
 import { config } from '@/config'
 import { fetchJSON } from '@/services/utils'
 import axios from 'axios' // API used for finding the coordinates of the gym-address
+import { gymFormSchema, offerFormSchema } from '@/schemas/gymFormSchema'
 
 /* shadcn UI imports */
 import { Checkbox } from '@/components/ui/checkbox'
@@ -57,74 +58,6 @@ import Dropzone from './Dropzone'
 import LoadingOverlay from './loadingIndicator'
 import { useFetchImages, useGetGym } from '@/services/gymService'
 
-/* Form checks */
-const formSchema = z.object({
-  name: z
-    .string()
-    .min(2, { message: 'Invalid name' })
-    .max(50, { message: 'Invalid name' }),
-  websiteLink: z
-    .string()
-    .refine((value) => simpleUrlRegex.test(value), { message: 'Invalid URL' }),
-  addressFields: z.object({
-    street: z
-      .string()
-      .min(2, { message: 'Invalid street' })
-      .max(100, { message: 'Invalid street' }),
-    postalCode: z.string().regex(/^\d{5}$/, {
-      message: 'Invalid postal code. It should be exactly 5 digits.',
-    }),
-    city: z
-      .string()
-      .min(2, { message: 'Invalid city' })
-      .max(50, { message: 'Invalid city' }),
-    country: z
-      .string()
-      .min(2, { message: 'Invalid country' })
-      .max(50, { message: 'Invalid country' }),
-  }),
-  openingTimes: z.array(
-    z
-      .object({
-        weekday: z.coerce.number().min(0).max(6).nullable(), //0 = Sunday, 6 = Saturday
-        openingTime: z.string().optional(),
-        closingTime: z.string().optional(),
-      })
-      .refine(
-        (data) =>
-          data.weekday === null || (data.openingTime && data.closingTime), //checks if opening and closing times are non-empty strings when the day is selected
-        {
-          message: 'Times must be provided',
-          path: ['closingTime'], // Pfad zur Fehlermeldung
-        },
-      )
-      .refine(
-        (data) => {
-          if (data.weekday === null) return true
-          if (!data.openingTime || !data.closingTime) return false
-          return data.openingTime < data.closingTime
-        },
-        {
-          message: 'Opening time must be before closing time',
-          path: ['closingTime'],
-        },
-      ),
-  ),
-  highlights: z.array(z.string()).optional(),
-})
-const simpleUrlRegex =
-  /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/
-
-/* Dialog form checks */
-const offerFormSchema = z.object({
-  title: z.string().min(2, { message: 'Field is required.' }),
-  description: z.string().min(2, { message: 'Field is required.' }),
-  type: z.string(),
-  isSpecial: z.boolean(),
-  priceEuro: z.coerce.number(),
-  endDate: z.coerce.date(),
-})
-
 interface CreateGymFormProps {
   mode: 'create' | 'edit'
 }
@@ -146,44 +79,6 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
 
   // Use custom hook to fetch images
   const { data: photos } = useFetchImages(cleanedName || '')
-
-  /* fetch coordinates of the address */
-  const fetchCoordinates = async (addressFields: {
-    street: string
-    postalCode: string
-    city: string
-    country: string
-  }): Promise<{ type: string; coordinates: [number, number] }> => {
-    console.log('fetchCoordinates called with addressFields:', addressFields) // Kontrollpunkt
-    try {
-      const fullAddress = `${addressFields.street}, ${addressFields.postalCode} ${addressFields.city}, ${addressFields.country}`
-      console.log('Full addressFields:', fullAddress) // Kontrollpunkt
-      const response = await axios.get(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(fullAddress)}`,
-      )
-      console.log('API response:', response.data) // Kontrollpunkt
-      if (response.data.length > 0) {
-        const { lat, lon } = response.data[0]
-        console.log('lat+lon:', lat, lon) // Kontrollpunkt
-        return {
-          type: 'Point',
-          coordinates: [parseFloat(lon), parseFloat(lat)] as [number, number],
-        }
-      } else {
-        console.error('Error fetching coordinates.')
-        return {
-          type: 'Point',
-          coordinates: [0, 0] as [number, number],
-        }
-      }
-    } catch (error) {
-      console.error('Error fetching coordinates.', error)
-      return {
-        type: 'Point',
-        coordinates: [0, 0] as [number, number],
-      }
-    }
-  }
 
   /* Opening Times */
   const weekdays = [
@@ -220,11 +115,11 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
   }
   /* form default values */
   const form = useForm({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(gymFormSchema),
     defaultValues: {
       name: '',
       websiteLink: '',
-      addressFields: {
+      address: {
         street: '',
         postalCode: '',
         city: '',
@@ -280,7 +175,7 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
         form.reset({
           name: gym.name,
           websiteLink: gym.websiteLink,
-          addressFields: {
+          address: {
             street: gym.address.street,
             postalCode: gym.address.postalCode,
             city: gym.address.city,
@@ -371,40 +266,19 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
   }
 
   /* Form submission */
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof gymFormSchema>) {
     //TODO: calc cheapest offer
     //  -> gymWithCheapestOffer = { cheapestOffer, ...values}
 
     setPageLoading(true)
 
-    /*add coordinates */
-    let location: { type: string; coordinates: [number, number] } | null = null
-    try {
-      location = await fetchCoordinates(values.addressFields)
-      if (location.coordinates[0] === 0 && location.coordinates[1] === 0) {
-        location = null // Setze location auf null, wenn die Koordinaten beide 0 sind
-      }
-    } catch (error) {
-      alert('Error fetching coordinates')
-    }
-    console.log(
-      'values.addressFields & location:',
-      values.addressFields,
-      location,
-    )
-
-    const address = {
-      ...values.addressFields,
-      location,
-    }
-
     /* Opening Times */
     const openingHours = values.openingTimes.filter(
       (day) => day?.weekday !== null, //checks if the day is selected and if not, excludes the day from the array
     )
-    console.log('CompleteAddress2:', address)
-    const gymData = { offers, address, openingHours, ...values }
-    console.log(gymData)
+    //const gymData = { offers, address: fullAddress, openingHours, ...rest }
+    const gymData = { offers, openingHours, ...values }
+    console.log('OI:', gymData)
 
     // set the image id to the gym name
     const image_id = values.name.replace(/\s+/g, '')
@@ -508,7 +382,7 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
           <div>
             <FormField
               control={form.control}
-              name="addressFields.street"
+              name="address.street"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Street and Number *</FormLabel>
@@ -521,7 +395,7 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
             />
             <FormField
               control={form.control}
-              name="addressFields.postalCode"
+              name="address.postalCode"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Postal Code *</FormLabel>
@@ -534,7 +408,7 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
             />
             <FormField
               control={form.control}
-              name="addressFields.city"
+              name="address.city"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>City *</FormLabel>
@@ -547,7 +421,7 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
             />
             <FormField
               control={form.control}
-              name="addressFields.country"
+              name="address.country"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Country *</FormLabel>
@@ -958,7 +832,6 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
                   />
 
                   {/* Submit button for the dialog form */}
-
                   <DialogFooter>
                     <Button
                       type="button"
@@ -975,16 +848,6 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
             </DialogContent>
           </Dialog>
           {/* Submit Button for the whole form */}
-          {/* If someone is bored they can build in that button, but its a bit tricky */}
-          {/* <Button
-          variant={isLoading ? 'loading' : 'outline'}
-          onClick={async () => {
-            setIsLoading(true)
-            await functionCall()
-            setIsLoading(false)
-          }}
-        > 
-        </Button> */}
           <Button className="mt-4" type="submit">
             Submit
           </Button>

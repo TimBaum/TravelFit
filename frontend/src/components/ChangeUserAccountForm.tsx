@@ -165,7 +165,7 @@ export function ChangeUserAccountForm() {
             variant="outline"
             onClick={() => onClickChangePassword()}
           >
-            Change password
+            TODO: Change password
           </Button>
         </div>
       </form>

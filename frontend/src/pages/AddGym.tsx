@@ -13,6 +13,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { AddressFields } from '../components/AddressFields'
 import { Button } from '@/components/ui/button'
+import { gymFormSchema } from '@/schemas/gymFormSchema'
 
 const formSchema = z.object({
   name: z
@@ -35,15 +36,11 @@ const formSchema = z.object({
       .string()
       .min(2, { message: 'Invalid country' })
       .max(50, { message: 'Invalid country' }),
-    // location: z.object({
-    //   type: z.string(),
-    //   coordinates: z.tuple([z.number(), z.number()]), // Validierung als Tupel
-    // }),
   }),
 })
 
 export function AddGym() {
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<z.infer<typeof gymFormSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: '',

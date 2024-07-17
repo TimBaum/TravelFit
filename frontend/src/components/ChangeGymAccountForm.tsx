@@ -268,7 +268,7 @@ export function ChangeGymAccountForm() {
                 variant="outline"
                 onClick={() => onClickChangePassword()}
               >
-                Change password
+                TODO: Change password
               </Button>
             </div>
           </div>
