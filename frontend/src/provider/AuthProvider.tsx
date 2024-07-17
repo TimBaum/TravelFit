@@ -39,7 +39,11 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     boolean | null
   >(false)
 
+  // because checkSubscriptionStatus is an async function and it does
+  // not explicitly return a value, it implicitly returns a Promise
+  // that resolves to undefined after .then() and .catch() are completed
   async function checkSubscriptionStatus() {
+    // fetchJSON returns a Promise
     return fetchJSON('/subscriptions/active')
       .then((data) => {
         setHasActiveSubscription(data.hasPremiumSubscription)
