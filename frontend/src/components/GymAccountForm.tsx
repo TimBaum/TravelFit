@@ -61,7 +61,6 @@ export function GymAccountForm() {
     }
   }
 
-  // this is the form's onSubmit-handler
   const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     //without this, a GET instead of a POST request is sent
     //in the http-request of the onSubmit-function
@@ -71,11 +70,16 @@ export function GymAccountForm() {
 
   return (
     <Form {...form}>
+      {/* form is rendered with a onSubmit-event-handler set to handleFormSubmit */}
       <form onSubmit={handleFormSubmit}>
         <div className="mb-2">
           <FormField
+            /* form.control is an object from React Hook Form that contains methods for
+            registering an input in the form so it can be validated and its value can be tracked */
             control={form.control}
             name="salutation"
+            /* render the DropdownMenu with the props 'field', an object containing properties and methods 
+            to manage the input's state, handle its registration, and integrate it with the form's validation system */
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="mr-2">Salutation</FormLabel>
