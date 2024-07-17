@@ -5,7 +5,6 @@ import { Request, Response } from 'express'
 import mongoose from 'mongoose'
 import { PublicGymAccount } from '@models/gymAccount'
 import bcryptjs from 'bcryptjs'
-import User from '../models/User'
 import { isMongoError } from './errors'
 import { getCoordinates } from './gymController'
 
@@ -15,10 +14,16 @@ export const createGymAccount = async (req: Request, res: Response) => {
     const accId = new mongoose.Types.ObjectId()
     const accAddress = accData.address
     const hashedPassword = await bcryptjs.hash(accData.password, 10)
+
+    //TODO: use location to check if address is valid
+    //dont save it in the db, we dont need the coordinates
+    const coordinates = await getCoordinates(accAddress)
+
     const acc = new GymAccount({
       _id: accId,
       ...accData,
       password: hashedPassword,
+      //address,
       address: { ...accAddress },
     })
     await acc.save()
