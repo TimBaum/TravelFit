@@ -145,8 +145,6 @@ function NavigationMenuManager({ className }: { className: string }) {
       navigate('/change-user-account')
     } else if (accountType === 'GYM_USER') {
       navigate('/change-gym-account')
-    } else {
-      console.log('ähhhh')
     }
   }
 
@@ -218,6 +216,7 @@ function NavigationMenuManager({ className }: { className: string }) {
               <DropdownMenuContent className="w-52">
                 <DropdownMenuLabel>
                   <h1 className="text-xl font-bold">My Account</h1>
+                  {user?.email}
                 </DropdownMenuLabel>
                 <DropdownMenuGroup>
                   <DropdownMenuItem onClick={() => navigateToAccount()}>
