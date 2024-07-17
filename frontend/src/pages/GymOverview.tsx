@@ -118,10 +118,10 @@ function GymOverview() {
               ))}
             </div>
             {/* Opening Hours Section */}
-            <div className="mt-3 w-1/3">
+            <div className="mt-3">
               <h1 className="mt-2 text-3xl font-bold mb-2">Opening Hours</h1>
               {!loading && (
-                <div className="mt-2 ml-3">
+                <div className="mt-2 w-1/2">
                   {data?.openingHours && data.openingHours.length > 0 ? (
                     data.openingHours.map((timeRange, index) => (
                       <div key={index} className="flex justify-between py-1">
