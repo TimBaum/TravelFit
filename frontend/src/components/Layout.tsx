@@ -16,18 +16,18 @@ function Layout() {
 function Main() {
   return (
     <main className="flex">
-      <Advertisement />
+      <Advertisement id="1" />
 
       <div className="w-3/5" style={{ minHeight: '60vh' }}>
         <Outlet />
       </div>
 
-      <Advertisement />
+      <Advertisement id="2" />
     </main>
   )
 }
 
-function Advertisement() {
+function Advertisement({ id }: { id: string }) {
   const { hasActiveSubscription, getAccountType } = useAuth()
 
   const showAds = !hasActiveSubscription && getAccountType() !== 'GYM_USER'
@@ -37,7 +37,7 @@ function Advertisement() {
       {showAds && (
         <img
           className="sticky top-20 w-full"
-          src="/src/assets/placeholder_ad.svg"
+          src={`/src/assets/placeholder_ad_${id}.svg`}
           alt="Advertisement"
         />
       )}

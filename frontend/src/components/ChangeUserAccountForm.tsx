@@ -66,7 +66,7 @@ export function ChangeUserAccountForm() {
     console.log('New user values for update HTTP request: ', values)
 
     try {
-      const response = await fetchJSON('/users/update/' + user?._id, {
+      const response = await fetchJSON('/users/update', {
         method: 'PATCH',
         body: JSON.stringify(values),
       })

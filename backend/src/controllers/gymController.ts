@@ -1,11 +1,11 @@
 import { NextFunction, Request, Response } from 'express'
-import mongoose, { FilterQuery, ObjectId } from 'mongoose'
+import mongoose, { FilterQuery } from 'mongoose'
 import Gym from '../models/Gym'
-import Review from '../models/Review'
 import { FilterState } from '@models/filter'
 import cache from '../cache'
 import cloudinary from 'cloudinary'
 import GymAccount from '../models/GymAccount'
+import { IGymAccountWithId } from '@models/gymAccount'
 
 const createGym = (req: Request, res: Response, next: NextFunction) => {
   const { ctx } = req
@@ -34,8 +34,14 @@ const createGym = (req: Request, res: Response, next: NextFunction) => {
     })
 }
 
-const readAll = (req: Request, res: Response, next: NextFunction) => {
-  return Gym.find()
+/**
+ * Returns all gyms which belong to a certain account
+ * @returns All gyms, which belong to a gym account
+ */
+const readAll = async (req: Request, res: Response, next: NextFunction) => {
+  const gymIds = (req.ctx! as IGymAccountWithId).gyms
+
+  return Gym.find({ _id: { $in: gymIds } })
     .then((gyms) => res.status(200).json({ gyms }))
     .catch((error) => res.status(500).json({ error }))
 }
@@ -189,8 +195,28 @@ const searchGyms = async (
     return res.status(500).json({ error })
   }
 }
+
+/**
+ * Check if a gym belongs to a gym account
+ */
+function gymBelongsToGymAccount(
+  gymAccount: IGymAccountWithId,
+  gymId: string,
+): boolean {
+  const gyms = gymAccount.gyms
+  const gymIdsAsString = gyms.map((id) => id.toString())
+
+  return gymIdsAsString.includes(gymId)
+}
+
 const deleteGym = (req: Request, res: Response, next: NextFunction) => {
   const { id } = req.params
+
+  if (!gymBelongsToGymAccount(req.ctx as IGymAccountWithId, id)) {
+    return res
+      .status(400)
+      .json({ message: "You don't have the right to delete this gym" })
+  }
 
   return Gym.findByIdAndDelete(id)
     .then((gym) => {
@@ -208,6 +234,13 @@ const deleteGym = (req: Request, res: Response, next: NextFunction) => {
 const updateGym = (req: Request, res: Response, next: NextFunction) => {
   const { id } = req.params
   const gymData = req.body
+
+  if (!gymBelongsToGymAccount(req.ctx as IGymAccountWithId, id)) {
+    return res
+      .status(400)
+      .json({ message: "You don't have the right to edit this gym" })
+  }
+
   return Gym.findByIdAndUpdate(id, gymData)
     .then((gym) => res.status(201).json({ gym }))
     .catch((error) => res.status(500).json({ error }))
@@ -248,6 +281,8 @@ cloudinary.v2.config({
 })
 
 const deleteImage = async (req: Request, res: Response) => {
+  //TODO: need to check if gym is allowed to be deleted from and if picture belongs to gym, etc...
+
   try {
     // Extract the public_id from the request parameters
     const public_id = req.params.public_id

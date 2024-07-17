@@ -6,7 +6,6 @@ export interface PublicUser {
   salutation: string
   email: string
   favourites: string[]
-  accountType: AccountType
 }
 
 export interface IUser {
@@ -25,6 +24,3 @@ export interface IUser {
 export interface IUserWithId extends IUser {
   _id: string
 }
-
-//TODO: deduplicate code
-export type AccountType = 'USER' | 'GYM_USER' | 'NOT_LOGGED_IN'

@@ -1,6 +1,7 @@
-import { AccountType, PublicUser } from '@models/user'
+import { PublicUser } from '@models/user'
 import { useEffect, useState } from 'react'
 import { fetchJSON } from './utils'
+import { AccountType } from '@models/token'
 
 interface User {
   data: PublicUser | undefined
@@ -25,6 +26,7 @@ function useReadUser(id: string | null, accountType: AccountType): User {
         return []
       })
 
+      //TODO: delete
       console.log(
         'userReadUser was called and returned the response ',
         response,

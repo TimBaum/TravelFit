@@ -48,7 +48,7 @@ function MarkFavourite({ gym }: { gym: IGymWithId | undefined }) {
 
   async function addFavourite() {
     try {
-      await fetchJSON(`/users/${user?._id}/favourites/add`, {
+      await fetchJSON(`/users/favourites/add`, {
         method: 'PATCH',
         body: JSON.stringify({ gymId }),
       })
@@ -62,7 +62,7 @@ function MarkFavourite({ gym }: { gym: IGymWithId | undefined }) {
 
   async function deleteFavourite() {
     try {
-      await fetchJSON(`/users/${user?._id}/favourites/delete/${gymId}`, {
+      await fetchJSON(`/users/favourites/delete/${gymId}`, {
         method: 'PATCH',
       })
       setIsFavourite(false)

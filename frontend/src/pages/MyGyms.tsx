@@ -35,6 +35,7 @@ import {
 import { IGymWithId } from '@models/gym'
 import NoGyms from '@/assets/illustrations/NoGyms.svg'
 import { Input } from '@/components/ui/input'
+import { fetchJSON } from '@/services/utils'
 
 function MyGyms() {
   const [gyms, setGyms] = React.useState<IGymWithId[]>([])
@@ -44,16 +45,9 @@ function MyGyms() {
 
   const handleDeleteGym = async (gymToDelete: string) => {
     try {
-      const response = await fetch(
-        `http://localhost:5000/gyms/${gymToDelete}`,
-        {
-          method: 'DELETE',
-        },
-      )
-
-      if (!response.ok) {
-        throw new Error('Network response was not ok')
-      }
+      await fetchJSON(`/gyms/${gymToDelete}`, {
+        method: 'DELETE',
+      })
       setGyms(gyms.filter((gym) => gym._id !== gymToDelete))
     } catch (error) {
       console.error('Error deleting gym:', error)
@@ -61,8 +55,7 @@ function MyGyms() {
   }
   useEffect(() => {
     // Abrufen der Gyms vom Backend
-    fetch('http://localhost:5000/gyms/get')
-      .then((response) => response.json())
+    fetchJSON('/gyms/get')
       .then((data) => {
         console.log(data) //  Struktur der Daten überprüfen
         setGyms(data.gyms)
