@@ -59,12 +59,10 @@ export function ChangeUserAccountForm() {
     values: z.infer<typeof changeUserAccountFormSchema>,
   ) {
     try {
-      const response = await fetchJSON('/users/update', {
+      await fetchJSON('/users/update', {
         method: 'PATCH',
         body: JSON.stringify(values),
       })
-
-      console.log('User changed successfully:', await response)
     } catch (error) {
       console.error('Error changing user:', error)
     }

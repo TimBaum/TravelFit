@@ -25,10 +25,11 @@ import { fetchJSON } from '@/services/utils'
 import { changeGymAccountFormSchema } from '@/schemas/changeGymAccountFormSchema'
 
 export function ChangeGymAccountForm() {
-  const { user } = useAuth()
-  console.log('useAuth() in changeGymAccountForm returns ', user, ' as user.')
-  let gymAccountDataFromBackend = useReadGymAccount(user?._id ?? '').data
-  console.log('gymAccountDataFromBackend ist ', gymAccountDataFromBackend)
+  const { user, getAccountType } = useAuth()
+  const { data: gymAccountDataFromBackend } = useReadGymAccount(
+    user?._id ?? '',
+    getAccountType(),
+  )
 
   const form = useForm<z.infer<typeof changeGymAccountFormSchema>>({
     resolver: zodResolver(changeGymAccountFormSchema),
@@ -44,7 +45,8 @@ export function ChangeGymAccountForm() {
     },
   })
 
-  //useEffect is necessary because the default values are not available when rendering the form and are thus not displayed without useEffect
+  //useEffect is necessary because the default values are not available when initially
+  //rendering the form and are thus not displayed without useEffect
   useEffect(() => {
     form.reset({
       salutation:
@@ -61,15 +63,11 @@ export function ChangeGymAccountForm() {
   async function onSubmitSaveChanges(
     values: z.infer<typeof changeGymAccountFormSchema>,
   ) {
-    console.log('New gym account values for update HTTP request: ', values)
-
     try {
       await fetchJSON('/gymAccounts/update', {
         method: 'PATCH',
         body: JSON.stringify(values),
       })
-
-      gymAccountDataFromBackend = useReadGymAccount(user?._id ?? '').data
     } catch (error) {
       console.error('Error changing gym account:', error)
     }
@@ -80,6 +78,8 @@ export function ChangeGymAccountForm() {
   }
 
   //without this, a GET instead of a POST request is sent
+  //this prevents the default form submission and instead uses
+  //react-hook-form's handleSubmit method to process the form data
   const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     form.handleSubmit((values) => onSubmitSaveChanges(values))()

@@ -18,7 +18,7 @@ function useReadUser(id: string | null, accountType: AccountType): User {
 
   useEffect(() => {
     async function fetchData() {
-      if (!id || accountType === 'GYM_USER') return
+      if (!id || accountType !== 'USER') return
       setLoading(true)
       setError(null)
       const response = await fetchJSON(`/users/get/${id}`, {
