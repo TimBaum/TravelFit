@@ -49,7 +49,8 @@ export function ChangeUserAccountForm() {
     },
   })
 
-  //useEffect is necessary because the default values are not available when initially rendering the form and are thus not displayed without useEffect
+  //useEffect is necessary because the default values are not available when initially
+  //rendering the form and are thus not displayed without useEffect
   useEffect(() => {
     form.reset({
       salutation:
@@ -74,7 +75,7 @@ export function ChangeUserAccountForm() {
       if (!response.ok) {
         console.log('response in changeUserAccountForm was ', response)
         console.log('response.ok in changeUserAccountForm was ', response.ok)
-        //for some reason response.ok is undefined. updating works correctly,
+        //TODO: for some reason response.ok is undefined. updating works correctly,
         //the sent request is a PATCH request that returns status code 200
         //and this problem does not occur in the other 3 classes
         throw new Error('Problem changeing user because !response.ok')
@@ -87,6 +88,7 @@ export function ChangeUserAccountForm() {
     }
   }
 
+  //TODO: remove if not used
   async function onClickChangePassword() {
     return <h1>TODO: implement password change</h1>
   }
@@ -175,6 +177,7 @@ export function ChangeUserAccountForm() {
           <Button type="submit" variant="outline">
             Save changes
           </Button>
+          {/* TODO: remove if not used */}
           <Button
             type="button"
             variant="outline"
