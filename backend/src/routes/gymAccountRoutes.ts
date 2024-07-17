@@ -12,6 +12,7 @@ const router = express.Router()
 router.post('/create', createGymAccount)
 router.get('/get', auth.isAuthorizedGymAccount, readGymAccount)
 router.patch('/update', auth.isAuthorizedGymAccount, updateGymAccount)
+//TODO: delete if not used?
 router.delete('/delete', auth.isAuthorizedGymAccount, deleteGymAccount)
 
 export default router

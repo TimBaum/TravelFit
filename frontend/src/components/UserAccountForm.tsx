@@ -19,32 +19,11 @@ import {
   DropdownMenuItem,
 } from '@/components/ui/dropdown-menu'
 import { LucidePencil } from 'lucide-react'
-import { config } from '@/config'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '@/provider/AuthProvider'
 import { useState } from 'react'
 import { fetchJSON } from '@/services/utils'
-
-export const userAccountFormSchema = z
-  .object({
-    salutation: z.enum(['Mr.', 'Ms.', 'Diverse'], {
-      required_error: 'Salutation is required.',
-    }),
-    displayName: z
-      .string()
-      .min(2, { message: 'Name must be at least 2 characters.' }),
-    email: z.string().email({ message: 'Invalid email address.' }),
-    password: z
-      .string()
-      .min(8, { message: 'Password must be at least 8 characters.' }),
-    confirmPassword: z
-      .string()
-      .min(8, { message: 'Confirm Password must be at least 8 characters.' }),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords don't match",
-    path: ['confirmPassword'],
-  })
+import { userAccountFormSchema } from '@/schemas/userAccountFormSchema'
 
 export function UserAccountForm() {
   const navigate = useNavigate()
@@ -61,10 +40,7 @@ export function UserAccountForm() {
     },
   })
 
-  async function onSubmit(
-    values: z.infer<typeof userAccountFormSchema>,
-    accountType: string,
-  ) {
+  async function onSubmit(values: z.infer<typeof userAccountFormSchema>) {
     try {
       setIsLoading(true)
       await fetchJSON('/users/create', {
@@ -77,15 +53,6 @@ export function UserAccountForm() {
 
       login(values.email, values.password)
       navigate('/')
-      /* if (accountType === 'premium') {
-        console.log(
-          'premium account created - we will navigate to the login now',
-        )
-        navigate('/login')
-      } else {
-        console.log('basic account created - we will navigate to the login now')
-        navigate('/login')
-      }*/
     } catch (error) {
       console.error('Error creating user:', error)
     } finally {
@@ -96,7 +63,7 @@ export function UserAccountForm() {
   //without this, a GET instead of a POST request is sent
   const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    form.handleSubmit((values) => onSubmit(values, 'basic'))()
+    form.handleSubmit((values) => onSubmit(values))()
   }
 
   return (
@@ -210,26 +177,6 @@ export function UserAccountForm() {
         >
           Create free account
         </Button>
-        {/* <Button
-          type="submit"
-          variant="outline"
-          className="mt-4 mr-4 mb-4"
-          onClick={() =>
-            form.handleSubmit((values) => onSubmit(values, 'basic'))()
-          }
-        >
-          Create basic account
-        </Button>
-          <Button
-          type="submit"
-          variant="outline"
-          className="bg-emerald-500 text-white"
-          onClick={() =>
-            form.handleSubmit((values) => onSubmit(values, 'premium'))()
-          }
-        >
-          Create premium account
-        </Button>*/}
       </form>
     </Form>
   )

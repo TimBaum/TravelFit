@@ -37,14 +37,12 @@ async function createUserContext(
 
     let ctx: Context
     if (decoded.accountType === 'USER') {
-      // as decoded is a type and not a value we need a runtime-check that aligns with the structure of PublicUser and PublicGymAccount to distinguish between them
       const user = await User.findById(decoded._id)
       if (!user) {
         throw new Error('No user found')
       }
       ctx = { ...user.toObject(), accountType: 'USER' }
     } else if (decoded.accountType === 'GYM_USER') {
-      // as decoded is a type and not a value we need a runtime-check that aligns with the structure of PublicUser and PublicGymAccount to distinguish between them
       const gymAccount = await GymAccount.findById(decoded._id)
       if (!gymAccount) {
         throw new Error('No gym account found')

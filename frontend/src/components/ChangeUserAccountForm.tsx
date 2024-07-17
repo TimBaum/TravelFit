@@ -23,20 +23,14 @@ import { useAuth } from '@/provider/AuthProvider'
 import { useReadUser } from '@/services/userService'
 import { useEffect } from 'react'
 import { fetchJSON } from '@/services/utils'
-
-export const changeUserAccountFormSchema = z.object({
-  salutation: z.enum(['Mr.', 'Ms.', 'Diverse'], {
-    required_error: 'Salutation is required.',
-  }),
-  displayName: z
-    .string()
-    .min(2, { message: 'Name must be at least 2 characters.' }),
-  email: z.string().email({ message: 'Invalid email address.' }),
-})
+import { changeUserAccountFormSchema } from '@/schemas/changeUserAccountFormSchema'
 
 export function ChangeUserAccountForm() {
   const { user, getAccountType } = useAuth()
-  let userDataFromBackend = useReadUser(user?._id ?? '', getAccountType()).data
+  const { data: userDataFromBackend } = useReadUser(
+    user?._id ?? '',
+    getAccountType(),
+  )
 
   const form = useForm<z.infer<typeof changeUserAccountFormSchema>>({
     resolver: zodResolver(changeUserAccountFormSchema),
@@ -49,7 +43,8 @@ export function ChangeUserAccountForm() {
     },
   })
 
-  //useEffect is necessary because the default values are not available when initially rendering the form and are thus not displayed without useEffect
+  //useEffect is necessary because the default values are not available when initially
+  //rendering the form and are thus not displayed without useEffect
   useEffect(() => {
     form.reset({
       salutation:
@@ -58,40 +53,29 @@ export function ChangeUserAccountForm() {
       displayName: userDataFromBackend?.displayName ?? '',
       email: userDataFromBackend?.email ?? '',
     })
-  }, [form.reset, userDataFromBackend])
+  }, [userDataFromBackend, form])
 
   async function onSubmitSaveChanges(
     values: z.infer<typeof changeUserAccountFormSchema>,
   ) {
-    console.log('New user values for update HTTP request: ', values)
-
     try {
-      const response = await fetchJSON('/users/update', {
+      await fetchJSON('/users/update', {
         method: 'PATCH',
         body: JSON.stringify(values),
       })
-
-      if (!response.ok) {
-        console.log('response in changeUserAccountForm was ', response)
-        console.log('response.ok in changeUserAccountForm was ', response.ok)
-        //for some reason response.ok is undefined. updating works correctly,
-        //the sent request is a PATCH request that returns status code 200
-        //and this problem does not occur in the other 3 classes
-        throw new Error('Problem changeing user because !response.ok')
-      }
-
-      console.log('User changed successfully:', await response)
-      userDataFromBackend = useReadUser(user?._id ?? '', getAccountType()).data //TODO: refactor
     } catch (error) {
       console.error('Error changing user:', error)
     }
   }
 
+  //TODO: remove if not used
   async function onClickChangePassword() {
     return <h1>TODO: implement password change</h1>
   }
 
   //without this, a GET instead of a POST request is sent
+  //this prevents the default form submission and instead uses
+  //react-hook-form's handleSubmit method to process the form data
   const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     form.handleSubmit((values) => onSubmitSaveChanges(values))()
@@ -175,6 +159,7 @@ export function ChangeUserAccountForm() {
           <Button type="submit" variant="outline">
             Save changes
           </Button>
+          {/* TODO: remove if not used */}
           <Button
             type="button"
             variant="outline"

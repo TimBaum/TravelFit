@@ -104,6 +104,11 @@ function GymOverview() {
       <div>
         {/* Basic structure for the rest of the page */}
         <PhotoGallery photos={images || []} />
+        {!images || images.length === 0 ? (
+          <div className="text-center mt-10 mb-10">
+            No gym photos are provided.
+          </div>
+        ) : null}
         <div className="flex gap-2">
           {/* left side */}
           <div className="w-2/3 mr-10">
@@ -111,6 +116,39 @@ function GymOverview() {
               {data?.highlights.map((element) => (
                 <HighlightBadge key={element} name={element} />
               ))}
+            </div>
+            {/* Opening Hours Section */}
+            <div className="mt-3 w-1/3">
+              <h1 className="mt-2 text-3xl font-bold mb-2">Opening Hours</h1>
+              {!loading && (
+                <div className="mt-2 ml-3">
+                  {data?.openingHours && data.openingHours.length > 0 ? (
+                    data.openingHours.map((timeRange, index) => (
+                      <div key={index} className="flex justify-between py-1">
+                        <span className="font-medium mr-4">
+                          {
+                            [
+                              'Monday',
+                              'Tuesday',
+                              'Wednesday',
+                              'Thursday',
+                              'Friday',
+                              'Saturday',
+                              'Sunday',
+                            ][timeRange.weekday]
+                          }
+                          :
+                        </span>
+                        <span className="flex-grow text-right">
+                          {timeRange.openingTime} - {timeRange.closingTime}
+                        </span>
+                      </div>
+                    ))
+                  ) : (
+                    <div>No opening hours are provided.</div>
+                  )}
+                </div>
+              )}
             </div>
             <div className="mt-3">
               {/* Offers Component */}
