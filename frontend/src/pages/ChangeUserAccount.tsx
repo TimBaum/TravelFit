@@ -11,8 +11,6 @@ function ChangeUserAccount() {
   const { hasActiveSubscription, checkSubscriptionStatus } = useAuth()
   const [isLoading, setIsLoading] = useState(false)
 
-  //const hasPremium = hasActiveSubscription ?? false
-
   return (
     <div>
       <h1 className="mb-2 font-bold text-5xl">Account</h1>

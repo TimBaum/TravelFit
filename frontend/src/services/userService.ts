@@ -26,12 +26,6 @@ function useReadUser(id: string | null, accountType: AccountType): User {
         return []
       })
 
-      //TODO: delete
-      console.log(
-        'userReadUser was called and returned the response ',
-        response,
-      )
-
       setData(response)
       setLoading(false)
     }

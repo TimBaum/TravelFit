@@ -25,11 +25,6 @@ function useReadGymAccount(id: string | null): GymAccount {
         return []
       })
 
-      console.log(
-        'userReadGymAccount was called and returned the response ',
-        response,
-      )
-
       setData(response)
       setLoading(false)
     }

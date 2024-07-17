@@ -103,7 +103,6 @@ export function GymAccountForm() {
 
   return (
     <Form {...form}>
-      {/*<form onSubmit={form.handleSubmit(onSubmit)} className="mx-auto">*/}
       <form onSubmit={handleFormSubmit}>
         <div className="mb-2">
           <FormField
