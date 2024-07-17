@@ -36,7 +36,10 @@ export const changeUserAccountFormSchema = z.object({
 
 export function ChangeUserAccountForm() {
   const { user, getAccountType } = useAuth()
-  let userDataFromBackend = useReadUser(user?._id ?? '', getAccountType()).data
+  const { data: userDataFromBackend } = useReadUser(
+    user?._id ?? '',
+    getAccountType(),
+  )
 
   const form = useForm<z.infer<typeof changeUserAccountFormSchema>>({
     resolver: zodResolver(changeUserAccountFormSchema),
@@ -59,13 +62,11 @@ export function ChangeUserAccountForm() {
       displayName: userDataFromBackend?.displayName ?? '',
       email: userDataFromBackend?.email ?? '',
     })
-  }, [form.reset, userDataFromBackend])
+  }, [userDataFromBackend, form])
 
   async function onSubmitSaveChanges(
     values: z.infer<typeof changeUserAccountFormSchema>,
   ) {
-    console.log('New user values for update HTTP request: ', values)
-
     try {
       const response = await fetchJSON('/users/update', {
         method: 'PATCH',
@@ -73,7 +74,6 @@ export function ChangeUserAccountForm() {
       })
 
       console.log('User changed successfully:', await response)
-      userDataFromBackend = useReadUser(user?._id ?? '', getAccountType()).data //TODO: refactor
     } catch (error) {
       console.error('Error changing user:', error)
     }
@@ -85,6 +85,8 @@ export function ChangeUserAccountForm() {
   }
 
   //without this, a GET instead of a POST request is sent
+  //this prevents the default form submission and instead uses
+  //react-hook-form's handleSubmit method to process the form data
   const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     form.handleSubmit((values) => onSubmitSaveChanges(values))()
