@@ -36,9 +36,23 @@ export const changeGymAccountFormSchema = z.object({
     .string()
     .min(2, { message: 'Last name must be at least 2 characters.' }),
   email: z.string().email({ message: 'Invalid email address.' }),
-  address: z
-    .string()
-    .min(5, { message: 'Address must be at least 5 characters.' }),
+  address: z.object({
+    street: z
+      .string()
+      .min(2, { message: 'Invalid street' })
+      .max(100, { message: 'Invalid street' }),
+    postalCode: z.string().regex(/^\d{5}$/, {
+      message: 'Invalid postal code. It should be exactly 5 digits.',
+    }),
+    city: z
+      .string()
+      .min(2, { message: 'Invalid city' })
+      .max(50, { message: 'Invalid city' }),
+    country: z
+      .string()
+      .min(2, { message: 'Invalid country' })
+      .max(50, { message: 'Invalid country' }),
+  }),
   phone: z
     .string()
     .min(10, { message: 'Phone number must be at least 10 characters.' })
@@ -61,7 +75,12 @@ export function ChangeGymAccountForm() {
         'Diverse',
       firstName: gymAccountDataFromBackend?.firstName ?? '',
       lastName: gymAccountDataFromBackend?.lastName ?? '',
-      address: gymAccountDataFromBackend?.address ?? '',
+      address: {
+        street: gymAccountDataFromBackend?.address.street ?? '',
+        postalCode: gymAccountDataFromBackend?.address.postalCode ?? '',
+        city: gymAccountDataFromBackend?.address.city ?? '',
+        country: gymAccountDataFromBackend?.address.country ?? '',
+      },
       email: gymAccountDataFromBackend?.email ?? '',
       phone: gymAccountDataFromBackend?.phone ?? '',
     },
@@ -75,7 +94,12 @@ export function ChangeGymAccountForm() {
         'Diverse',
       firstName: gymAccountDataFromBackend?.firstName ?? '',
       lastName: gymAccountDataFromBackend?.lastName ?? '',
-      address: gymAccountDataFromBackend?.address ?? '',
+      address: {
+        street: gymAccountDataFromBackend?.address.street ?? '',
+        postalCode: gymAccountDataFromBackend?.address.postalCode ?? '',
+        city: gymAccountDataFromBackend?.address.city ?? '',
+        country: gymAccountDataFromBackend?.address.country ?? '',
+      },
       email: gymAccountDataFromBackend?.email ?? '',
       phone: gymAccountDataFromBackend?.phone ?? '',
     })
@@ -177,21 +201,67 @@ export function ChangeGymAccountForm() {
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name="address"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Address</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage>
-                      {form.formState.errors.address?.message}
-                    </FormMessage>
-                  </FormItem>
-                )}
-              />
+              {/* <AddressFields /> TODO: Use the new AddressFields component */}
+              <>
+                <div className="w-1/2">
+                  <FormField
+                    control={form.control}
+                    name="address.street"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Street</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Street" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div className="grid grid-cols-2 w-1/2 gap-2">
+                  <FormField
+                    control={form.control}
+                    name="address.postalCode"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Postal Code</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Postal Code" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="address.city"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>City</FormLabel>
+                        <FormControl>
+                          <Input placeholder="City" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div className="w-1/2">
+                  <FormField
+                    control={form.control}
+                    name="address.country"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Country</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Country" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </>
               <FormField
                 control={form.control}
                 name="email"

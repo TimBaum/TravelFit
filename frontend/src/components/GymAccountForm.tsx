@@ -22,6 +22,7 @@ import { useNavigate } from 'react-router-dom'
 import { useAuth } from '@/provider/AuthProvider'
 import { useState } from 'react'
 import { fetchJSON } from '@/services/utils'
+import { AddressFields } from '@/components/AddressFields' //TODO: Address-Felder auslagern
 
 const phoneValidationRegex = /^\+?[1-9]\d{1,14}$/ // E.164 international phone number format
 
@@ -43,9 +44,23 @@ const gymAccountFormSchema = z
       .regex(phoneValidationRegex, {
         message: 'Please enter a valid phone number.',
       }),
-    address: z
-      .string()
-      .min(5, { message: 'Address must be at least 5 characters.' }),
+    address: z.object({
+      street: z
+        .string()
+        .min(2, { message: 'Invalid street' })
+        .max(100, { message: 'Invalid street' }),
+      postalCode: z.string().regex(/^\d{5}$/, {
+        message: 'Invalid postal code. It should be exactly 5 digits.',
+      }),
+      city: z
+        .string()
+        .min(2, { message: 'Invalid city' })
+        .max(50, { message: 'Invalid city' }),
+      country: z
+        .string()
+        .min(2, { message: 'Invalid country' })
+        .max(50, { message: 'Invalid country' }),
+    }),
     password: z
       .string()
       .min(8, { message: 'Password must be at least 8 characters.' }),
@@ -70,13 +85,19 @@ export function GymAccountForm() {
       lastName: '',
       email: '',
       phone: '',
-      address: '',
+      address: {
+        street: '',
+        postalCode: '',
+        city: '',
+        country: 'Germany',
+      },
       password: '',
       confirmPassword: '',
     },
   })
 
   async function onSubmit(values: z.infer<typeof gymAccountFormSchema>) {
+    console.log('Der neue account:', values) // Debugging
     try {
       setIsLoading(true)
       await fetchJSON('/gymAccounts/create', {
@@ -86,7 +107,6 @@ export function GymAccountForm() {
         },
         body: JSON.stringify(values),
       })
-
       login(values.email, values.password)
       navigate('/my-gyms')
     } catch (error) {
@@ -173,22 +193,67 @@ export function GymAccountForm() {
             )}
           />
         </div>
-
-        <FormField
-          control={form.control}
-          name="address"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Address</FormLabel>
-              <FormControl>
-                <Input placeholder="address" {...field} />
-              </FormControl>
-              <FormMessage>
-                {form.formState.errors.address?.message}
-              </FormMessage>
-            </FormItem>
-          )}
-        />
+        {/* <AddressFields /> TODO: Use the new AddressFields component */}
+        <>
+          <div className="w-1/2">
+            <FormField
+              control={form.control}
+              name="address.street"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Street</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Street" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+          <div className="grid grid-cols-2 w-1/2 gap-2">
+            <FormField
+              control={form.control}
+              name="address.postalCode"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Postal Code</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Postal Code" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="address.city"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>City</FormLabel>
+                  <FormControl>
+                    <Input placeholder="City" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+          <div className="w-1/2">
+            <FormField
+              control={form.control}
+              name="address.country"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Country</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Country" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+        </>
         <div className="flex space-x-4">
           <FormField
             control={form.control}

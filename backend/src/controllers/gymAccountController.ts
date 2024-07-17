@@ -7,8 +7,51 @@ import { PublicGymAccount } from '@models/gymAccount'
 import bcryptjs from 'bcryptjs'
 import User from '../models/User'
 import { isMongoError } from './errors'
+import { getCoordinates } from './gymController'
 
 export const createGymAccount = async (req: Request, res: Response) => {
+  try {
+    const accData = req.body
+
+    // Check if email already exists
+    const userWithSameMail = await User.findOne({ email: accData.email }).exec()
+    if (userWithSameMail) {
+      return res
+        .status(400)
+        .json({ message: 'Email already exists. Try another email address' })
+    }
+
+    const accId = new mongoose.Types.ObjectId()
+    const accAddress = accData.address
+    const hashedPassword = await bcryptjs.hash(accData.password, 10)
+    const coordinates = await getCoordinates(accAddress)
+
+    const address = {
+      ...accAddress,
+      location: coordinates
+        ? {
+            type: 'Point',
+            coordinates: coordinates,
+          }
+        : null,
+    }
+    const acc = new GymAccount({
+      _id: accId,
+      ...accData,
+      password: hashedPassword,
+      address,
+    })
+    await acc.save()
+    res.status(201).json({ message: 'Account created successfully', acc })
+  } catch (error) {
+    console.error('Error creating acc:', error)
+    return res.status(500).json({ error })
+  }
+}
+
+//kann weg
+
+/* export const createGymAccount = async (req: Request, res: Response) => {
   console.log(
     'Creating gym account in controller with values' + JSON.stringify(req.body),
   )
@@ -54,7 +97,7 @@ export const createGymAccount = async (req: Request, res: Response) => {
     console.log('Error creating gym account:', err)
     return res.status(500).json({ error })
   }
-}
+} */
 
 export const readGymAccount = async (req: Request, res: Response) => {
   const gymAccountId = req.ctx!._id
@@ -74,7 +117,19 @@ export const readGymAccount = async (req: Request, res: Response) => {
       email: gymAccount.email || '',
       favourites: gymAccount.favourites.map((fav) => fav.toString()),
       gyms: gymAccount.gyms.map((gym) => gym.toString()),
-      //address: gymAccount.address || '',
+      address: {
+        street: gymAccount.address.street || '',
+        postalCode: gymAccount.address.postalCode || '',
+        country: gymAccount.address.country || '',
+        city: gymAccount.address.city || '',
+        location: {
+          type: 'Point',
+          coordinates: (gymAccount.address.location?.coordinates as [
+            number,
+            number,
+          ]) ?? [0, 0],
+        },
+      },
       phone: gymAccount.phone || '',
     }
     return res.status(200).json(publicGymAccount)
@@ -105,7 +160,19 @@ export const updateGymAccount = async (req: Request, res: Response) => {
       email: gymAccount.email || '',
       favourites: gymAccount.favourites.map((fav) => fav.toString()),
       gyms: gymAccount.gyms.map((gym) => gym.toString()),
-      //address: gymAccount.address || '',
+      address: {
+        street: gymAccount.address.street || '',
+        postalCode: gymAccount.address.postalCode || '',
+        country: gymAccount.address.country || '',
+        city: gymAccount.address.city || '',
+        location: {
+          type: 'Point',
+          coordinates: (gymAccount.address.location?.coordinates as [
+            number,
+            number,
+          ]) ?? [0, 0],
+        },
+      },
       phone: gymAccount.phone || '',
     }
     return res.status(201).json({ updatedPublicGymAccount })
@@ -120,7 +187,7 @@ export const addFavourite = async (req: Request, res: Response) => {
     if (!gymAccount) {
       return res.status(404).json({ message: 'Gym account not found' })
     }
-
+    //TODO: check if really Needed here
     const publicGymAccount: PublicGymAccount = {
       _id: gymAccount._id.toString() || '',
       firstName: gymAccount.firstName || '',
@@ -129,7 +196,19 @@ export const addFavourite = async (req: Request, res: Response) => {
       email: gymAccount.email || '',
       favourites: gymAccount.favourites.map((fav) => fav.toString()),
       gyms: gymAccount.gyms.map((gym) => gym.toString()),
-      //address: gymAccount.address || '',
+      address: {
+        street: gymAccount.address.street || '',
+        postalCode: gymAccount.address.postalCode || '',
+        country: gymAccount.address.country || '',
+        city: gymAccount.address.city || '',
+        location: {
+          type: 'Point',
+          coordinates: (gymAccount.address.location?.coordinates as [
+            number,
+            number,
+          ]) ?? [0, 0],
+        },
+      },
       phone: gymAccount.phone || '',
     }
     gymAccount.favourites.push(req.body.gymId)
