@@ -43,7 +43,7 @@ export function GymTile({ gym }: { gym: IGymWithId }) {
   const maxOpeningHourToday = getMaxOpeningHourToday()
 
   return (
-    <div className="flex h-48 w-full border rounded p-2 items-stretch">
+    <div className="flex h-48 w-full bg-white border rounded p-2 items-stretch">
       {/* Section left side */}
       {/* TODO: exchange pictures */}
       <div className="h-full w-1/3 flex gap-2 pr-2">

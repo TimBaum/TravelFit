@@ -93,7 +93,7 @@ function GymOverview() {
           </BreadcrumbList>
         </Breadcrumb>
       </div>
-      <div className="header-container">
+      <div className="header-container flex align-center">
         <h1 className="text-5xl font-bold pb-2">{gymname}</h1>
         <div className="header-icons">
           <ShareButton link={window.location.href} />
@@ -164,7 +164,7 @@ function GymOverview() {
           </div>
 
           {/* right side */}
-          <div className="w-1/3 m-2">
+          <div className="w-1/3 mx-2">
             <Button asChild className="w-full">
               <Link
                 to={data?.websiteLink ?? '/default-url'}
@@ -174,7 +174,7 @@ function GymOverview() {
                 Visit gym website
               </Link>
             </Button>
-            <h1 className="mt-5 text-3xl font-bold flex items-center gap-1 text-nowrap">
+            <h1 className="mt-5 text-3xl font-bold flex items-center gap-1 text-nowrap w-full mb-2">
               <StarFilledIcon className="text-primary h-7 w-7" />
               {(data?.averageRating
                 ? data?.averageRating.toFixed(1)
@@ -184,14 +184,16 @@ function GymOverview() {
                 ` Review${data?.reviews.length !== 1 ? 's' : ''}`}
             </h1>
             {!loading && (
-              <div>
+              <div className="w-full">
                 {data?.reviews
                   .slice(0, 5)
                   .map((review) => <ReviewTile review={review} />)}
               </div>
             )}
-            <ReviewDialog reviews={data?.reviews} />
-            {user && <AddReviewDialog gym={data} />}
+            <div className="flex justify-center items-center">
+              <ReviewDialog reviews={data?.reviews} />|
+              {user && <AddReviewDialog gym={data} />}
+            </div>
           </div>
         </div>
         {data?.address?.location?.coordinates ? (
