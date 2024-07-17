@@ -19,7 +19,7 @@ export const createGymAccount = async (req: Request, res: Response) => {
     phone,
     salutation,
     password,
-    address,
+    //address,
     gyms,
   } = req.body
 
@@ -41,7 +41,7 @@ export const createGymAccount = async (req: Request, res: Response) => {
       lastName,
       phone,
       salutation,
-      address,
+      //address,
       gyms,
       password: hashedPassword,
     })
@@ -163,6 +163,7 @@ export const deleteFavourite = async (req: Request, res: Response) => {
   }
 }
 
+//TODO: remove if not used?
 export const deleteGymAccount = async (req: Request, res: Response) => {
   try {
     const gymAccount = await GymAccount.findByIdAndDelete(req.ctx!._id)
