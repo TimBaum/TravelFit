@@ -89,6 +89,9 @@ export const updateUser = async (req: Request, res: Response) => {
     }
     return res.status(200).json({ updatedPublicUser })
   } catch (err) {
+    if (isMongoError(err) && err.code === 11000) {
+      return res.status(400).json({ message: 'Email already exists' })
+    }
     return res.status(500).json({ error })
   }
 }

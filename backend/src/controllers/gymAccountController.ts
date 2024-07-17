@@ -12,34 +12,14 @@ import { getCoordinates } from './gymController'
 export const createGymAccount = async (req: Request, res: Response) => {
   try {
     const accData = req.body
-
-    // Check if email already exists. TODO: this actually does nothing
-    const userWithSameMail = await User.findOne({ email: accData.email }).exec()
-    if (userWithSameMail) {
-      return res
-        .status(400)
-        .json({ message: 'Email already exists. Try another email address' })
-    }
-
     const accId = new mongoose.Types.ObjectId()
     const accAddress = accData.address
     const hashedPassword = await bcryptjs.hash(accData.password, 10)
-    const coordinates = await getCoordinates(accAddress)
-
-    const address = {
-      ...accAddress,
-      location: coordinates
-        ? {
-            type: 'Point',
-            coordinates: coordinates,
-          }
-        : null,
-    }
     const acc = new GymAccount({
       _id: accId,
       ...accData,
       password: hashedPassword,
-      address,
+      address: { ...accAddress },
     })
     await acc.save()
     res.status(201).json({ message: 'Account created successfully', acc })
@@ -51,56 +31,6 @@ export const createGymAccount = async (req: Request, res: Response) => {
     return res.status(500).json({ error })
   }
 }
-
-//kann weg
-
-/* export const createGymAccount = async (req: Request, res: Response) => {
-  console.log(
-    'Creating gym account in controller with values' + JSON.stringify(req.body),
-  )
-  const {
-    email,
-    firstName,
-    lastName,
-    phone,
-    salutation,
-    password,
-    //address,
-    gyms,
-  } = req.body
-
-  const userWithSameMail = await User.findOne({ email: email }).exec()
-
-  if (userWithSameMail) {
-    return res
-      .status(400)
-      .json({ message: 'Email already exists. Try another email address' })
-  }
-
-  const hashedPassword = await bcryptjs.hash(password, 10)
-
-  try {
-    const newGymAccount = new GymAccount({
-      _id: new mongoose.Types.ObjectId(),
-      email,
-      firstName,
-      lastName,
-      phone,
-      salutation,
-      //address,
-      gyms,
-      password: hashedPassword,
-    })
-    await newGymAccount.save()
-    return res.status(201).json({ newGymAccount })
-  } catch (err) {
-    if (isMongoError(err) && err.code === 11000) {
-      return res.status(400).json({ message: 'Email already exists' })
-    }
-    console.log('Error creating gym account:', err)
-    return res.status(500).json({ error })
-  }
-} */
 
 export const readGymAccount = async (req: Request, res: Response) => {
   const gymAccountId = req.ctx!._id
@@ -180,6 +110,9 @@ export const updateGymAccount = async (req: Request, res: Response) => {
     }
     return res.status(201).json({ updatedPublicGymAccount })
   } catch (err) {
+    if (isMongoError(err) && err.code === 11000) {
+      return res.status(400).json({ message: 'Email already exists' })
+    }
     return res.status(500).json({ error })
   }
 }

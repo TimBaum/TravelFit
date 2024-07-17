@@ -23,8 +23,10 @@ import { useReadGymAccount } from '@/services/gymAccountService'
 import { useEffect } from 'react'
 import { fetchJSON } from '@/services/utils'
 import { changeGymAccountFormSchema } from '@/schemas/changeGymAccountFormSchema'
+import { useNavigate } from 'react-router-dom'
 
 export function ChangeGymAccountForm() {
+  const navigate = useNavigate()
   const { user, getAccountType } = useAuth()
   const { data: gymAccountDataFromBackend } = useReadGymAccount(
     user?._id ?? '',
@@ -78,6 +80,7 @@ export function ChangeGymAccountForm() {
         method: 'PATCH',
         body: JSON.stringify(values),
       })
+      navigate('/my-gyms')
     } catch (error) {
       console.error('Error changing gym account:', error)
     }
