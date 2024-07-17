@@ -17,7 +17,6 @@ import {
   DropdownMenuTrigger,
   DropdownMenuItem,
 } from '@/components/ui/dropdown-menu'
-import { config } from '@/config'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '@/provider/AuthProvider'
 import { useState } from 'react'
