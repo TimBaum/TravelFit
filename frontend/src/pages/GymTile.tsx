@@ -43,10 +43,10 @@ export function GymTile({ gym }: { gym: IGymWithId }) {
   const maxOpeningHourToday = getMaxOpeningHourToday()
 
   return (
-    <div className="flex h-48 w-full bg-white border rounded p-2 items-stretch">
+    <div className="flex h-48 w-full bg-white border rounded p-2">
       {/* Section left side */}
       {/* TODO: exchange pictures */}
-      <div className="h-full w-1/3 flex gap-2 pr-2">
+      <div className="h-full flex gap-2 pr-2">
         <img
           className="h-full shrink object-cover aspect-square rounded"
           src={`src/assets/img${Math.floor(Math.random() * 4) + 1}.png`}
@@ -72,7 +72,7 @@ export function GymTile({ gym }: { gym: IGymWithId }) {
               {gym.name} <MarkFavourite gym={gym} />
             </div>
             <div>{gym.address.street + ' ' + gym.address.city}</div>
-            <div className="flex gap-2 w-full lg:flex-wrap mt-2 no-scrollbar overflow-scroll max-h-20">
+            <div className="flex gap-2 w-full flex-nowrap mt-2 no-scrollbar overflow-scroll max-h-12">
               {gym.highlights.map((element) => (
                 <HighlightBadge key={element} name={element} />
               ))}
