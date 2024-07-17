@@ -1,17 +1,24 @@
 /* Imports */
 import React, { useState } from 'react'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
-import OfferTile from '@/components/OfferTile'
 import { IOffer } from '@models/offer'
 import { config } from '@/config'
 import { fetchJSON } from '@/services/utils'
-import axios from 'axios' // API used for finding the coordinates of the gym-address
-import { gymFormSchema, offerFormSchema } from '@/schemas/gymFormSchema'
+import { useFetchImages, useGetGym } from '@/services/gymService'
 
-/* shadcn UI imports */
+/* form checks */
+import { gymFormSchema, offerFormSchema } from '@/schemas/gymFormSchema'
+import { z } from 'zod'
+import { zodResolver } from '@hookform/resolvers/zod'
+
+/* Reusable custom components */
+import { AddressFields } from '../components/AddressFields'
+import OfferTile from '@/components/OfferTile'
+import LoadingOverlay from './loadingIndicator'
+
+/* (mostly shadcn) UI imports */
+import Dropzone from './Dropzone'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
@@ -21,7 +28,6 @@ import { CalendarIcon } from 'lucide-react'
 import { Calendar } from '@/components/ui/calendar'
 import { format } from 'date-fns'
 import { cn } from '@/lib/utils'
-
 import { TrashIcon } from '@radix-ui/react-icons'
 import { ResetIcon } from '@radix-ui/react-icons'
 import {
@@ -54,9 +60,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
-import Dropzone from './Dropzone'
-import LoadingOverlay from './loadingIndicator'
-import { useFetchImages, useGetGym } from '@/services/gymService'
 
 interface CreateGymFormProps {
   mode: 'create' | 'edit'
@@ -68,15 +71,10 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
   // Leonie
   const { id } = useParams<{ id: string }>()
   const gymId = id || ''
-  const {
-    data: gym,
-    //error: getGymError,
-    //loading: getGymLoading,
-  } = useGetGym(gymId)
+  const { data: gym } = useGetGym(gymId)
 
   // FIXME: at the moment only pictures which public_id starts with gym are used. For some reason gym.name is not arriving on time.
   const cleanedName = gym?.name?.replace(/\s+/g, '') || 'gym'
-
   // Use custom hook to fetch images
   const { data: photos } = useFetchImages(cleanedName || '')
 
@@ -134,7 +132,7 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
       offers: [],
     },
   })
-  const watch = form.watch //watch is a function that returns the value of the fields being watched
+  const watch = form.watch //watch is a function that returns the value of all fields
 
   /* 
   Array of strings (public_ids of images) to be deleted after submission
@@ -164,11 +162,11 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
     )
   }
 
-  /* 
-  hook for prefill the form with the gyms data if in edit mode
-  runs before form is rendered  
-  pre-fills a form with a gym's data when the component is in "edit" mode and a gym object is provided
-  */
+  /**
+   *hook for prefill the form with the gyms data if in edit mode
+   *runs before form is rendered
+   *pre-fills a form with a gym's data when the component is in "edit" mode and a gym object is provided
+   */
   React.useEffect(() => {
     if (mode === 'edit' && gym) {
       console.log('gym.address:', gym.address), // Kontrollpunkt
@@ -379,60 +377,7 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
           />
 
           {/* addressFields */}
-          <div>
-            <FormField
-              control={form.control}
-              name="address.street"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Street and Number *</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Awesome street 12" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="address.postalCode"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Postal Code *</FormLabel>
-                  <FormControl>
-                    <Input placeholder="12345" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="address.city"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>City *</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Awesometown" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="address.country"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Country *</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Germany" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
+          <AddressFields />
 
           {/* Opening Times */}
 

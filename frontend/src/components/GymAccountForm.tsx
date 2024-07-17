@@ -22,6 +22,7 @@ import { useAuth } from '@/provider/AuthProvider'
 import { useState } from 'react'
 import { fetchJSON } from '@/services/utils'
 import { gymAccountFormSchema } from '@/schemas/gymAccountFormSchema'
+import { AddressFields } from './AddressFields'
 
 export function GymAccountForm() {
   const navigate = useNavigate()
@@ -143,66 +144,7 @@ export function GymAccountForm() {
           />
         </div>
         {/* <AddressFields /> TODO: Use the new AddressFields component */}
-        <>
-          <div className="w-1/2">
-            <FormField
-              control={form.control}
-              name="address.street"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Street</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Street" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-          <div className="grid grid-cols-2 w-1/2 gap-2">
-            <FormField
-              control={form.control}
-              name="address.postalCode"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Postal Code</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Postal Code" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="address.city"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>City</FormLabel>
-                  <FormControl>
-                    <Input placeholder="City" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-          <div className="w-1/2">
-            <FormField
-              control={form.control}
-              name="address.country"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Country</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Country" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-        </>
+        <AddressFields />
         <div className="flex space-x-4">
           <FormField
             control={form.control}

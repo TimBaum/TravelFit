@@ -24,6 +24,7 @@ import { useEffect } from 'react'
 import { fetchJSON } from '@/services/utils'
 import { changeGymAccountFormSchema } from '@/schemas/changeGymAccountFormSchema'
 import { useNavigate } from 'react-router-dom'
+import { AddressFields } from './AddressFields'
 
 export function ChangeGymAccountForm() {
   const navigate = useNavigate()
@@ -168,7 +169,8 @@ export function ChangeGymAccountForm() {
                 )}
               />
               {/* <AddressFields /> TODO: Use the new AddressFields component */}
-              <>
+              <AddressFields />
+              {/* <>
                 <div className="w-1/2">
                   <FormField
                     control={form.control}
@@ -227,7 +229,7 @@ export function ChangeGymAccountForm() {
                     )}
                   />
                 </div>
-              </>
+              </> */}
               <FormField
                 control={form.control}
                 name="email"
