@@ -206,8 +206,7 @@ function gymBelongsToGymAccount(
   const gyms = gymAccount.gyms
   const gymIdsAsString = gyms.map((id) => id.toString())
 
-  if (!gymIdsAsString.includes(gymId)) return false
-  return true
+  return gymIdsAsString.includes(gymId)
 }
 
 const deleteGym = (req: Request, res: Response, next: NextFunction) => {
@@ -239,7 +238,7 @@ const updateGym = (req: Request, res: Response, next: NextFunction) => {
   if (!gymBelongsToGymAccount(req.ctx as IGymAccountWithId, id)) {
     return res
       .status(400)
-      .json({ message: "You don't have the right to delete this gym" })
+      .json({ message: "You don't have the right to edit this gym" })
   }
 
   return Gym.findByIdAndUpdate(id, gymData)
