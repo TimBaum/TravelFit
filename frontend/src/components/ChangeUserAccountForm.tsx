@@ -72,15 +72,6 @@ export function ChangeUserAccountForm() {
         body: JSON.stringify(values),
       })
 
-      if (!response.ok) {
-        console.log('response in changeUserAccountForm was ', response)
-        console.log('response.ok in changeUserAccountForm was ', response.ok)
-        //TODO: for some reason response.ok is undefined. updating works correctly,
-        //the sent request is a PATCH request that returns status code 200
-        //and this problem does not occur in the other 3 classes
-        throw new Error('Problem changeing user because !response.ok')
-      }
-
       console.log('User changed successfully:', await response)
       userDataFromBackend = useReadUser(user?._id ?? '', getAccountType()).data //TODO: refactor
     } catch (error) {
