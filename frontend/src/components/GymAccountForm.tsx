@@ -43,9 +43,9 @@ const gymAccountFormSchema = z
       .regex(phoneValidationRegex, {
         message: 'Please enter a valid phone number.',
       }),
-    address: z
+    /*address: z
       .string()
-      .min(5, { message: 'Address must be at least 5 characters.' }),
+      .min(5, { message: 'Address must be at least 5 characters.' }),*/
     password: z
       .string()
       .min(8, { message: 'Password must be at least 8 characters.' }),
@@ -70,7 +70,7 @@ export function GymAccountForm() {
       lastName: '',
       email: '',
       phone: '',
-      address: '',
+      //address: '',
       password: '',
       confirmPassword: '',
     },
@@ -174,7 +174,7 @@ export function GymAccountForm() {
           />
         </div>
 
-        <FormField
+        {/*} <FormField
           control={form.control}
           name="address"
           render={({ field }) => (
@@ -188,7 +188,7 @@ export function GymAccountForm() {
               </FormMessage>
             </FormItem>
           )}
-        />
+        />*/}
         <div className="flex space-x-4">
           <FormField
             control={form.control}

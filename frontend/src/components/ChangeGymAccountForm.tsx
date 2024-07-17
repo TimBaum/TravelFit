@@ -36,9 +36,9 @@ export const changeGymAccountFormSchema = z.object({
     .string()
     .min(2, { message: 'Last name must be at least 2 characters.' }),
   email: z.string().email({ message: 'Invalid email address.' }),
-  address: z
+  /*address: z
     .string()
-    .min(5, { message: 'Address must be at least 5 characters.' }),
+    .min(5, { message: 'Address must be at least 5 characters.' }),*/
   phone: z
     .string()
     .min(10, { message: 'Phone number must be at least 10 characters.' })
@@ -61,7 +61,7 @@ export function ChangeGymAccountForm() {
         'Diverse',
       firstName: gymAccountDataFromBackend?.firstName ?? '',
       lastName: gymAccountDataFromBackend?.lastName ?? '',
-      address: gymAccountDataFromBackend?.address ?? '',
+      //address: gymAccountDataFromBackend?.address ?? '',
       email: gymAccountDataFromBackend?.email ?? '',
       phone: gymAccountDataFromBackend?.phone ?? '',
     },
@@ -75,7 +75,7 @@ export function ChangeGymAccountForm() {
         'Diverse',
       firstName: gymAccountDataFromBackend?.firstName ?? '',
       lastName: gymAccountDataFromBackend?.lastName ?? '',
-      address: gymAccountDataFromBackend?.address ?? '',
+      //address: gymAccountDataFromBackend?.address ?? '',
       email: gymAccountDataFromBackend?.email ?? '',
       phone: gymAccountDataFromBackend?.phone ?? '',
     })
@@ -177,7 +177,7 @@ export function ChangeGymAccountForm() {
                   </FormItem>
                 )}
               />
-              <FormField
+              {/*  <FormField
                 control={form.control}
                 name="address"
                 render={({ field }) => (
@@ -191,7 +191,7 @@ export function ChangeGymAccountForm() {
                     </FormMessage>
                   </FormItem>
                 )}
-              />
+              />*/}
               <FormField
                 control={form.control}
                 name="email"
