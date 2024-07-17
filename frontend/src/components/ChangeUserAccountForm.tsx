@@ -23,7 +23,7 @@ import { useAuth } from '@/provider/AuthProvider'
 import { useReadUser } from '@/services/userService'
 import { useEffect } from 'react'
 import { fetchJSON } from '@/services/utils'
-import { changeUserAccountFormSchema } from '@/schemas/changeUserAccountSchema'
+import { changeUserAccountFormSchema } from '@/schemas/changeUserAccountFormSchema'
 
 export function ChangeUserAccountForm() {
   const { user, getAccountType } = useAuth()
