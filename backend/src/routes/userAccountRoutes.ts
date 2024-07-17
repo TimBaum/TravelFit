@@ -13,7 +13,7 @@ const router = express.Router()
 
 router.post('/create', createUser)
 //TODO: refactor
-router.get('/get/:id', readUser)
+router.get('/get', auth.isAuthorizedUser, readUser)
 router.patch('/update', auth.isAuthorizedUser, updateUser)
 router.patch('/favourites/add', auth.isAuthorizedUser, addFavourite)
 router.patch(

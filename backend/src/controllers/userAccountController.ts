@@ -50,8 +50,12 @@ export const createUser = async (req: Request, res: Response) => {
 }
 
 export const readUser = async (req: Request, res: Response) => {
+  const userId = req.ctx!._id
+
   try {
-    const user = await User.findById(req.params.id)
+    // could technically be skipped since we already fetch the account in the middleware
+    // but for potential future modifications, it is left here
+    const user = await User.findById(userId)
     if (!user) {
       return res.status(404).json({ message: 'User not found' })
     }
