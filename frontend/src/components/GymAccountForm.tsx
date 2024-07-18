@@ -58,7 +58,7 @@ export function GymAccountForm() {
         },
         body: JSON.stringify(values),
       })
-      login(values.email, values.password)
+      await login(values.email, values.password)
       navigate('/my-gyms')
     } catch (error) {
       console.error('Error creating gym account:', error)
