@@ -36,8 +36,8 @@ function GymOverview() {
   const GymId = id || ''
 
   const { data, error, loading } = useGetGym(GymId)
-  const cleanedName = data?.name?.replace(/\s+/g, '') || 'gym'
-  const { data: images } = useFetchImages(cleanedName)
+  const cleanedName = data?.name?.replace(/\s+/g, '')
+  const { data: images, loading: photosLoading } = useFetchImages(cleanedName)
   const gymname = data?.name
   const previousPage = useLocation().state?.from
   const previousPagePath =
@@ -103,8 +103,8 @@ function GymOverview() {
       </div>
       <div>
         {/* Basic structure for the rest of the page */}
-        <PhotoGallery photos={images || []} />
-        {!images || images.length === 0 ? (
+        {!photosLoading && <PhotoGallery photos={images || []} />}
+        {(!images && !photosLoading) || images?.length === 0 ? (
           <div className="text-center mt-10 mb-10">
             No gym photos are provided.
           </div>
