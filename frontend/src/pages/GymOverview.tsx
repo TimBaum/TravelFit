@@ -192,8 +192,10 @@ function GymOverview() {
             )}
             <div className="flex justify-center items-center">
               <ReviewDialog reviews={data?.reviews} />
-              {user && <div>|</div>}
-              {user && <AddReviewDialog gym={data} />}
+              {user && accountType !== 'GYM_USER' && <div>|</div>}
+              {user && accountType !== 'GYM_USER' && (
+                <AddReviewDialog gym={data} />
+              )}
             </div>
           </div>
         </div>
