@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { IGym, IGymWithId } from '@models/gym'
+import { IGymWithId } from '@models/gym'
 import { fetchJSON } from './utils'
 import { FilterState } from '@models/filter'
 import { config } from '@/config'
@@ -94,7 +94,7 @@ function useGetGym(id: string | null): GymOverview {
   return { data, error, loading }
 }
 
-function useGetGymsByIds(ids: string[] | null): {
+function useGetGymsByIds(ids: string[] | undefined): {
   data: IGymWithId[]
   error: string | null
   loading: boolean
@@ -107,13 +107,15 @@ function useGetGymsByIds(ids: string[] | null): {
     async function fetchData() {
       setLoading(true)
       setError(null)
-      const response = await fetchJSON(`/gyms/by-ids`, {
+      const response = await fetch(`${config.BACKEND_URL}/gyms/by-ids`, {
         method: 'GET',
         body: JSON.stringify({ ids }),
-      }).catch((error) => {
-        setError(error.message)
-        return []
       })
+        .then((response) => response.json())
+        .catch((error) => {
+          setError(error.message)
+          return []
+        })
       setData(response.gyms)
       setLoading(false)
     }
@@ -216,4 +218,11 @@ const useDeleteImage = (public_id: string | null) => {
   return { data, error, loading }
 }
 
-export { useGymSearch, useGetGym, useReadAll, useFetchImages, useDeleteImage }
+export {
+  useGymSearch,
+  useGetGym,
+  useReadAll,
+  useFetchImages,
+  useDeleteImage,
+  useGetGymsByIds,
+}
