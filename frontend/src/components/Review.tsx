@@ -29,6 +29,7 @@ import { z } from 'zod'
 import { IReviewPopulated } from '@models/review'
 import { useAuth } from '@/provider/AuthProvider'
 import { fetchJSON } from '@/services/utils'
+import { DialogDescription } from '@radix-ui/react-dialog'
 
 //TODO: show prompt when review is scussessfully created
 
@@ -106,7 +107,11 @@ function AddReviewDialog({ gym }: { gym: IGymWithIdPopulated | undefined }) {
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Write a new review for {gym?.name}</DialogTitle>
+          <DialogTitle>Add review</DialogTitle>
+          <DialogDescription>
+            {/* Added to get rid of missing description warning */}
+            Write a new review for {gym?.name}
+          </DialogDescription>
         </DialogHeader>
         <div>
           <StarRating
