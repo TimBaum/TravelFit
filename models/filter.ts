@@ -1,3 +1,5 @@
+import { Highlight } from './gym'
+
 export interface FilterState {
   price: {
     from: number | undefined

@@ -2,7 +2,7 @@ import SearchBar from '@/components/SearchBar'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { useGymSearch } from '@/services/gymService'
-import { StarIcon } from '@radix-ui/react-icons'
+import { CubeIcon, StarIcon } from '@radix-ui/react-icons'
 import { Coins, ExpandIcon, MapIcon } from 'lucide-react'
 import React, { useEffect } from 'react'
 import { useState } from 'react'
@@ -32,6 +32,8 @@ import {
   PaginationNext,
 } from '@/components/ui/pagination'
 import Map from '@/components/map'
+import { Switch } from '@/components/ui/switch'
+import { Highlight } from '@models/gym'
 
 function GymSearchResults() {
   const urlParams = new URLSearchParams(window.location.search)
@@ -96,6 +98,7 @@ function GymSearchResults() {
     { text: 'Rating', icon: <StarIcon />, state: filterState.rating },
     { text: 'Price', icon: <Coins />, state: filterState.price },
     { text: 'Radius', icon: <ExpandIcon />, state: filterState.radius },
+    { text: 'Highlights', icon: <CubeIcon />, state: filterState.highlights },
   ]
 
   const sortOptions = [
@@ -278,6 +281,15 @@ function Filter({
           />
         )
 
+      case 'Highlights':
+        return (
+          <CubeFilter
+            icon={icon}
+            filterState={filterState}
+            setFilterState={setFilterState}
+          />
+        )
+
       default:
         return <>Not implemented yet.</>
     }
@@ -410,6 +422,57 @@ function PriceFilter({ icon, filterState, setFilterState }: FilterProps) {
             }}
           />
         </div>
+      </div>
+    </div>
+  )
+}
+
+function CubeFilter({ icon, filterState, setFilterState }: FilterProps) {
+  const highlights: Highlight[] = [
+    'Sauna',
+    'Posing room',
+    'Pool',
+    'Courses',
+    'Personal trainings',
+    'Nutrition bar',
+    'Outdoor',
+    'Parking',
+  ]
+
+  function addOrRemoveHighlight(highlight: Highlight) {
+    if (filterState.highlights.includes(highlight)) {
+      setFilterState({
+        ...filterState,
+        highlights: filterState.highlights.filter((h) => h !== highlight),
+      })
+    } else {
+      setFilterState({
+        ...filterState,
+        highlights: [...filterState.highlights, highlight],
+      })
+    }
+  }
+
+  return (
+    <div className="p-4 box-shadow-md">
+      <div className="flex gap-2 items-center">
+        {icon && React.cloneElement(icon, { className: 'w-7 h-7' })}{' '}
+        <p className="text-3xl text-bold">Highlights</p>
+      </div>
+      <div className="flex flex-col gap-2 mt-4">
+        {highlights.map((highlight) => (
+          <div
+            key={highlight}
+            className="flex gap-2 items-center justify-between"
+          >
+            {' '}
+            <Label>{highlight}</Label>
+            <Switch
+              checked={filterState.highlights.includes(highlight)}
+              onCheckedChange={() => addOrRemoveHighlight(highlight)}
+            />
+          </div>
+        ))}
       </div>
     </div>
   )
