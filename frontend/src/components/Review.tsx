@@ -19,21 +19,20 @@ import { toast } from 'sonner'
 
 import { StarRating, DisplayRating } from './StarRating'
 
-import { IGymWithId } from '@models/gym'
+import { IGymWithIdPopulated } from '@models/gym'
 
 import { useState } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
-import { IReview } from '@models/review'
+import { IReviewPopulated } from '@models/review'
 import { useAuth } from '@/provider/AuthProvider'
-import { useReadUser } from '@/services/userService'
 import { fetchJSON } from '@/services/utils'
 
 //TODO: show prompt when review is scussessfully created
 
-function AddReviewDialog({ gym }: { gym: IGymWithId | undefined }) {
+function AddReviewDialog({ gym }: { gym: IGymWithIdPopulated | undefined }) {
   const [filledStars, setFilledStars] = useState([
     false,
     false,
@@ -58,12 +57,14 @@ function AddReviewDialog({ gym }: { gym: IGymWithId | undefined }) {
     resolver: zodResolver(FormSchema),
   })
 
-  async function checkIfUserHasReviewed() {
+  function checkIfUserHasReviewed() {
     const reviews = gym?.reviews
 
     if (reviews) {
+      console.log(reviews)
+      console.log(user)
       const hasUserReviewed = reviews.some(
-        (review) => review.author === user?._id,
+        (review) => review.author._id === user?._id,
       )
       return hasUserReviewed
     }
@@ -78,7 +79,7 @@ function AddReviewDialog({ gym }: { gym: IGymWithId | undefined }) {
       text: data.reviewText,
     }
 
-    const hasUserReviewed = await checkIfUserHasReviewed()
+    const hasUserReviewed = checkIfUserHasReviewed()
 
     if (hasUserReviewed) {
       toast.error('You have already reviewed this gym')
@@ -139,7 +140,7 @@ function AddReviewDialog({ gym }: { gym: IGymWithId | undefined }) {
   )
 }
 
-function ReviewTile({ review }: { review: IReview }) {
+function ReviewTile({ review }: { review: IReviewPopulated }) {
   const [showFullText, setShowFullText] = useState(false)
   const maxLength = 100
 
@@ -147,7 +148,9 @@ function ReviewTile({ review }: { review: IReview }) {
     setShowFullText(!showFullText)
   }
 
-  const author = useReadUser(review.author, 'USER').data?.displayName
+  if (!review.author) return
+
+  const author = review.author.displayName
 
   return (
     <div className="flex h-46 w-full rounded relative mb-2">
@@ -170,7 +173,11 @@ function ReviewTile({ review }: { review: IReview }) {
   )
 }
 
-function ReviewDialog({ reviews }: { reviews: IReview[] | undefined }) {
+function ReviewDialog({
+  reviews,
+}: {
+  reviews: IReviewPopulated[] | undefined
+}) {
   return (
     <Dialog>
       <DialogTrigger asChild>
