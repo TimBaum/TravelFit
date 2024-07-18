@@ -67,9 +67,9 @@ export function GymAccountForm() {
     }
   }
 
+  //this prevents the default form submission and instead uses
+  //react-hook-form's handleSubmit method to process the form data
   const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    //without this, a GET instead of a POST request is sent
-    //in the http-request of the onSubmit-function
     event.preventDefault()
     form.handleSubmit((values) => onSubmit(values))()
   }
@@ -80,8 +80,9 @@ export function GymAccountForm() {
       <form onSubmit={handleFormSubmit}>
         <div className="mb-2">
           <FormField
-            /* form.control is an object from React Hook Form that contains methods for
-            registering an input in the form so it can be validated and its value can be tracked */
+            /* the form's control property registers input fields to the form so that react-hook-form can manage 
+            their states and re-render the components as needed based on user input and validation changes
+            */
             control={form.control}
             name="salutation"
             /* render the DropdownMenu with the props 'field', an object containing properties and methods 
@@ -104,8 +105,8 @@ export function GymAccountForm() {
                       {['Mr.', 'Ms.', 'Diverse'].map((option) => (
                         <DropdownMenuItem
                           key={option}
-                          // selecting a value means that field.onChange() is called
-                          //which updates the form's state to reflect the selected value
+                          /* selecting a value means that field.onChange() is called
+                          which updates the form's state to reflect the selected value*/
                           onSelect={() => field.onChange(option)}
                         >
                           {option}
