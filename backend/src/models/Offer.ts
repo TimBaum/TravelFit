@@ -6,12 +6,7 @@ const offerSchema = new mongoose.Schema({
   title: String,
   type: String,
   isSpecial: Boolean,
-  // {
-  //   type: String,
-  //   enum: ['Subscription', 'OneTime', 'FreeTrial', 'Special'],
-  // },
   description: String,
-  // validityDays: Number,
   priceEuro: Number,
   startDate: Date,
   endDate: Date,

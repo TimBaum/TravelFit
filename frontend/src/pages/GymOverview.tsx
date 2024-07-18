@@ -100,7 +100,6 @@ function GymOverview() {
           <MarkFavourite gym={data} />
         </div>
       </div>
-      {/* Basic structure for the rest of the page */}
       <div>
         {/* Basic structure for the rest of the page */}
         <PhotoGallery photos={images || []} />

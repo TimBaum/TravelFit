@@ -25,11 +25,18 @@ const createGym = async (req: Request, res: Response, next: NextFunction) => {
       : null,
   }
   console.log('CompleteAddress2:', fullAddress)
+
+  const cheapestOfferPrice =
+    gymData.offers.length > 0
+      ? Math.min(...gymData.offers.map((offer: any) => offer.priceEuro))
+      : 0
   const gym = new Gym({
     _id: gymId,
     ...gymData,
     address: fullAddress,
+    cheapestOfferPrice,
   })
+
   return gym
     .save()
     .then(async () => {
