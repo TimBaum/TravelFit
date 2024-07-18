@@ -168,7 +168,6 @@ export const deleteFavourite = async (req: Request, res: Response) => {
   }
 }
 
-//TODO: delete if not used?
 export const deleteUser = async (req: Request, res: Response) => {
   try {
     const user = await User.findByIdAndDelete(req.ctx!._id)

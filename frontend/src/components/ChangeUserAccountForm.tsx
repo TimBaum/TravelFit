@@ -18,7 +18,6 @@ import {
   DropdownMenuTrigger,
   DropdownMenuItem,
 } from '@/components/ui/dropdown-menu'
-import { LucidePencil } from 'lucide-react'
 import { useAuth } from '@/provider/AuthProvider'
 import { useReadUser } from '@/services/userService'
 import { useEffect } from 'react'
