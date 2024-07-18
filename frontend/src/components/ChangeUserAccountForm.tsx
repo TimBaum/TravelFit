@@ -18,12 +18,12 @@ import {
   DropdownMenuTrigger,
   DropdownMenuItem,
 } from '@/components/ui/dropdown-menu'
-import { LucidePencil } from 'lucide-react'
 import { useAuth } from '@/provider/AuthProvider'
 import { useReadUser } from '@/services/userService'
 import { useEffect } from 'react'
 import { fetchJSON } from '@/services/utils'
 import { changeUserAccountFormSchema } from '@/schemas/changeUserAccountFormSchema'
+import { toast } from 'sonner'
 
 export function ChangeUserAccountForm() {
   const { user, getAccountType } = useAuth()
@@ -63,15 +63,15 @@ export function ChangeUserAccountForm() {
         method: 'PATCH',
         body: JSON.stringify(values),
       })
+      toast('Changes saved')
     } catch (error) {
       console.error('Error changing user:', error)
     }
   }
 
-  //TODO: remove if not used
-  async function onClickChangePassword() {
+  /* async function onClickChangePassword() {
     return <h1>TODO: implement password change</h1>
-  }
+  }*/
 
   //without this, a GET instead of a POST request is sent
   //this prevents the default form submission and instead uses
@@ -85,12 +85,12 @@ export function ChangeUserAccountForm() {
     <Form {...form}>
       <form onSubmit={handleFormSubmit}>
         <div>
-          <div className="flex justify-center items-center m-6">
+          {/* <div className="flex justify-center items-center m-6">
             <div className="flex flex-col justify-center items-center p-6 border rounded-lg w-32 h-32">
               <LucidePencil size={20} />
               <span>Photo</span>
             </div>
-          </div>
+          </div>*/}
           <FormField
             control={form.control}
             name="salutation"
@@ -159,14 +159,13 @@ export function ChangeUserAccountForm() {
           <Button type="submit" variant="outline">
             Save changes
           </Button>
-          {/* TODO: remove if not used */}
-          <Button
+          {/*<Button
             type="button"
             variant="outline"
             onClick={() => onClickChangePassword()}
           >
             TODO: Change password
-          </Button>
+          </Button>*/}
         </div>
       </form>
     </Form>

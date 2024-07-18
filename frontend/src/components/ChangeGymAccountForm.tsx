@@ -23,11 +23,10 @@ import { useReadGymAccount } from '@/services/gymAccountService'
 import { useEffect } from 'react'
 import { fetchJSON } from '@/services/utils'
 import { changeGymAccountFormSchema } from '@/schemas/changeGymAccountFormSchema'
-import { useNavigate } from 'react-router-dom'
 import { AddressFields } from './AddressFields'
+import { toast } from 'sonner'
 
 export function ChangeGymAccountForm() {
-  const navigate = useNavigate()
   const { user, getAccountType } = useAuth()
   const { data: gymAccountDataFromBackend } = useReadGymAccount(
     user?._id ?? '',
@@ -81,15 +80,15 @@ export function ChangeGymAccountForm() {
         method: 'PATCH',
         body: JSON.stringify(values),
       })
-      navigate('/my-gyms')
+      toast('Changes saved')
     } catch (error) {
       console.error('Error changing gym account:', error)
     }
   }
 
-  async function onClickChangePassword() {
+  /*async function onClickChangePassword() {
     return <h1>TODO: implement password change</h1>
-  }
+  }*/
 
   //without this, a GET instead of a POST request is sent
   //this prevents the default form submission and instead uses
@@ -168,68 +167,7 @@ export function ChangeGymAccountForm() {
                   </FormItem>
                 )}
               />
-              {/* <AddressFields /> TODO: Use the new AddressFields component */}
               <AddressFields />
-              {/* <>
-                <div className="w-1/2">
-                  <FormField
-                    control={form.control}
-                    name="address.street"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Street</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Street" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                <div className="grid grid-cols-2 w-1/2 gap-2">
-                  <FormField
-                    control={form.control}
-                    name="address.postalCode"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Postal Code</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Postal Code" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="address.city"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>City</FormLabel>
-                        <FormControl>
-                          <Input placeholder="City" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                <div className="w-1/2">
-                  <FormField
-                    control={form.control}
-                    name="address.country"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Country</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Country" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              </> */}
               <FormField
                 control={form.control}
                 name="email"
@@ -265,13 +203,13 @@ export function ChangeGymAccountForm() {
               <Button type="submit" variant="outline">
                 Save changes
               </Button>
-              <Button
+              {/*<Button
                 type="button"
                 variant="outline"
                 onClick={() => onClickChangePassword()}
               >
                 TODO: Change password
-              </Button>
+              </Button>*/}
             </div>
           </div>
         </form>
