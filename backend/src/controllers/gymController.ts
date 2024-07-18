@@ -338,7 +338,9 @@ cloudinary.v2.config({
 })
 
 const deleteImage = async (req: Request, res: Response) => {
-  //TODO: need to check if gym is allowed to be deleted from and if picture belongs to gym, etc...
+  const { ctx } = req
+
+  if (!ctx) return res.status(401).json({ error: 'Unauthorized' })
 
   try {
     // Extract the public_id from the request parameters

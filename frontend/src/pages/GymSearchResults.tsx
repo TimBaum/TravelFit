@@ -4,7 +4,7 @@ import { Separator } from '@/components/ui/separator'
 import { useGymSearch } from '@/services/gymService'
 import { StarIcon } from '@radix-ui/react-icons'
 import { Coins, ExpandIcon, MapIcon } from 'lucide-react'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useState } from 'react'
 import { FilterState } from '@models/filter'
 import {
@@ -40,9 +40,33 @@ function GymSearchResults() {
 
   const [showMapView, setShowMapView] = useState(false)
 
+  const [position, setPosition] = useState<
+    { lat: number; lon: number } | undefined
+  >(undefined)
+
   // default search by distance descending
   const [sortBy, setSortBy] = useState('+distance')
   const [page, setPage] = useState(1)
+
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setPosition({
+            lat: position.coords.latitude,
+            lon: position.coords.longitude,
+          })
+        },
+        (error) => {
+          console.log(error.message)
+        },
+      )
+    } else {
+      console.log('Geolocation is not supported by this browser.')
+    }
+  }, [])
+
+  console.log(position)
 
   const defaultFilters: FilterState = {
     price: {
@@ -169,6 +193,7 @@ function GymSearchResults() {
           }))}
           enablePopups={true}
           center={coordinates}
+          userPosition={position}
         />
       )}
       {loading && <div>Loading...</div>}

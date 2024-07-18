@@ -14,8 +14,21 @@ function Dropzone({ onFilesSelected }: DropzoneProps) {
     [onFilesSelected],
   )
 
+  const pickerOpts = {
+    types: [
+      {
+        description: 'Images',
+        accept: {
+          'image/*': ['.png', '.jpeg', '.jpg'],
+        },
+      },
+    ],
+    excludeAcceptAllOption: true,
+    multiple: true,
+  }
+
   const { acceptedFiles, getRootProps, getInputProps, isDragActive } =
-    useDropzone({ onDrop })
+    useDropzone({ onDrop, ...pickerOpts })
 
   const files = acceptedFiles.map((file) => (
     <li key={file.name}>

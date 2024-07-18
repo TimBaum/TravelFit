@@ -159,7 +159,7 @@ function useReadAll(): {
 }
 
 // Fetch all images from cloudinary for a gym (id)
-function useFetchImages(prefix: string | null) {
+function useFetchImages(prefix: string | undefined) {
   const [data, setData] = useState<CloudinaryImage[]>()
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(false)
@@ -168,7 +168,7 @@ function useFetchImages(prefix: string | null) {
     async function fetchData() {
       setLoading(true)
       setError(null)
-      console.log('Prefix:', prefix)
+      if (!prefix) return
 
       const response = await fetchJSON(`/gyms/fetch-images/${prefix}`, {
         method: 'GET',
