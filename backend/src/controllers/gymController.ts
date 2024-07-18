@@ -85,6 +85,15 @@ const addReview = async (req: Request, res: Response) => {
     }
 
     gym.reviews.push(req.body.review)
+
+    const totalReviews = gym.reviews.length
+    const totalRating = gym.reviews.reduce(
+      (sum, review) => sum + review.rating.valueOf(),
+      0,
+    )
+
+    gym.averageRating = totalRating / totalReviews
+
     await gym.save()
     return res.status(201).json({ gym })
   } catch (err) {
