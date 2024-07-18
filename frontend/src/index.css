@@ -28,7 +28,6 @@ a:hover {
 
 body {
   margin: 0;
-  /*display: flex; // Sorgt dafür, dass alles in die linke Ecke geschoben wird */
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
@@ -78,16 +77,14 @@ button:focus-visible {
 
 .navigationmenu {
   align-items: center;
-  padding: 10px 20px;
+  padding: 10px 0px;
   color: white;
-  margin-bottom: 20px;
 }
 
 .breadcrumps {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 20px;
+  padding: 0;
   color: white;
-  margin-bottom: 20px;
 }

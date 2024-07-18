@@ -1,19 +1,19 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { useForm } from 'react-hook-form'
-import { Button } from '@/components/ui/button'
+import { useForm, FormProvider } from 'react-hook-form' // Import FormProvider to pass down the form contextimport { Button } from '@/components/ui/button'
 
 import {
   Form,
-  FormControl,
   FormField,
+  FormControl,
   FormItem,
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
-
 import { Input } from '@/components/ui/input'
-import { AddressFields } from './AddressFields'
+import { AddressFields } from '../components/AddressFields'
+import { Button } from '@/components/ui/button'
+import { gymFormSchema } from '@/schemas/gymFormSchema'
 
 const formSchema = z.object({
   name: z
@@ -36,15 +36,11 @@ const formSchema = z.object({
       .string()
       .min(2, { message: 'Invalid country' })
       .max(50, { message: 'Invalid country' }),
-    // location: z.object({
-    //   type: z.string(),
-    //   coordinates: z.tuple([z.number(), z.number()]), // Validierung als Tupel
-    // }),
   }),
 })
 
 export function AddGym() {
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<z.infer<typeof gymFormSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: '',
@@ -66,7 +62,8 @@ export function AddGym() {
   }
 
   return (
-    <>
+    <FormProvider {...form}>
+      {/* Provide the form context to child components */}
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <FormLabel className="text-2xl font-bold">Name</FormLabel>
@@ -84,65 +81,13 @@ export function AddGym() {
             )}
           />
           <FormLabel className="text-2xl font-bold">Address</FormLabel>
-          <FormField
-            control={form.control}
-            name="address.street"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>street</FormLabel>
-                <FormControl>
-                  <Input placeholder="Street" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="address.postalCode"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Postal Code</FormLabel>
-                <FormControl>
-                  <Input placeholder="Postal Code" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="address.city"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>City</FormLabel>
-                <FormControl>
-                  <Input placeholder="City" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="address.country"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Country</FormLabel>
-                <FormControl>
-                  <Input placeholder="Country" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
           <AddressFields /> {/* Use the new AddressFields component */}
           <Button className="mt-4" type="submit">
             Submit
           </Button>
         </form>
       </Form>
-    </>
+    </FormProvider>
   )
 }
 

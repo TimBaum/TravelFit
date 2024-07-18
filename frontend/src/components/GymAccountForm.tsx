@@ -22,6 +22,7 @@ import { useAuth } from '@/provider/AuthProvider'
 import { useState } from 'react'
 import { fetchJSON } from '@/services/utils'
 import { gymAccountFormSchema } from '@/schemas/gymAccountFormSchema'
+import { AddressFields } from './AddressFields'
 
 export function GymAccountForm() {
   const navigate = useNavigate()
@@ -35,13 +36,19 @@ export function GymAccountForm() {
       lastName: '',
       email: '',
       phone: '',
-      //address: '',
+      address: {
+        street: '',
+        postalCode: '',
+        city: '',
+        country: 'Germany',
+      },
       password: '',
       confirmPassword: '',
     },
   })
 
   async function onSubmit(values: z.infer<typeof gymAccountFormSchema>) {
+    console.log('Der neue account:', values) // Debugging
     try {
       setIsLoading(true)
       await fetchJSON('/gymAccounts/create', {
@@ -51,7 +58,6 @@ export function GymAccountForm() {
         },
         body: JSON.stringify(values),
       })
-
       login(values.email, values.password)
       navigate('/my-gyms')
     } catch (error) {
@@ -147,22 +153,8 @@ export function GymAccountForm() {
             )}
           />
         </div>
-
-        {/*} <FormField
-          control={form.control}
-          name="address"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Address</FormLabel>
-              <FormControl>
-                <Input placeholder="address" {...field} />
-              </FormControl>
-              <FormMessage>
-                {form.formState.errors.address?.message}
-              </FormMessage>
-            </FormItem>
-          )}
-        />*/}
+        {/* <AddressFields /> TODO: Use the new AddressFields component */}
+        <AddressFields />
         <div className="flex space-x-4">
           <FormField
             control={form.control}

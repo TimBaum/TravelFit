@@ -28,6 +28,7 @@
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
     "@types/mongoose": "^5.11.97",
+    "axios": "^1.7.2",
     "bcryptjs": "^2.4.3",
     "chalk": "^5.3.0",
     "cloudinary": "^2.2.0",

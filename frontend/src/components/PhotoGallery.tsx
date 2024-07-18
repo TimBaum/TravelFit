@@ -79,7 +79,7 @@ const PhotoGallery = ({ photos }: PhotoGalleryProps) => {
   const initialPhotos = photos.slice(0, 5)
 
   return (
-    <div className="grid-container">
+    <div className="grid-container mb-4">
       {initialPhotos.map((photo, index) => (
         <div key={index} className={`item${index + 1}`}>
           <PhotoTile

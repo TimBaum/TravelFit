@@ -50,7 +50,7 @@ async function createUserContext(
       ctx = { ...gymAccount.toObject(), accountType: 'GYM_USER' }
     }
     req.ctx = ctx
-    console.log(ctx)
+    //console.log(ctx)
   } catch (error) {
     // pass, since we also have non protected routes
   } finally {

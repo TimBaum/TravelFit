@@ -13,7 +13,7 @@ import { GymTile } from './GymTile'
 function Favourites() {
   const { user, getAccountType } = useAuth()
   //TODO: replace useReadAll with something like useReadFavourites to avoid loading all gyms
-  const { data, error, loading } = useReadAll()
+  const { data, loading } = useReadAll()
 
   const userFavourites = useReadUser(user?._id ?? '', getAccountType()).data
     ?.favourites

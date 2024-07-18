@@ -13,8 +13,9 @@ const router = express.Router()
 
 router.post('/create', createUser)
 //TODO: refactor
-router.get('/get/:id', readUser)
+router.get('/get', auth.isAuthorizedUser, readUser)
 router.patch('/update', auth.isAuthorizedUser, updateUser)
+//TODO: Implement router.get('/favourites/:userId', auth.isAuthorizedUser, getFavouriteGyms);
 router.patch('/favourites/add', auth.isAuthorizedUser, addFavourite)
 router.patch(
   '/favourites/delete/:favourite',

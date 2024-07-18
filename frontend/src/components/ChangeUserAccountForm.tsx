@@ -86,9 +86,9 @@ export function ChangeUserAccountForm() {
       <form onSubmit={handleFormSubmit}>
         <div>
           <div className="flex justify-center items-center m-6">
-            <div className="flex flex-col justify-center items-center p-6 border-2 border-gray-300 rounded-lg w-32 h-32">
+            <div className="flex flex-col justify-center items-center p-6 border rounded-lg w-32 h-32">
               <LucidePencil size={20} />
-              <span>Foto</span>
+              <span>Photo</span>
             </div>
           </div>
           <FormField
@@ -165,7 +165,7 @@ export function ChangeUserAccountForm() {
             variant="outline"
             onClick={() => onClickChangePassword()}
           >
-            Change password
+            TODO: Change password
           </Button>
         </div>
       </form>

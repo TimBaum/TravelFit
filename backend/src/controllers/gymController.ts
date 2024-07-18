@@ -6,19 +6,30 @@ import cache from '../cache'
 import cloudinary from 'cloudinary'
 import GymAccount from '../models/GymAccount'
 import { IGymAccountWithId } from '@models/gymAccount'
+import axios from 'axios'
 
-const createGym = (req: Request, res: Response, next: NextFunction) => {
+const createGym = async (req: Request, res: Response, next: NextFunction) => {
   const { ctx } = req
   console.log('ctx: ', ctx)
   if (!ctx) return res.status(401).json({ error: 'Unauthorized' })
   const gymData = req.body
   const gymId = new mongoose.Types.ObjectId()
-
+  const coordinates = await getCoordinates(gymData.address)
+  const fullAddress = {
+    ...gymData.address,
+    location: coordinates
+      ? {
+          type: 'Point',
+          coordinates: coordinates,
+        }
+      : null,
+  }
+  console.log('CompleteAddress2:', fullAddress)
   const gym = new Gym({
     _id: gymId,
     ...gymData,
+    address: fullAddress,
   })
-
   return gym
     .save()
     .then(async () => {
@@ -29,7 +40,7 @@ const createGym = (req: Request, res: Response, next: NextFunction) => {
       res.status(201).json({ gym })
     })
     .catch((error) => {
-      console.error('Error saving gym:', error) // Detaillierte Fehlermeldung
+      console.error('Error saving gym:', error)
       res.status(500).json({ error: error.message })
     })
 }
@@ -50,7 +61,13 @@ const getGym = (req: Request, res: Response, next: NextFunction) => {
   const { id } = req.params
 
   return Gym.findById(id)
-    .then((gym) => res.status(200).json(gym))
+    .populate({
+      path: 'reviews.author',
+      select: 'displayName',
+    })
+    .then((gym) => {
+      res.status(200).json(gym)
+    })
     .catch((error) => res.status(500).json({ error }))
 }
 
@@ -75,36 +92,41 @@ const addReview = async (req: Request, res: Response) => {
   }
 }
 
-async function getCoordinates(
-  address: string,
+export async function getCoordinates(
+  address:
+    | {
+        street: string
+        postalCode: string
+        city: string
+        country: string
+      }
+    | string,
 ): Promise<[number, number] | void> {
+  let fullAddress: string
+  if (typeof address === 'string') {
+    fullAddress = address.toLowerCase()
+  } else {
+    fullAddress =
+      `${address.street}, ${address.postalCode} ${address.city}, ${address.country}`.toLowerCase()
+  }
   // Check if the coordinates are already cached to improve response time
-  const cachedCoordinates: [number, number] | undefined = cache.get(
-    address.toLowerCase(),
-  )
-
+  const cachedCoordinates: [number, number] | undefined = cache.get(fullAddress)
   if (cachedCoordinates !== undefined) return cachedCoordinates
 
-  return fetch(
-    `https://nominatim.openstreetmap.org/search?q=${address}&format=json`,
-  )
-    .then((response) => response.json())
-    .then((response: OpenStreetMapResponse[]) => {
-      if (!response || response.length === 0) {
-        return undefined
-      }
-      // We take the first result, they are ranked by importance
-      const result = response[0]
-      const coordinates = [parseFloat(result.lon), parseFloat(result.lat)] as [
-        number,
-        number,
-      ]
-      cache.set(address.toLowerCase(), coordinates)
-      return coordinates
-    })
-    .catch((error) => {
-      console.error('Error fetching coordinates:', error)
-    })
+  try {
+    const response = await axios.get(
+      `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(fullAddress)}`,
+    )
+    if (!response.data || response.data.length === 0) {
+      return
+    }
+    const { lat, lon } = response.data[0]
+    const coordinates = [parseFloat(lon), parseFloat(lat)] as [number, number]
+    cache.set(fullAddress, coordinates)
+    return coordinates
+  } catch (error) {
+    console.error('Error fetching coordinates:', error)
+  }
 }
 
 interface SearchRequestBody {
