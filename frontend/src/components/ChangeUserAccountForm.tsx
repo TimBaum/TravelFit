@@ -24,6 +24,7 @@ import { useReadUser } from '@/services/userService'
 import { useEffect } from 'react'
 import { fetchJSON } from '@/services/utils'
 import { changeUserAccountFormSchema } from '@/schemas/changeUserAccountFormSchema'
+import { toast } from 'sonner'
 
 export function ChangeUserAccountForm() {
   const { user, getAccountType } = useAuth()
@@ -63,6 +64,7 @@ export function ChangeUserAccountForm() {
         method: 'PATCH',
         body: JSON.stringify(values),
       })
+      toast('Changes saved')
     } catch (error) {
       console.error('Error changing user:', error)
     }
