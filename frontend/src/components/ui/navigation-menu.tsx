@@ -162,7 +162,7 @@ function NavigationMenuManager({ className }: { className: string }) {
         <NavigationMenuList>
           <NavigationMenuLink
             onClick={() => navigate('/')}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 cursor-pointer"
           >
             <img src="/src/assets/TravelFitIcon.svg" className="w-8 h-8 " />
             <div className="text-xl font-bold">TravelFit</div>
