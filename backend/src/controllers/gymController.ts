@@ -240,26 +240,38 @@ function gymBelongsToGymAccount(
   return gymIdsAsString.includes(gymId)
 }
 
-const deleteGym = (req: Request, res: Response, next: NextFunction) => {
+const deleteGym = async (req: Request, res: Response, next: NextFunction) => {
   const { id } = req.params
+  const { ctx } = req
 
-  if (!gymBelongsToGymAccount(req.ctx as IGymAccountWithId, id)) {
-    return res
-      .status(400)
-      .json({ message: "You don't have the right to delete this gym" })
+  if (!ctx) return res.status(401).json({ error: 'Unauthorized' })
+
+  try {
+    const gymAccountId = ctx._id
+    const gymAccount = await GymAccount.findById(gymAccountId)
+
+    if (!gymAccount) {
+      return res.status(404).json({ message: 'Gym account not found' })
+    }
+
+    if (!gymBelongsToGymAccount(req.ctx as IGymAccountWithId, id)) {
+      return res
+        .status(400)
+        .json({ message: "You don't have the right to delete this gym" })
+    }
+
+    const gym = await Gym.findByIdAndDelete(id)
+    if (!gym) {
+      return res.status(404).json({ message: 'Gym not found' })
+    }
+    gymAccount.gyms.pull(id) //mongoose method to remove entry from DocumentArray (ObjectIds)
+    await gymAccount.save()
+
+    return res.status(201).json({ message: 'Gym deleted' })
+  } catch (error) {
+    console.error('Error deleting gym:', error)
+    return res.status(500).json({ error })
   }
-
-  return Gym.findByIdAndDelete(id)
-    .then((gym) => {
-      if (gym) {
-        return res.status(201).json({ message: 'Gym deleted' })
-      } else {
-        return res.status(404).json({ message: 'Gym not found' })
-      }
-    })
-    .catch((error) => {
-      return res.status(500).json({ error })
-    })
 }
 
 const updateGym = (req: Request, res: Response, next: NextFunction) => {

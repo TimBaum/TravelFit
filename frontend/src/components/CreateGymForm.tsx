@@ -380,123 +380,130 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
           <AddressFields />
 
           {/* Opening Times */}
-
-          <FormLabel className="text-2xl font-bold">Opening Times</FormLabel>
-          <div className="grid grid-cols-7">
-            {weekdays.map((day, index) => (
-              <div key={day} className="day-row">
-                <FormField
-                  control={form.control}
-                  name={`openingTimes.${index}.weekday`}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{day}: open</FormLabel>
-                      <FormControl>
-                        <Switch
-                          checked={isOpen[index]}
-                          onCheckedChange={(checked) => {
-                            const newIsOpen = [...isOpen]
-                            newIsOpen[index] = checked
-                            setIsOpen(newIsOpen)
-                            field.onChange(checked ? index : null)
-                            if (!checked) {
-                              form.setValue(
-                                `openingTimes.${index}.weekday`,
-                                null,
-                              ), // Setze weekday auf null
+          <div className="mt-4 border-2 border-gray-300 rounded-lg p-4">
+            <div className="mb-3">
+              <FormLabel className="text-2xl font-bold">
+                Opening Times
+              </FormLabel>
+            </div>
+            <div className="grid grid-cols-7">
+              {weekdays.map((day, index) => (
+                <div key={day} className="day-row w-5/6">
+                  <FormField
+                    control={form.control}
+                    name={`openingTimes.${index}.weekday`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>{day}: open</FormLabel>
+                        <FormControl>
+                          <Switch
+                            className="flex"
+                            checked={isOpen[index]}
+                            onCheckedChange={(checked) => {
+                              const newIsOpen = [...isOpen]
+                              newIsOpen[index] = checked
+                              setIsOpen(newIsOpen)
+                              field.onChange(checked ? index : null)
+                              if (!checked) {
                                 form.setValue(
-                                  `openingTimes.${index}.openingTime`,
-                                  '',
-                                ),
-                                form.setValue(
-                                  `openingTimes.${index}.closingTime`,
-                                  '',
-                                )
-                            }
-                          }}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
+                                  `openingTimes.${index}.weekday`,
+                                  null,
+                                ), // Setze weekday auf null
+                                  form.setValue(
+                                    `openingTimes.${index}.openingTime`,
+                                    '',
+                                  ),
+                                  form.setValue(
+                                    `openingTimes.${index}.closingTime`,
+                                    '',
+                                  )
+                              }
+                            }}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  {watch(`openingTimes.${index}.weekday`) !== null && (
+                    <>
+                      <FormField
+                        control={form.control}
+                        name={`openingTimes.${weekdays.indexOf(day)}.openingTime`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Opening Time</FormLabel>
+                            <FormControl>
+                              <Select
+                                value={field.value || '00:00'}
+                                onValueChange={(value) => field.onChange(value)}
+                              >
+                                <SelectTrigger className="rounded-lg">
+                                  <SelectValue placeholder="Select time" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {[...Array(24)].map((_, hour) =>
+                                    [...Array(2)].map((_, half) => {
+                                      const time = `${hour.toString().padStart(2, '0')}:${half === 0 ? '00' : '30'}`
+                                      return (
+                                        <SelectItem key={time} value={time}>
+                                          {time}
+                                        </SelectItem>
+                                      )
+                                    }),
+                                  )}
+                                </SelectContent>
+                              </Select>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name={`openingTimes.${index}.closingTime`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Closing Time</FormLabel>
+                            <FormControl>
+                              <Select
+                                value={field.value || '24:00'}
+                                onValueChange={(value) => field.onChange(value)}
+                              >
+                                <SelectTrigger className="rounded-lg">
+                                  <SelectValue placeholder="Select time" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {[...Array(24)].map((_, hour) =>
+                                    [...Array(2)].map((_, half) => {
+                                      const time = `${hour.toString().padStart(2, '0')}:${half === 0 ? '00' : '30'}`
+                                      return (
+                                        <SelectItem key={time} value={time}>
+                                          {time}
+                                        </SelectItem>
+                                      )
+                                    }),
+                                  )}
+                                  <SelectItem key="24:00" value="24:00">
+                                    24:00
+                                  </SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </>
                   )}
-                />
-                {watch(`openingTimes.${index}.weekday`) !== null && (
-                  <>
-                    <FormField
-                      control={form.control}
-                      name={`openingTimes.${weekdays.indexOf(day)}.openingTime`}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Opening Time</FormLabel>
-                          <FormControl>
-                            <Select
-                              value={field.value || '00:00'}
-                              onValueChange={(value) => field.onChange(value)}
-                            >
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select time" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {[...Array(24)].map((_, hour) =>
-                                  [...Array(2)].map((_, half) => {
-                                    const time = `${hour.toString().padStart(2, '0')}:${half === 0 ? '00' : '30'}`
-                                    return (
-                                      <SelectItem key={time} value={time}>
-                                        {time}
-                                      </SelectItem>
-                                    )
-                                  }),
-                                )}
-                              </SelectContent>
-                            </Select>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name={`openingTimes.${index}.closingTime`}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Closing Time</FormLabel>
-                          <FormControl>
-                            <Select
-                              value={field.value || '24:00'}
-                              onValueChange={(value) => field.onChange(value)}
-                            >
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select time" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {[...Array(24)].map((_, hour) =>
-                                  [...Array(2)].map((_, half) => {
-                                    const time = `${hour.toString().padStart(2, '0')}:${half === 0 ? '00' : '30'}`
-                                    return (
-                                      <SelectItem key={time} value={time}>
-                                        {time}
-                                      </SelectItem>
-                                    )
-                                  }),
-                                )}
-                                <SelectItem key="24:00" value="24:00">
-                                  24:00
-                                </SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </>
-                )}
-              </div>
-            ))}
+                </div>
+              ))}
+            </div>
           </div>
-
           {/* Highlights: */}
-          <FormLabel className="text-2xl font-bold">Highlights</FormLabel>
+          <div className="mt-4 mb-1">
+            <FormLabel className="text-2xl font-bold">Highlights</FormLabel>
+          </div>
           <FormDescription>
             Select the highlights your gym offers.
           </FormDescription>

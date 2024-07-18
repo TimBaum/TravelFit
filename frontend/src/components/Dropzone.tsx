@@ -40,7 +40,7 @@ function Dropzone({ onFilesSelected }: DropzoneProps) {
         )}
       </div>
       <aside>
-        <h4 className="mt-4">Files for upload: </h4>
+        <h4 className="mt-4 font-bold">Files for upload: </h4>
         <ul>{files}</ul>
       </aside>
     </div>

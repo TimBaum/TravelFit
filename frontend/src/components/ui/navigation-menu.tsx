@@ -2,8 +2,8 @@ import * as React from 'react'
 import * as NavigationMenuPrimitive from '@radix-ui/react-navigation-menu'
 import { cva } from 'class-variance-authority'
 import { ChevronDown } from 'lucide-react'
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
-import { AvatarIcon, PersonIcon } from '@radix-ui/react-icons'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar' //could potentially be used for the user's image
+import { PersonIcon } from '@radix-ui/react-icons'
 import '@/index.css'
 import { cn } from '@/lib/utils'
 import { Button } from './button'
@@ -162,7 +162,7 @@ function NavigationMenuManager({ className }: { className: string }) {
         <NavigationMenuList>
           <NavigationMenuLink
             onClick={() => navigate('/')}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 cursor-pointer"
           >
             <img src="/src/assets/TravelFitIcon.svg" className="w-8 h-8 " />
             <div className="text-xl font-bold">TravelFit</div>
