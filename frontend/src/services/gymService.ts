@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { IGymWithId } from '@models/gym'
+import { IGym, IGymWithId } from '@models/gym'
 import { fetchJSON } from './utils'
 import { FilterState } from '@models/filter'
 import { config } from '@/config'
@@ -90,6 +90,36 @@ function useGetGym(id: string | null): GymOverview {
 
     fetchData()
   }, [id])
+
+  return { data, error, loading }
+}
+
+function useGetGymsByIds(ids: string[] | null): {
+  data: IGymWithId[]
+  error: string | null
+  loading: boolean
+} {
+  const [data, setData] = useState<IGymWithId[]>([])
+  const [error, setError] = useState(null)
+  const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    async function fetchData() {
+      setLoading(true)
+      setError(null)
+      const response = await fetchJSON(`/gyms/by-ids`, {
+        method: 'GET',
+        body: JSON.stringify({ ids }),
+      }).catch((error) => {
+        setError(error.message)
+        return []
+      })
+      setData(response.gyms)
+      setLoading(false)
+    }
+
+    fetchData()
+  }, [ids])
 
   return { data, error, loading }
 }
