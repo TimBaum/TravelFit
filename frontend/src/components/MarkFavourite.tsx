@@ -14,10 +14,14 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
-import { IGymWithId } from '@models/gym' // Import the type definition
+import { IGymWithId, IGymWithIdPopulated } from '@models/gym' // Import the type definition
 import { toast } from 'sonner'
 
-function MarkFavourite({ gym }: { gym: IGymWithId | undefined }) {
+function MarkFavourite({
+  gym,
+}: {
+  gym: IGymWithId | IGymWithIdPopulated | undefined
+}) {
   const navigate = useNavigate()
   const gymId = gym?._id || ''
 

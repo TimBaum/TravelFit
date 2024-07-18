@@ -23,7 +23,6 @@ export const createUser = async (req: Request, res: Response) => {
   }).exec()
 
   console.log(gymAccountWithSameEmail)
-
   if (gymAccountWithSameEmail)
     return res
       .status(400)
@@ -81,6 +80,16 @@ export const updateUser = async (req: Request, res: Response) => {
     if (!user) {
       return res.status(404).json({ message: 'User not found' })
     }
+    const gymAccountWithSameEmail = await GymAccount.findOne({
+      email: user?.email,
+    }).exec()
+
+    console.log(gymAccountWithSameEmail)
+    if (gymAccountWithSameEmail)
+      return res
+        .status(400)
+        .json({ message: 'Email already exists. Try another email address' })
+
     user.set(req.body)
     await user.save()
     console.log('This is the updated user: ', user)
@@ -93,6 +102,9 @@ export const updateUser = async (req: Request, res: Response) => {
     }
     return res.status(200).json({ updatedPublicUser })
   } catch (err) {
+    if (isMongoError(err) && err.code === 11000) {
+      return res.status(400).json({ message: 'Email already exists' })
+    }
     return res.status(500).json({ error })
   }
 }
@@ -143,7 +155,6 @@ export const deleteFavourite = async (req: Request, res: Response) => {
   }
 }
 
-//TODO: delete if not used?
 export const deleteUser = async (req: Request, res: Response) => {
   try {
     const user = await User.findByIdAndDelete(req.ctx!._id)

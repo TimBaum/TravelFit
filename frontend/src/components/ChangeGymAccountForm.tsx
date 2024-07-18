@@ -23,6 +23,8 @@ import { useReadGymAccount } from '@/services/gymAccountService'
 import { useEffect } from 'react'
 import { fetchJSON } from '@/services/utils'
 import { changeGymAccountFormSchema } from '@/schemas/changeGymAccountFormSchema'
+import { AddressFields } from './AddressFields'
+import { toast } from 'sonner'
 
 export function ChangeGymAccountForm() {
   const { user, getAccountType } = useAuth()
@@ -39,7 +41,12 @@ export function ChangeGymAccountForm() {
         'Diverse',
       firstName: gymAccountDataFromBackend?.firstName ?? '',
       lastName: gymAccountDataFromBackend?.lastName ?? '',
-      //address: gymAccountDataFromBackend?.address ?? '',
+      address: {
+        street: gymAccountDataFromBackend?.address.street ?? '',
+        postalCode: gymAccountDataFromBackend?.address.postalCode ?? '',
+        city: gymAccountDataFromBackend?.address.city ?? '',
+        country: gymAccountDataFromBackend?.address.country ?? '',
+      },
       email: gymAccountDataFromBackend?.email ?? '',
       phone: gymAccountDataFromBackend?.phone ?? '',
     },
@@ -54,7 +61,12 @@ export function ChangeGymAccountForm() {
         'Diverse',
       firstName: gymAccountDataFromBackend?.firstName ?? '',
       lastName: gymAccountDataFromBackend?.lastName ?? '',
-      //address: gymAccountDataFromBackend?.address ?? '',
+      address: {
+        street: gymAccountDataFromBackend?.address.street ?? '',
+        postalCode: gymAccountDataFromBackend?.address.postalCode ?? '',
+        city: gymAccountDataFromBackend?.address.city ?? '',
+        country: gymAccountDataFromBackend?.address.country ?? '',
+      },
       email: gymAccountDataFromBackend?.email ?? '',
       phone: gymAccountDataFromBackend?.phone ?? '',
     })
@@ -68,14 +80,15 @@ export function ChangeGymAccountForm() {
         method: 'PATCH',
         body: JSON.stringify(values),
       })
+      toast('Changes saved')
     } catch (error) {
       console.error('Error changing gym account:', error)
     }
   }
 
-  async function onClickChangePassword() {
+  /*async function onClickChangePassword() {
     return <h1>TODO: implement password change</h1>
-  }
+  }*/
 
   //without this, a GET instead of a POST request is sent
   //this prevents the default form submission and instead uses
@@ -154,21 +167,7 @@ export function ChangeGymAccountForm() {
                   </FormItem>
                 )}
               />
-              {/*  <FormField
-                control={form.control}
-                name="address"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Address</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage>
-                      {form.formState.errors.address?.message}
-                    </FormMessage>
-                  </FormItem>
-                )}
-              />*/}
+              <AddressFields />
               <FormField
                 control={form.control}
                 name="email"
@@ -204,13 +203,13 @@ export function ChangeGymAccountForm() {
               <Button type="submit" variant="outline">
                 Save changes
               </Button>
-              <Button
+              {/*<Button
                 type="button"
                 variant="outline"
                 onClick={() => onClickChangePassword()}
               >
-                Change password
-              </Button>
+                TODO: Change password
+              </Button>*/}
             </div>
           </div>
         </form>

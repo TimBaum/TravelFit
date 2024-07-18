@@ -1,6 +1,6 @@
 import { IAddress } from './address'
 import { IOffer } from './offer'
-import { IReview } from './review'
+import { IReview, IReviewPopulated } from './review'
 import { ITimeRange } from './timerange'
 
 export interface IGym {
@@ -31,3 +31,14 @@ export type Highlight =
 export interface IGymWithId extends IGym {
   _id: string
 }
+
+// Allows to overwrite attributes of a type definition
+type Modify<T, R> = Omit<T, keyof R> & R
+
+export interface IGymWithIdPopulated
+  extends Modify<
+    IGymWithId,
+    {
+      reviews: IReviewPopulated[]
+    }
+  > {}

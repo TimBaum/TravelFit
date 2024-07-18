@@ -101,7 +101,6 @@ function GymOverview() {
           {accountType !== 'GYM_USER' && <MarkFavourite gym={data} />}
         </div>
       </div>
-      {/* Basic structure for the rest of the page */}
       <div>
         {/* Basic structure for the rest of the page */}
         <PhotoGallery photos={images || []} />
@@ -192,7 +191,8 @@ function GymOverview() {
               </div>
             )}
             <div className="flex justify-center items-center">
-              <ReviewDialog reviews={data?.reviews} />|
+              <ReviewDialog reviews={data?.reviews} />
+              {user && <div>|</div>}
               {user && <AddReviewDialog gym={data} />}
             </div>
           </div>

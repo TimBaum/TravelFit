@@ -2,8 +2,8 @@ import * as React from 'react'
 import * as NavigationMenuPrimitive from '@radix-ui/react-navigation-menu'
 import { cva } from 'class-variance-authority'
 import { ChevronDown } from 'lucide-react'
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
-import { AvatarIcon, PersonIcon } from '@radix-ui/react-icons'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar' //could potentially be used for the user's image
+import { PersonIcon } from '@radix-ui/react-icons'
 import '@/index.css'
 import { cn } from '@/lib/utils'
 import { Button } from './button'
@@ -52,7 +52,12 @@ NavigationMenuList.displayName = NavigationMenuPrimitive.List.displayName
 const NavigationMenuItem = NavigationMenuPrimitive.Item
 
 const navigationMenuTriggerStyle = cva(
-  'cursor-pointer group inline-flex h-10 w-max items-center rounded-md px-4 py-2 text-md font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-accent/50 data-[state=open]:bg-accent/50',
+  `cursor-pointer group inline-flex h-10 w-max items-center rounded-md px-4 py-2 underline-offset-4
+  text-md font-medium transition-colors
+  hover:text-accent-foreground hover:text-emerald-600 hover:underline
+  focus:bg-accent focus:text-accent-foreground focus:outline-none 
+  disabled:pointer-events-none disabled:opacity-50 
+  data-[active]:bg-accent/50 data-[state=open]:bg-accent/50`,
 )
 
 const NavigationMenuTrigger = React.forwardRef<
@@ -150,13 +155,21 @@ function NavigationMenuManager({ className }: { className: string }) {
 
   return (
     <NavigationMenu
-      className={`navigationmenu w-full bg-emerald-500 text-black ${className} flex align-center justify-between drop-shadow-md sticky top-0 z-50`}
+      className={`navigationmenu w-full text-black ${className} flex align-center w-full justify-center gap-8 shadow-emerald-10 sticky top-0 z-50 bg-white shadow shadow-emerald-500`}
+      style={{ boxShadow: '-.5px .25px 0 #059669' }}
     >
+      <div className="grow basis-0 flex justify-start ml-6">
+        <NavigationMenuList>
+          <NavigationMenuLink
+            onClick={() => navigate('/')}
+            className="flex items-center gap-2 cursor-pointer"
+          >
+            <img src="/src/assets/TravelFitIcon.svg" className="w-8 h-8 " />
+            <div className="text-xl font-bold">TravelFit</div>
+          </NavigationMenuLink>
+        </NavigationMenuList>
+      </div>
       <NavigationMenuList>
-        <NavigationMenuLink href="/" className="pr-8 flex items-center gap-2">
-          <img src="/src/assets/TravelFitIcon.svg" className="w-8 h-8 " />
-          <div className="text-xl font-bold">TravelFit</div>
-        </NavigationMenuLink>
         <NavigationMenuItem>
           <NavigationMenuLink
             className={navigationMenuTriggerStyle()}
@@ -186,52 +199,54 @@ function NavigationMenuManager({ className }: { className: string }) {
           </NavigationMenuItem>
         )}
       </NavigationMenuList>
-      {accountType === 'NOT_LOGGED_IN' && (
-        <div className="flex gap-2">
-          <Button
-            variant={'outline'}
-            className="text-white bg-emerald-500 hover:text-white hover:bg-emerald-600"
-            onClick={() => navigate('/create-gym-account')}
-          >
-            Become a partner
-          </Button>
-          <Button className="bg-black" onClick={() => navigate('/login')}>
-            Login
-          </Button>
-          <Button
-            className="bg-black"
-            onClick={() => navigate('/create-user-account')}
-          >
-            Signup
-          </Button>
-        </div>
-      )}
-      {accountType !== 'NOT_LOGGED_IN' && (
+      <div className="grow basis-0 flex justify-end mr-6">
         <NavigationMenuList>
-          <NavigationMenuItem>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <PersonIcon className="h-6 w-6" />
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-52">
-                <DropdownMenuLabel>
-                  <h1 className="text-xl font-bold">My Account</h1>
-                  {user?.email}
-                </DropdownMenuLabel>
-                <DropdownMenuGroup>
-                  <DropdownMenuItem onClick={() => navigateToAccount()}>
-                    Manage your account
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => logout()}>
-                    Log out
-                  </DropdownMenuItem>
-                </DropdownMenuGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </NavigationMenuItem>
+          {accountType === 'NOT_LOGGED_IN' && (
+            <div className="flex gap-2">
+              <Button
+                variant={'outline'}
+                className=""
+                onClick={() => navigate('/create-gym-account')}
+              >
+                Become a partner
+              </Button>
+              <Button className="bg-black" onClick={() => navigate('/login')}>
+                Login
+              </Button>
+              <Button
+                className="bg-black"
+                onClick={() => navigate('/create-user-account')}
+              >
+                Signup
+              </Button>
+            </div>
+          )}
+          {accountType !== 'NOT_LOGGED_IN' && (
+            <NavigationMenuItem className={navigationMenuTriggerStyle()}>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <PersonIcon className="h-6 w-6" />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-52">
+                  <DropdownMenuLabel>
+                    <h1 className="text-xl font-bold">My Account</h1>
+                    {user?.email}
+                  </DropdownMenuLabel>
+                  <DropdownMenuGroup>
+                    <DropdownMenuItem onClick={() => navigateToAccount()}>
+                      Manage your account
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={() => logout()}>
+                      Log out
+                    </DropdownMenuItem>
+                  </DropdownMenuGroup>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </NavigationMenuItem>
+          )}
         </NavigationMenuList>
-      )}
+      </div>
     </NavigationMenu>
   )
 }

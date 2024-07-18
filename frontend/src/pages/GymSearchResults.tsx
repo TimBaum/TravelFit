@@ -320,6 +320,7 @@ function RatingFilter({ icon, filterState, setFilterState }: FilterProps) {
           <Input
             type="number"
             step={0.1}
+            min={0}
             max={5}
             placeholder="Number"
             value={filterState.rating.from ?? ''}
@@ -352,6 +353,7 @@ function PriceFilter({ icon, filterState, setFilterState }: FilterProps) {
           <Input
             type="number"
             placeholder="Number"
+            min="0"
             value={filterState.price.from ?? ''}
             onChange={(event) => {
               setFilterState({
@@ -369,6 +371,7 @@ function PriceFilter({ icon, filterState, setFilterState }: FilterProps) {
           <Input
             type="number"
             placeholder="Number"
+            min="0"
             value={filterState.price.to ?? ''}
             onChange={(event) => {
               setFilterState({

@@ -39,6 +39,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     boolean | null
   >(false)
 
+  /* implicitly returns a Promise that resolves to undefined */
   async function checkSubscriptionStatus() {
     return fetchJSON('/subscriptions/active')
       .then((data) => {
