@@ -6,7 +6,7 @@ import { useAuth } from '@/provider/AuthProvider'
 function Layout() {
   return (
     <div>
-      <NavigationMenuManager className="w-full mb-10" />
+      <NavigationMenuManager className="w-full" />
       <Main />
       <Footer />
     </div>
@@ -15,7 +15,7 @@ function Layout() {
 
 function Main() {
   return (
-    <main className="flex">
+    <main className="flex pt-10">
       <Advertisement id="1" />
 
       <div className="w-3/5" style={{ minHeight: '60vh' }}>
@@ -45,7 +45,6 @@ function Advertisement({ id }: { id: string }) {
   )
 }
 
-//TODO: Implement footer
 function Footer() {
   const navigate = useNavigate()
 
