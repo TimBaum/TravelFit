@@ -168,7 +168,7 @@ function useFetchImages(prefix: string | undefined) {
     async function fetchData() {
       setLoading(true)
       setError(null)
-      console.log('Prefix:', prefix)
+      if (!prefix) return
 
       const response = await fetchJSON(`/gyms/fetch-images/${prefix}`, {
         method: 'GET',

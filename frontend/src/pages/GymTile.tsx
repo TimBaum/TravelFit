@@ -6,15 +6,27 @@ import HighlightBadge from '@/components/HighlightBadge'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { MarkFavourite } from '@/components/MarkFavourite'
 import { useAuth } from '@/provider/AuthProvider'
+import { useFetchImages } from '@/services/gymService'
 
 export function GymTile({ gym }: { gym: IGymWithId }) {
   const navigate = useNavigate()
   const location = useLocation()
 
+  const { data } = useFetchImages(gym.name.replace(/\s+/g, ''))
+
+  const images = data
+
+  function getImage(index: number) {
+    if (images && images.length > index) {
+      return images[index].url
+    }
+    const placeholderImageUrl =
+      'https://static.vecteezy.com/system/resources/thumbnails/008/695/917/small_2x/no-image-available-icon-simple-two-colors-template-for-no-image-or-picture-coming-soon-and-placeholder-illustration-isolated-on-white-background-vector.jpg'
+    return placeholderImageUrl
+  }
+
   const { getAccountType } = useAuth()
   const accountType = getAccountType()
-
-  console.log(location.pathname)
 
   function getMaxOpeningHourToday() {
     const today = new Date().getDay()
@@ -53,16 +65,16 @@ export function GymTile({ gym }: { gym: IGymWithId }) {
       <div className="h-full flex gap-2 pr-2">
         <img
           className="h-full shrink object-cover aspect-square rounded"
-          src={`src/assets/img${Math.floor(Math.random() * 4) + 1}.png`}
+          src={getImage(0)}
         />
         <div className="h-full shrink grid grid-cols-1 grid-rows-2 gap-2">
           <img
             className="h-full aspect-square object-cover rounded"
-            src={`src/assets/img${Math.floor(Math.random() * 4) + 1}.png`}
+            src={getImage(1)}
           />
           <img
             className="h-full aspect-square object-cover rounded"
-            src={`src/assets/img${Math.floor(Math.random() * 4) + 1}.png`}
+            src={getImage(2)}
           />
         </div>
       </div>
