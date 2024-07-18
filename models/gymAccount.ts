@@ -8,7 +8,6 @@ export interface PublicGymAccount {
   lastName: string
   address: IAddress
   phone: string
-  favourites: string[]
   gyms: string[]
 }
 
@@ -20,7 +19,6 @@ export interface IGymAccount {
   lastName: string
   address: IAddress
   phone: string
-  favourites: string[]
   gyms: string[]
   createdAt: Date
   updatedAt: Date

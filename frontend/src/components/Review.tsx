@@ -195,9 +195,9 @@ function ReviewDialog({
         </DialogHeader>
 
         <div>
-          {reviews?.map((review) => <ReviewTile review={review} />) || (
-            <p>No reviews available.</p>
-          )}
+          {reviews?.map((review, index) => (
+            <ReviewTile key={index} review={review} />
+          )) || <p>No reviews available.</p>}
         </div>
       </DialogContent>
     </Dialog>

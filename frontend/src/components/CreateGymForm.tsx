@@ -557,8 +557,11 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
             )}
           />
           {/* Pictures */}
-          <FormLabel className="text-2xl font-bold">Photos</FormLabel>
-          <FormDescription>Show your gym!</FormDescription>
+          <div className="mt-4 mb-1">
+            <FormLabel className="text-2xl font-bold">Photos</FormLabel>
+
+            <FormDescription>Show your gym!</FormDescription>
+          </div>
           <FormItem>
             <FormControl>
               <FormLabel className="font-normal">

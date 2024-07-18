@@ -10,7 +10,6 @@ const gymAccountSchema = new mongoose.Schema({
   lastName: { type: String, required: true },
   address: { type: Address.schema, required: true },
   phone: { type: String, required: true },
-  favourites: { type: [ObjectId], ref: 'Gym' },
   gyms: { type: [ObjectId], ref: 'Gym' },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },

@@ -60,7 +60,6 @@ export const readGymAccount = async (req: Request, res: Response) => {
       lastName: gymAccount.lastName || '',
       salutation: gymAccount.salutation || '',
       email: gymAccount.email || '',
-      favourites: gymAccount.favourites.map((fav) => fav.toString()),
       gyms: gymAccount.gyms.map((gym) => gym.toString()),
       address: {
         street: gymAccount.address.street || '',
@@ -111,7 +110,6 @@ export const updateGymAccount = async (req: Request, res: Response) => {
       lastName: gymAccount.lastName || '',
       salutation: gymAccount.salutation || '',
       email: gymAccount.email || '',
-      favourites: gymAccount.favourites.map((fav) => fav.toString()),
       gyms: gymAccount.gyms.map((gym) => gym.toString()),
       address: {
         street: gymAccount.address.street || '',

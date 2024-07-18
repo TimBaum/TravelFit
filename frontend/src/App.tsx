@@ -12,7 +12,6 @@ import MyGyms from './pages/MyGyms'
 import CreateGymAccount from './pages/CreateGymAccount'
 import CreateUserAccount from './pages/CreateUserAccount'
 import ChangeUserAccount from './pages/ChangeUserAccount'
-import AddGym from './pages/AddGym'
 import CreateGym from './pages/CreateGym'
 import Layout from './components/Layout'
 import '../app/globals.css'
@@ -61,8 +60,6 @@ const App: React.FC = () => {
                 <Route path="/create-gym/" element={<CreateGym />} />
                 <Route path="/edit-gym/:id" element={<CreateGym />} />
               </Route>
-              {/* TODO: delete: add-gym is a sandbox page for outsourcing form problems */}
-              <Route path="/add-gym/" element={<AddGym />} />
               <Route path="/gyms/:id" element={<GymOverview />} />
               <Route path="*" element={<GymOverview />} />
             </Route>
