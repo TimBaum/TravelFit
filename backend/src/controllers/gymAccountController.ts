@@ -7,6 +7,7 @@ import { PublicGymAccount } from '@models/gymAccount'
 import bcryptjs from 'bcryptjs'
 import { isMongoError } from './errors'
 import { getCoordinates } from './gymController'
+import User from '../models/User'
 
 export const createGymAccount = async (req: Request, res: Response) => {
   try {
@@ -14,6 +15,13 @@ export const createGymAccount = async (req: Request, res: Response) => {
     const accId = new mongoose.Types.ObjectId()
     const accAddress = accData.address
     const hashedPassword = await bcryptjs.hash(accData.password, 10)
+
+    const userWithSameMail = await User.findOne({ email: accData.email }).exec()
+    if (userWithSameMail) {
+      return res
+        .status(400)
+        .json({ message: 'Email already exists. Try another email address' })
+    }
 
     //TODO: use location to check if address is valid
     //dont save it in the db, we dont need the coordinates
@@ -83,6 +91,14 @@ export const updateGymAccount = async (req: Request, res: Response) => {
     // could technically be skipped since we already fetch the account in the middleware
     // but for potential future modifications, it is left here
     const gymAccount = await GymAccount.findById(gymAccountId)
+    const userWithSameMail = await User.findOne({
+      email: gymAccount?.email,
+    }).exec()
+    if (userWithSameMail) {
+      return res
+        .status(400)
+        .json({ message: 'Email already exists. Try another email address' })
+    }
     console.log('This user will be updated: ', gymAccount)
     if (!gymAccount) {
       return res.status(404).json({ message: 'Gym account not found' })
