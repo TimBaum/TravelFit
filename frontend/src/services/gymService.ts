@@ -108,7 +108,10 @@ function useGetGymsByIds(ids: string[] | undefined): {
       setLoading(true)
       setError(null)
       const response = await fetch(`${config.BACKEND_URL}/gyms/by-ids`, {
-        method: 'GET',
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify({ ids }),
       })
         .then((response) => response.json())
