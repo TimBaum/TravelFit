@@ -191,6 +191,10 @@ const searchGyms = async (
       if (filters.price.to) dbFilters.cheapestOfferPrice.$lte = filters.price.to
     }
 
+    if (filters.highlights.length > 0) {
+      dbFilters.highlights = { $all: filters.highlights }
+    }
+
     const maxDistance = filters.radius ? filters.radius * 1000 : 10000 // default 10 km
 
     function queryBuilder(type: 'FETCH' | 'COUNT') {
