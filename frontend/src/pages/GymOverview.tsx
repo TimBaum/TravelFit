@@ -113,8 +113,8 @@ function GymOverview() {
           {/* left side */}
           <div className="w-2/3  pr-4">
             <div className="flex gap-2 flex-nowrap overflow-scroll no-scrollbar">
-              {data?.highlights.map((element) => (
-                <HighlightBadge key={element} name={element} />
+              {data?.highlights.map((element, index) => (
+                <HighlightBadge key={index} name={element} />
               ))}
             </div>
             {/* Opening Hours Section */}
@@ -155,8 +155,8 @@ function GymOverview() {
               <h1 className="mt-2 text-3xl font-bold">Offers</h1>
               {!loading && (
                 <div>
-                  {data?.offers.map((offer) => (
-                    <OfferTile key={offer.title} offer={offer} />
+                  {data?.offers.map((offer, index) => (
+                    <OfferTile key={index} offer={offer} />
                   ))}
                 </div>
               )}
@@ -185,7 +185,9 @@ function GymOverview() {
               <div className="w-full">
                 {data?.reviews
                   .slice(0, 5)
-                  .map((review) => <ReviewTile review={review} />)}
+                  .map((review, index) => (
+                    <ReviewTile key={index} review={review} />
+                  ))}
               </div>
             )}
             <div className="flex justify-center items-center">
