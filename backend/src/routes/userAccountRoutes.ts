@@ -6,7 +6,6 @@ import {
   deleteUser,
   addFavourite,
   deleteFavourite,
-  getFavouriteGyms,
 } from '../controllers/userAccountController'
 import auth from '../middleware/auth'
 
@@ -16,7 +15,6 @@ router.post('/create', createUser)
 //TODO: refactor
 router.get('/get', auth.isAuthorizedUser, readUser)
 router.patch('/update', auth.isAuthorizedUser, updateUser)
-router.get('/favourites/:userId', auth.isAuthorizedUser, getFavouriteGyms)
 router.patch('/favourites/add', auth.isAuthorizedUser, addFavourite)
 router.patch(
   '/favourites/delete/:favourite',

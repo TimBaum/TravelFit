@@ -67,25 +67,33 @@ export function GymAccountForm() {
     }
   }
 
-  //without this, a GET instead of a POST request is sent
   const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    //without this, a GET instead of a POST request is sent
+    //in the http-request of the onSubmit-function
     event.preventDefault()
     form.handleSubmit((values) => onSubmit(values))()
   }
 
   return (
     <Form {...form}>
+      {/* form is rendered with a onSubmit-event-handler set to handleFormSubmit */}
       <form onSubmit={handleFormSubmit}>
         <div className="mb-2">
           <FormField
+            /* form.control is an object from React Hook Form that contains methods for
+            registering an input in the form so it can be validated and its value can be tracked */
             control={form.control}
             name="salutation"
+            /* render the DropdownMenu with the props 'field', an object containing properties and methods 
+            to manage the input's state, handle its registration, and integrate it with the form's validation system */
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="mr-2">Salutation</FormLabel>
                 <FormControl>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
+                      {/* the drowdown menu is triggered by this button that displays the currently
+                    selected value (or "Select" if no value is selected) */}
                       <Button variant="outline" className="justify-between">
                         {field.value || 'Select'}
                         <span className="ml-2">&#x25BC;</span>{' '}
@@ -96,6 +104,8 @@ export function GymAccountForm() {
                       {['Mr.', 'Ms.', 'Diverse'].map((option) => (
                         <DropdownMenuItem
                           key={option}
+                          // selecting a value means that field.onChange() is called
+                          //which updates the form's state to reflect the selected value
                           onSelect={() => field.onChange(option)}
                         >
                           {option}
@@ -143,7 +153,6 @@ export function GymAccountForm() {
             )}
           />
         </div>
-        {/* <AddressFields /> TODO: Use the new AddressFields component */}
         <AddressFields />
         <div className="flex space-x-4">
           <FormField

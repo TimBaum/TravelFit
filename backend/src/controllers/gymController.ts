@@ -25,11 +25,18 @@ const createGym = async (req: Request, res: Response, next: NextFunction) => {
       : null,
   }
   console.log('CompleteAddress2:', fullAddress)
+
+  const cheapestOfferPrice =
+    gymData.offers.length > 0
+      ? Math.min(...gymData.offers.map((offer: any) => offer.priceEuro))
+      : 0
   const gym = new Gym({
     _id: gymId,
     ...gymData,
     address: fullAddress,
+    cheapestOfferPrice,
   })
+
   return gym
     .save()
     .then(async () => {
@@ -68,6 +75,13 @@ const getGym = (req: Request, res: Response, next: NextFunction) => {
     .then((gym) => {
       res.status(200).json(gym)
     })
+    .catch((error) => res.status(500).json({ error }))
+}
+
+const getGymsByIds = (req: Request, res: Response, next: NextFunction) => {
+  const { ids } = req.body
+  return Gym.find({ _id: { $in: ids } })
+    .then((gyms) => res.status(200).json({ gyms }))
     .catch((error) => res.status(500).json({ error }))
 }
 
@@ -352,4 +366,5 @@ export default {
   fetchImages,
   updateGym,
   deleteImage,
+  getGymsByIds,
 }

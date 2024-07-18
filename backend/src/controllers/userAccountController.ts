@@ -80,14 +80,16 @@ export const updateUser = async (req: Request, res: Response) => {
     if (!user) {
       return res.status(404).json({ message: 'User not found' })
     }
-    const userWithSameMail = await User.findOne({
+    const gymAccountWithSameEmail = await GymAccount.findOne({
       email: user?.email,
     }).exec()
-    if (userWithSameMail) {
+
+    console.log(gymAccountWithSameEmail)
+    if (gymAccountWithSameEmail)
       return res
         .status(400)
         .json({ message: 'Email already exists. Try another email address' })
-    }
+
     user.set(req.body)
     await user.save()
     console.log('This is the updated user: ', user)
@@ -106,20 +108,7 @@ export const updateUser = async (req: Request, res: Response) => {
     return res.status(500).json({ error })
   }
 }
-//TODO: finish implementation
-export const getFavouriteGyms = async (req: Request, res: Response) => {
-  const userId = req.params.userId
 
-  try {
-    const user = await User.findById(userId)
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' })
-    }
-    return res.status(200).json(user.favourites)
-  } catch (err) {
-    return res.status(500).json(err)
-  }
-}
 export const addFavourite = async (req: Request, res: Response) => {
   try {
     const user = await User.findById(req.ctx!._id)
@@ -166,7 +155,6 @@ export const deleteFavourite = async (req: Request, res: Response) => {
   }
 }
 
-//TODO: delete if not used?
 export const deleteUser = async (req: Request, res: Response) => {
   try {
     const user = await User.findByIdAndDelete(req.ctx!._id)
