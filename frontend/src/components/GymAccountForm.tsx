@@ -153,7 +153,6 @@ export function GymAccountForm() {
             )}
           />
         </div>
-        {/* <AddressFields /> TODO: Use the new AddressFields component */}
         <AddressFields />
         <div className="flex space-x-4">
           <FormField

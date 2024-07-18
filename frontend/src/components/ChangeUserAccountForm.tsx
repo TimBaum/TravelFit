@@ -68,10 +68,9 @@ export function ChangeUserAccountForm() {
     }
   }
 
-  //TODO: remove if not used
-  async function onClickChangePassword() {
+  /* async function onClickChangePassword() {
     return <h1>TODO: implement password change</h1>
-  }
+  }*/
 
   //without this, a GET instead of a POST request is sent
   //this prevents the default form submission and instead uses
@@ -159,14 +158,13 @@ export function ChangeUserAccountForm() {
           <Button type="submit" variant="outline">
             Save changes
           </Button>
-          {/* TODO: remove if not used */}
-          <Button
+          {/*<Button
             type="button"
             variant="outline"
             onClick={() => onClickChangePassword()}
           >
             TODO: Change password
-          </Button>
+          </Button>*/}
         </div>
       </form>
     </Form>
