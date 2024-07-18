@@ -138,67 +138,6 @@ export const updateGymAccount = async (req: Request, res: Response) => {
   }
 }
 
-export const addFavourite = async (req: Request, res: Response) => {
-  try {
-    const gymAccount = await GymAccount.findById(req.params.id)
-    if (!gymAccount) {
-      return res.status(404).json({ message: 'Gym account not found' })
-    }
-    //TODO: check if really Needed here
-    const publicGymAccount: PublicGymAccount = {
-      _id: gymAccount._id.toString() || '',
-      firstName: gymAccount.firstName || '',
-      lastName: gymAccount.lastName || '',
-      salutation: gymAccount.salutation || '',
-      email: gymAccount.email || '',
-      favourites: gymAccount.favourites.map((fav) => fav.toString()),
-      gyms: gymAccount.gyms.map((gym) => gym.toString()),
-      address: {
-        street: gymAccount.address.street || '',
-        postalCode: gymAccount.address.postalCode || '',
-        country: gymAccount.address.country || '',
-        city: gymAccount.address.city || '',
-        location: {
-          type: 'Point',
-          coordinates: (gymAccount.address.location?.coordinates as [
-            number,
-            number,
-          ]) ?? [0, 0],
-        },
-      },
-      phone: gymAccount.phone || '',
-    }
-    gymAccount.favourites.push(req.body.gymId)
-    await gymAccount.save()
-    return res.status(201).json({ publicGymAccount })
-  } catch (err) {
-    return res.status(500).json(err)
-  }
-}
-
-export const deleteFavourite = async (req: Request, res: Response) => {
-  try {
-    const gymAccount = await GymAccount.findById(req.params.id)
-    const favouriteId = new mongoose.Types.ObjectId(req.params.favourite)
-    if (!gymAccount) {
-      return res.status(404).json({ message: 'Gym account not found' })
-    }
-    const favouriteIndex = gymAccount.favourites.findIndex(
-      (favourite) => favourite._id && favourite._id.equals(favouriteId),
-    )
-    if (favouriteIndex === -1) {
-      return res.status(404).json({ message: 'Favourite not found' })
-    }
-
-    gymAccount.favourites.splice(favouriteIndex, 1)
-    await gymAccount.save()
-
-    res.status(200).json({ message: 'Favourite removed successfully' })
-  } catch (err) {
-    return res.status(500).json(err)
-  }
-}
-
 //TODO: remove if not used?
 export const deleteGymAccount = async (req: Request, res: Response) => {
   try {
