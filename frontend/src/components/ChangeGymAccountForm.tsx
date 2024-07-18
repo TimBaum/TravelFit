@@ -1,6 +1,15 @@
-import { zodResolver } from '@hookform/resolvers/zod'
+import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
+import { useAuth } from '@/provider/AuthProvider'
+import { useReadGymAccount } from '@/services/gymAccountService'
+
+import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
+import { changeGymAccountFormSchema } from '@/schemas/changeGymAccountFormSchema'
+
+import { fetchJSON } from '@/services/utils'
+import { AddressFields } from './AddressFields'
+import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -18,13 +27,6 @@ import {
   DropdownMenuTrigger,
   DropdownMenuItem,
 } from '@/components/ui/dropdown-menu'
-import { useAuth } from '@/provider/AuthProvider'
-import { useReadGymAccount } from '@/services/gymAccountService'
-import { useEffect } from 'react'
-import { fetchJSON } from '@/services/utils'
-import { changeGymAccountFormSchema } from '@/schemas/changeGymAccountFormSchema'
-import { AddressFields } from './AddressFields'
-import { toast } from 'sonner'
 
 export function ChangeGymAccountForm() {
   const { user, getAccountType } = useAuth()
@@ -33,8 +35,11 @@ export function ChangeGymAccountForm() {
     getAccountType(),
   )
 
+  // useForm hook from react-hook-form is used for handling form state, validation, and submission
+  // zodResolver along with Zod schema is used for form validation
   const form = useForm<z.infer<typeof changeGymAccountFormSchema>>({
     resolver: zodResolver(changeGymAccountFormSchema),
+    // Setting default form values based on the data fetched from the backend
     defaultValues: {
       salutation:
         (gymAccountDataFromBackend?.salutation as 'Mr.' | 'Ms.' | 'Diverse') ??
@@ -52,8 +57,7 @@ export function ChangeGymAccountForm() {
     },
   })
 
-  //useEffect is necessary because the default values are not available when initially
-  //rendering the form and are thus not displayed without useEffect
+  // useEffect is used to update form values dynamically after the component mounts
   useEffect(() => {
     form.reset({
       salutation:
@@ -86,11 +90,6 @@ export function ChangeGymAccountForm() {
     }
   }
 
-  /*async function onClickChangePassword() {
-    return <h1>TODO: implement password change</h1>
-  }*/
-
-  //without this, a GET instead of a POST request is sent
   //this prevents the default form submission and instead uses
   //react-hook-form's handleSubmit method to process the form data
   const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -101,11 +100,18 @@ export function ChangeGymAccountForm() {
   return (
     <div>
       <Form {...form}>
+        {/* Form component with react-hook-form integration */}
         <form onSubmit={handleFormSubmit}>
+          {/* Form element with custom submit handler */}
           <div className="border-2 border-gray-300 rounded-lg p-4">
             <FormField
               control={form.control}
+              /* the form's control property registers input fields to the form so that react-hook-form can manage 
+            their states and re-render the components as needed based on user input and validation changes
+            */
               name="salutation"
+              /* render the DropdownMenu with the props 'field', an object containing properties and methods 
+            to manage the input's state, handle its registration, and integrate it with the form's validation system */
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="mr-2">Salutation</FormLabel>
@@ -122,6 +128,8 @@ export function ChangeGymAccountForm() {
                         {['Mr.', 'Ms.', 'Diverse'].map((option) => (
                           <DropdownMenuItem
                             key={option}
+                            /* selecting a value means that field.onChange() is called
+                            which updates the form's state to reflect the selected value*/
                             onSelect={() => field.onChange(option)}
                           >
                             {option}
@@ -130,6 +138,7 @@ export function ChangeGymAccountForm() {
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </FormControl>
+                  {/* Display validation message for this field */}
                   <FormMessage>
                     {form.formState.errors.salutation?.message}
                   </FormMessage>
@@ -199,17 +208,10 @@ export function ChangeGymAccountForm() {
                 )}
               />
             </div>
-            <div className="mt-6 space-x-4">
+            <div className="mt-6">
               <Button type="submit" variant="outline">
                 Save changes
               </Button>
-              {/*<Button
-                type="button"
-                variant="outline"
-                onClick={() => onClickChangePassword()}
-              >
-                TODO: Change password
-              </Button>*/}
             </div>
           </div>
         </form>

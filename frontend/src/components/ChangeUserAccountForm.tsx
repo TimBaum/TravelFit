@@ -43,8 +43,7 @@ export function ChangeUserAccountForm() {
     },
   })
 
-  //useEffect is necessary because the default values are not available when initially
-  //rendering the form and are thus not displayed without useEffect
+  // useEffect is used to update form values dynamically after the component mounts
   useEffect(() => {
     form.reset({
       salutation:
@@ -69,11 +68,6 @@ export function ChangeUserAccountForm() {
     }
   }
 
-  /* async function onClickChangePassword() {
-    return <h1>TODO: implement password change</h1>
-  }*/
-
-  //without this, a GET instead of a POST request is sent
   //this prevents the default form submission and instead uses
   //react-hook-form's handleSubmit method to process the form data
   const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -83,7 +77,10 @@ export function ChangeUserAccountForm() {
 
   return (
     <Form {...form}>
+      {/* Form component with react-hook-form integration */}
       <form onSubmit={handleFormSubmit}>
+        {' '}
+        {/* Form element with custom submit handler */}
         <div>
           {/* <div className="flex justify-center items-center m-6">
             <div className="flex flex-col justify-center items-center p-6 border rounded-lg w-32 h-32">
@@ -93,7 +90,12 @@ export function ChangeUserAccountForm() {
           </div>*/}
           <FormField
             control={form.control}
+            /* the form's control property registers input fields to the form so that react-hook-form can manage 
+            their states and re-render the components as needed based on user input and validation changes
+            */
             name="salutation"
+            /* render the DropdownMenu with the props 'field', an object containing properties and methods 
+            to manage the input's state, handle its registration, and integrate it with the form's validation system */
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="mr-2">Salutation</FormLabel>
@@ -110,6 +112,8 @@ export function ChangeUserAccountForm() {
                       {['Mr.', 'Ms.', 'Diverse'].map((option) => (
                         <DropdownMenuItem
                           key={option}
+                          /* selecting a value means that field.onChange() is called
+                          which updates the form's state to reflect the selected value*/
                           onSelect={() => field.onChange(option)}
                         >
                           {option}
@@ -118,6 +122,7 @@ export function ChangeUserAccountForm() {
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </FormControl>
+                {/* Display validation message for this field */}
                 <FormMessage>
                   {form.formState.errors.salutation?.message}
                 </FormMessage>
@@ -159,13 +164,6 @@ export function ChangeUserAccountForm() {
           <Button type="submit" variant="outline">
             Save changes
           </Button>
-          {/*<Button
-            type="button"
-            variant="outline"
-            onClick={() => onClickChangePassword()}
-          >
-            TODO: Change password
-          </Button>*/}
         </div>
       </form>
     </Form>
