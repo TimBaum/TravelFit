@@ -23,8 +23,11 @@ import { useReadGymAccount } from '@/services/gymAccountService'
 import { useEffect } from 'react'
 import { fetchJSON } from '@/services/utils'
 import { changeGymAccountFormSchema } from '@/schemas/changeGymAccountFormSchema'
+import { useNavigate } from 'react-router-dom'
+import { AddressFields } from './AddressFields'
 
 export function ChangeGymAccountForm() {
+  const navigate = useNavigate()
   const { user, getAccountType } = useAuth()
   const { data: gymAccountDataFromBackend } = useReadGymAccount(
     user?._id ?? '',
@@ -39,7 +42,12 @@ export function ChangeGymAccountForm() {
         'Diverse',
       firstName: gymAccountDataFromBackend?.firstName ?? '',
       lastName: gymAccountDataFromBackend?.lastName ?? '',
-      //address: gymAccountDataFromBackend?.address ?? '',
+      address: {
+        street: gymAccountDataFromBackend?.address.street ?? '',
+        postalCode: gymAccountDataFromBackend?.address.postalCode ?? '',
+        city: gymAccountDataFromBackend?.address.city ?? '',
+        country: gymAccountDataFromBackend?.address.country ?? '',
+      },
       email: gymAccountDataFromBackend?.email ?? '',
       phone: gymAccountDataFromBackend?.phone ?? '',
     },
@@ -54,7 +62,12 @@ export function ChangeGymAccountForm() {
         'Diverse',
       firstName: gymAccountDataFromBackend?.firstName ?? '',
       lastName: gymAccountDataFromBackend?.lastName ?? '',
-      //address: gymAccountDataFromBackend?.address ?? '',
+      address: {
+        street: gymAccountDataFromBackend?.address.street ?? '',
+        postalCode: gymAccountDataFromBackend?.address.postalCode ?? '',
+        city: gymAccountDataFromBackend?.address.city ?? '',
+        country: gymAccountDataFromBackend?.address.country ?? '',
+      },
       email: gymAccountDataFromBackend?.email ?? '',
       phone: gymAccountDataFromBackend?.phone ?? '',
     })
@@ -68,6 +81,7 @@ export function ChangeGymAccountForm() {
         method: 'PATCH',
         body: JSON.stringify(values),
       })
+      navigate('/my-gyms')
     } catch (error) {
       console.error('Error changing gym account:', error)
     }
@@ -154,21 +168,68 @@ export function ChangeGymAccountForm() {
                   </FormItem>
                 )}
               />
-              {/*  <FormField
-                control={form.control}
-                name="address"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Address</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage>
-                      {form.formState.errors.address?.message}
-                    </FormMessage>
-                  </FormItem>
-                )}
-              />*/}
+              {/* <AddressFields /> TODO: Use the new AddressFields component */}
+              <AddressFields />
+              {/* <>
+                <div className="w-1/2">
+                  <FormField
+                    control={form.control}
+                    name="address.street"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Street</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Street" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div className="grid grid-cols-2 w-1/2 gap-2">
+                  <FormField
+                    control={form.control}
+                    name="address.postalCode"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Postal Code</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Postal Code" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="address.city"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>City</FormLabel>
+                        <FormControl>
+                          <Input placeholder="City" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div className="w-1/2">
+                  <FormField
+                    control={form.control}
+                    name="address.country"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Country</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Country" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </> */}
               <FormField
                 control={form.control}
                 name="email"
@@ -209,7 +270,7 @@ export function ChangeGymAccountForm() {
                 variant="outline"
                 onClick={() => onClickChangePassword()}
               >
-                Change password
+                TODO: Change password
               </Button>
             </div>
           </div>

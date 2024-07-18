@@ -13,9 +13,23 @@ export const changeGymAccountFormSchema = z.object({
     .string()
     .min(2, { message: 'Last name must be at least 2 characters.' }),
   email: z.string().email({ message: 'Invalid email address.' }),
-  /*address: z
+  address: z.object({
+    street: z
       .string()
-      .min(5, { message: 'Address must be at least 5 characters.' }),*/
+      .min(2, { message: 'Invalid street' })
+      .max(100, { message: 'Invalid street' }),
+    postalCode: z.string().regex(/^\d{5}$/, {
+      message: 'Invalid postal code. It should be exactly 5 digits.',
+    }),
+    city: z
+      .string()
+      .min(2, { message: 'Invalid city' })
+      .max(50, { message: 'Invalid city' }),
+    country: z
+      .string()
+      .min(2, { message: 'Invalid country' })
+      .max(50, { message: 'Invalid country' }),
+  }),
   phone: z
     .string()
     .min(10, { message: 'Phone number must be at least 10 characters.' })
