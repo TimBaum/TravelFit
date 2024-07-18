@@ -86,12 +86,12 @@ export function ChangeUserAccountForm() {
     <Form {...form}>
       <form onSubmit={handleFormSubmit}>
         <div>
-          <div className="flex justify-center items-center m-6">
+          {/* <div className="flex justify-center items-center m-6">
             <div className="flex flex-col justify-center items-center p-6 border rounded-lg w-32 h-32">
               <LucidePencil size={20} />
               <span>Photo</span>
             </div>
-          </div>
+          </div>*/}
           <FormField
             control={form.control}
             name="salutation"

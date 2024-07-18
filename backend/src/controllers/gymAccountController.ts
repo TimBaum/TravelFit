@@ -199,7 +199,6 @@ export const deleteFavourite = async (req: Request, res: Response) => {
   }
 }
 
-//TODO: remove if not used?
 export const deleteGymAccount = async (req: Request, res: Response) => {
   try {
     const gymAccount = await GymAccount.findByIdAndDelete(req.ctx!._id)
