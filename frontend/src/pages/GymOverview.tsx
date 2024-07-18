@@ -109,10 +109,10 @@ function GymOverview() {
             No gym photos are provided.
           </div>
         ) : null}
-        <div className="flex gap-2">
+        <div className="flex w-100">
           {/* left side */}
-          <div className="w-2/3 mr-10">
-            <div className="flex gap-2">
+          <div className="w-2/3  pr-4">
+            <div className="flex gap-2 flex-nowrap overflow-scroll no-scrollbar">
               {data?.highlights.map((element) => (
                 <HighlightBadge key={element} name={element} />
               ))}
@@ -164,7 +164,7 @@ function GymOverview() {
           </div>
 
           {/* right side */}
-          <div className="w-1/3 mx-2">
+          <div className="w-1/3">
             <Button asChild className="w-full">
               <Link
                 to={data?.websiteLink ?? '/default-url'}
