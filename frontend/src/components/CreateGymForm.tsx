@@ -76,7 +76,9 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
   // FIXME: at the moment only pictures which public_id starts with gym are used. For some reason gym.name is not arriving on time.
   const cleanedName = gym?.name?.replace(/\s+/g, '') || 'gym'
   // Use custom hook to fetch images
-  const { data: photos } = useFetchImages(cleanedName || '')
+  const { data: photos, loading: photosLoading } = useFetchImages(
+    cleanedName || '',
+  )
 
   /* Opening Times */
   const weekdays = [
@@ -575,7 +577,7 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
                 Current Photos
               </FormLabel>
               <div className="grid grid-cols-3 gap-4 mt-4">
-                {photos && photos.length > 0 ? (
+                {photos && photos.length > 0 && !photosLoading ? (
                   photos.map((photo, index) => (
                     <div key={index} className="relative">
                       <img
