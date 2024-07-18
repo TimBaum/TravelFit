@@ -54,6 +54,13 @@ const getGym = (req: Request, res: Response, next: NextFunction) => {
     .catch((error) => res.status(500).json({ error }))
 }
 
+const getGymsByIds = (req: Request, res: Response, next: NextFunction) => {
+  const { ids } = req.body
+  return Gym.find({ _id: { $in: ids } })
+    .then((gyms) => res.status(200).json({ gyms }))
+    .catch((error) => res.status(500).json({ error }))
+}
+
 interface OpenStreetMapResponse {
   lat: string
   lon: string
@@ -309,4 +316,5 @@ export default {
   fetchImages,
   updateGym,
   deleteImage,
+  getGymsByIds,
 }
