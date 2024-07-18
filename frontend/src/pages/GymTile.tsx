@@ -5,10 +5,14 @@ import { IGymWithId } from '@models/gym'
 import HighlightBadge from '@/components/HighlightBadge'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { MarkFavourite } from '@/components/MarkFavourite'
+import { useAuth } from '@/provider/AuthProvider'
 
 export function GymTile({ gym }: { gym: IGymWithId }) {
   const navigate = useNavigate()
   const location = useLocation()
+
+  const { getAccountType } = useAuth()
+  const accountType = getAccountType()
 
   console.log(location.pathname)
 
@@ -69,7 +73,8 @@ export function GymTile({ gym }: { gym: IGymWithId }) {
         <div className="flex flex-col h-full justify-between w-2/3">
           <div className="">
             <div className="text-2xl text-bold flex gap-2 items-center">
-              {gym.name} <MarkFavourite gym={gym} />
+              {gym.name}{' '}
+              {accountType !== 'GYM_USER' && <MarkFavourite gym={gym} />}
             </div>
             <div>{gym.address.street + ' ' + gym.address.city}</div>
             <div className="flex gap-2 w-full flex-nowrap mt-2 no-scrollbar overflow-scroll max-h-12">

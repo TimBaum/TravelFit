@@ -29,7 +29,8 @@ import { StarFilledIcon } from '@radix-ui/react-icons'
 
 function GymOverview() {
   const { id } = useParams()
-  const { user } = useAuth()
+  const { user, getAccountType } = useAuth()
+  const accountType = getAccountType()
 
   // Use a valid default value for `id` to avoid `undefined`
   const GymId = id || ''
@@ -97,7 +98,7 @@ function GymOverview() {
         <h1 className="text-5xl font-bold pb-2">{gymname}</h1>
         <div className="header-icons">
           <ShareButton link={window.location.href} />
-          <MarkFavourite gym={data} />
+          {accountType !== 'GYM_USER' && <MarkFavourite gym={data} />}
         </div>
       </div>
       <div>

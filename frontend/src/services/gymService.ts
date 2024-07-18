@@ -94,6 +94,41 @@ function useGetGym(id: string | null): GymOverview {
   return { data, error, loading }
 }
 
+function useGetGymsByIds(ids: string[] | undefined): {
+  data: IGymWithId[]
+  error: string | null
+  loading: boolean
+} {
+  const [data, setData] = useState<IGymWithId[]>([])
+  const [error, setError] = useState(null)
+  const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    async function fetchData() {
+      setLoading(true)
+      setError(null)
+      const response = await fetch(`${config.BACKEND_URL}/gyms/by-ids`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ ids }),
+      })
+        .then((response) => response.json())
+        .catch((error) => {
+          setError(error.message)
+          return []
+        })
+      setData(response.gyms)
+      setLoading(false)
+    }
+
+    fetchData()
+  }, [ids])
+
+  return { data, error, loading }
+}
+
 function useReadAll(): {
   data: IGymWithId[]
   error: string | null
@@ -186,4 +221,11 @@ const useDeleteImage = (public_id: string | null) => {
   return { data, error, loading }
 }
 
-export { useGymSearch, useGetGym, useReadAll, useFetchImages, useDeleteImage }
+export {
+  useGymSearch,
+  useGetGym,
+  useReadAll,
+  useFetchImages,
+  useDeleteImage,
+  useGetGymsByIds,
+}
