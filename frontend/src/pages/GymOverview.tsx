@@ -191,7 +191,8 @@ function GymOverview() {
               </div>
             )}
             <div className="flex justify-center items-center">
-              <ReviewDialog reviews={data?.reviews} />|
+              <ReviewDialog reviews={data?.reviews} />
+              {user && <div>|</div>}
               {user && <AddReviewDialog gym={data} />}
             </div>
           </div>

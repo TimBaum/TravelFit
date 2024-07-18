@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { IGymWithId } from '@models/gym'
+import { IGymWithId, IGymWithIdPopulated } from '@models/gym'
 import { fetchJSON } from './utils'
 import { FilterState } from '@models/filter'
 import { config } from '@/config'
@@ -14,7 +14,7 @@ interface GymSearchResults {
 }
 
 interface GymOverview {
-  data: IGymWithId | undefined
+  data: IGymWithIdPopulated | undefined
   error: string | null
   loading: boolean
 }
@@ -66,7 +66,7 @@ function useGymSearch(
 }
 
 function useGetGym(id: string | null): GymOverview {
-  const [data, setData] = useState<IGymWithId>()
+  const [data, setData] = useState<IGymWithIdPopulated>()
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(false)
 
