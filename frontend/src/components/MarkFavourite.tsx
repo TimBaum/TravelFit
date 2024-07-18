@@ -88,6 +88,7 @@ function MarkFavourite({
       {user ? (
         <Button
           variant="ghost"
+          className="px-0"
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
           onClick={async () => {
@@ -111,7 +112,7 @@ function MarkFavourite({
       ) : (
         <>
           <Dialog>
-            <DialogTrigger asChild>
+            <DialogTrigger asChild className="border-0">
               <Button variant="outline">
                 <FaRegBookmark className="h-6 w-6" />
               </Button>

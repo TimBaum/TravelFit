@@ -786,7 +786,7 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
                   />
 
                   {/* Submit button for the dialog form */}
-                  <DialogFooter>
+                  <DialogFooter className="mt-4">
                     <Button
                       type="button"
                       onClick={() => setIsDialogOpen(false)}

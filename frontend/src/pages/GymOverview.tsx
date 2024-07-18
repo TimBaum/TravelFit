@@ -176,9 +176,7 @@ function GymOverview() {
             </Button>
             <h1 className="mt-5 text-3xl font-bold flex items-center gap-1 text-nowrap w-full mb-2">
               <StarFilledIcon className="text-primary h-7 w-7" />
-              {(data?.averageRating
-                ? data?.averageRating.toFixed(1)
-                : 'No reviews') +
+              {(data?.averageRating ? data?.averageRating.toFixed(1) : '') +
                 ' · ' +
                 data?.reviews.length +
                 ` Review${data?.reviews.length !== 1 ? 's' : ''}`}
