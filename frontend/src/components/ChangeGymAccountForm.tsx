@@ -81,7 +81,6 @@ export function ChangeGymAccountForm() {
         method: 'PATCH',
         body: JSON.stringify(values),
       })
-      navigate('/my-gyms')
     } catch (error) {
       console.error('Error changing gym account:', error)
     }
