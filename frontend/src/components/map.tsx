@@ -14,10 +14,19 @@ const customIcon = new L.Icon({
   shadowSize: [41, 41],
 })
 
+const userIcon = new L.Icon({
+  iconUrl: 'https://cdn-icons-png.flaticon.com/512/1365/1365700.png',
+  iconSize: [41, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [-10, -34],
+  shadowSize: [41, 41],
+})
+
 const Map = ({
   markers,
   center,
   enablePopups = false,
+  userPosition,
 }: {
   markers: {
     id: string
@@ -28,6 +37,7 @@ const Map = ({
   }[]
   center: [number, number]
   enablePopups?: boolean
+  userPosition?: { lat: number; lon: number }
 }) => {
   const navigate = useNavigate()
 
@@ -70,6 +80,18 @@ const Map = ({
             )}
           </Marker>
         ))}
+        {userPosition && (
+          <Marker
+            position={[userPosition.lat, userPosition.lon]}
+            icon={userIcon}
+          >
+            <Popup className="">
+              <div className="flex gap-2 items-center">
+                <div>Your location</div>
+              </div>
+            </Popup>
+          </Marker>
+        )}
       </MapContainer>
     </div>
   )
