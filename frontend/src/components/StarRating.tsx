@@ -42,13 +42,13 @@ const DisplayRating: React.FC<DisplayRatingProps> = ({ rating }) => {
 
   for (let i = 1; i <= maxStars; i++) {
     if (i <= rating) {
-      stars.push(<StarFilledIcon key={i} className="text-primary w-3 h-3" />)
+      stars.push(<StarFilledIcon key={i} className="text-primary w-4 h-4" />)
     } else {
-      stars.push(<StarIcon key={i} className="text-primary w-3 h-3" />)
+      stars.push(<StarIcon key={i} className="text-primary w-4 h-4" />)
     }
   }
 
-  return <div className="inline-grid grid-cols-5 gap-2 p-2">{stars}</div>
+  return <div className="inline-grid grid-cols-5 gap-2 py-2">{stars}</div>
 }
 
 export { StarRating, DisplayRating }

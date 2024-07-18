@@ -93,7 +93,7 @@ function GymOverview() {
           </BreadcrumbList>
         </Breadcrumb>
       </div>
-      <div className="header-container">
+      <div className="header-container flex align-center">
         <h1 className="text-5xl font-bold pb-2">{gymname}</h1>
         <div className="header-icons">
           <ShareButton link={window.location.href} />
@@ -109,19 +109,19 @@ function GymOverview() {
             No gym photos are provided.
           </div>
         ) : null}
-        <div className="flex gap-2">
+        <div className="flex w-100">
           {/* left side */}
-          <div className="w-2/3 mr-10">
-            <div className="flex gap-2">
+          <div className="w-2/3  pr-4">
+            <div className="flex gap-2 flex-nowrap overflow-scroll no-scrollbar">
               {data?.highlights.map((element) => (
                 <HighlightBadge key={element} name={element} />
               ))}
             </div>
             {/* Opening Hours Section */}
-            <div className="mt-3 w-1/3">
+            <div className="mt-3">
               <h1 className="mt-2 text-3xl font-bold mb-2">Opening Hours</h1>
               {!loading && (
-                <div className="mt-2 ml-3">
+                <div className="mt-2 w-1/2">
                   {data?.openingHours && data.openingHours.length > 0 ? (
                     data.openingHours.map((timeRange, index) => (
                       <div key={index} className="flex justify-between py-1">
@@ -164,7 +164,7 @@ function GymOverview() {
           </div>
 
           {/* right side */}
-          <div className="w-1/3 m-2">
+          <div className="w-1/3">
             <Button asChild className="w-full">
               <Link
                 to={data?.websiteLink ?? '/default-url'}
@@ -174,7 +174,7 @@ function GymOverview() {
                 Visit gym website
               </Link>
             </Button>
-            <h1 className="mt-5 text-3xl font-bold flex items-center gap-1 text-nowrap">
+            <h1 className="mt-5 text-3xl font-bold flex items-center gap-1 text-nowrap w-full mb-2">
               <StarFilledIcon className="text-primary h-7 w-7" />
               {(data?.averageRating
                 ? data?.averageRating.toFixed(1)
@@ -184,14 +184,16 @@ function GymOverview() {
                 ` Review${data?.reviews.length !== 1 ? 's' : ''}`}
             </h1>
             {!loading && (
-              <div>
+              <div className="w-full">
                 {data?.reviews
                   .slice(0, 5)
                   .map((review) => <ReviewTile review={review} />)}
               </div>
             )}
-            <ReviewDialog reviews={data?.reviews} />
-            {user && <AddReviewDialog gym={data} />}
+            <div className="flex justify-center items-center">
+              <ReviewDialog reviews={data?.reviews} />|
+              {user && <AddReviewDialog gym={data} />}
+            </div>
           </div>
         </div>
         {data?.address?.location?.coordinates ? (

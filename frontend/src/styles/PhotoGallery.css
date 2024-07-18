@@ -2,7 +2,6 @@
   display: grid;
   grid-template-columns: repeat(4, 1fr); /* Four equal columns */
   gap: 10px;
-  padding: 10px;
   grid-auto-rows: minmax(100px, auto); /* Adjust rows dynamically */
 }
 

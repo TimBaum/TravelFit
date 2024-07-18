@@ -150,7 +150,7 @@ function ReviewTile({ review }: { review: IReview }) {
   const author = useReadUser(review.author, 'USER').data?.displayName
 
   return (
-    <div className="flex h-46 w-full rounded p-2 relative m-2">
+    <div className="flex h-46 w-full rounded relative mb-2">
       <div className="w-full">
         <div className="flex justify-between items-center">
           <h1 className="font-bold">{author}</h1>
@@ -176,6 +176,7 @@ function ReviewDialog({ reviews }: { reviews: IReview[] | undefined }) {
       <DialogTrigger asChild>
         <Button variant="ghost">View more</Button>
       </DialogTrigger>
+
       <DialogContent className="sm:max-w-[425px] max-h-[80vh] overflow-auto">
         <DialogHeader>
           <DialogTitle>View all reviews</DialogTitle>
