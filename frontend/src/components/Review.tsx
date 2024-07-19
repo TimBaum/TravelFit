@@ -192,6 +192,8 @@ function ReviewDialog({
       <DialogContent className="sm:max-w-[425px] max-h-[80vh] overflow-auto">
         <DialogHeader>
           <DialogTitle>View all reviews</DialogTitle>
+          <DialogDescription></DialogDescription>
+          {/* Added to get rid of missing description warning */}
         </DialogHeader>
 
         <div>

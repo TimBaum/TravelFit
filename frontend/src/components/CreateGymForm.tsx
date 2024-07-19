@@ -3,7 +3,6 @@ import React, { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
 import { IOffer } from '@models/offer'
-import { config } from '@/config'
 import { fetchJSON } from '@/services/utils'
 import { useFetchImages, useGetGym } from '@/services/gymService'
 
@@ -168,6 +167,8 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
    *pre-fills a form with a gym's data when the component is in "edit" mode and a gym object is provided
    */
   React.useEffect(() => {
+    //TODO: useEffect is not needed here because is doesnt need to react to state changes somewhere else
+    // it is only there to fill the form fields
     if (mode === 'edit' && gym) {
       console.log('gym.address:', gym.address), // Kontrollpunkt
         form.reset({
@@ -342,7 +343,7 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
 
   /* Render */
   return (
-    <div>
+    <div className="mt-4 border-2 border-gray-300 rounded-lg p-2">
       {/* Loading indicator */}
       {pageLoading && <LoadingOverlay />}
       {/* one form that contains all the fields */}
