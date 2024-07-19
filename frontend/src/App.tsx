@@ -35,7 +35,6 @@ const App: React.FC = () => {
               <Route index element={<GymSearch />} />
               <Route path="/find-gyms/" element={<GymSearchResults />} />
               {/* TODO: exemplary routes, should be changed */}
-              <Route path="/my-gyms/" element={<MyGyms />} />
               <Route
                 path="/create-gym-account/"
                 element={<CreateGymAccount />}
@@ -57,6 +56,7 @@ const App: React.FC = () => {
                   path="/change-gym-account/"
                   element={<ChangeGymAccount />}
                 />
+                <Route path="/my-gyms/" element={<MyGyms />} />
                 <Route path="/create-gym/" element={<CreateGym />} />
                 <Route path="/edit-gym/:id" element={<CreateGym />} />
               </Route>

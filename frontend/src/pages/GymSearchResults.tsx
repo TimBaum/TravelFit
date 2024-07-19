@@ -330,6 +330,7 @@ function RadiusFilter({ icon, filterState, setFilterState }: FilterProps) {
         <Label>Radius in km</Label>
         <Input
           type="number"
+          min={0}
           placeholder="Number"
           value={filterState.radius ?? ''}
           onChange={(event) => {
