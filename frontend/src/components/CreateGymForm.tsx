@@ -74,11 +74,9 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
   const { data: gym } = useGetGym(gymId)
 
   // FIXME: at the moment only pictures which public_id starts with gym are used. For some reason gym.name is not arriving on time.
-  const cleanedName = gym?.name?.replace(/\s+/g, '') || 'gym'
+  const cleanedName = gym?.name?.replace(/\s+/g, '')
   // Use custom hook to fetch images
-  const { data: photos, loading: photosLoading } = useFetchImages(
-    cleanedName || '',
-  )
+  const { data: photos, loading: photosLoading } = useFetchImages(cleanedName)
 
   /* Opening Times */
   const weekdays = [
