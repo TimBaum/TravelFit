@@ -98,6 +98,16 @@ const addReview = async (req: Request, res: Response) => {
       return res.status(404).json({ message: 'Gym not found' })
     }
 
+    const hasUserReviewed = gym.reviews.some(
+      (review) =>
+        review.author.toString() === req.body.review.author.toString(),
+    )
+    if (hasUserReviewed) {
+      return res
+        .status(400)
+        .json({ message: 'You have already reviewed this gym' })
+    }
+
     gym.reviews.push(req.body.review)
 
     const totalReviews = gym.reviews.length
