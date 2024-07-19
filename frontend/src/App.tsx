@@ -61,7 +61,7 @@ const App: React.FC = () => {
                 <Route path="/edit-gym/:id" element={<CreateGym />} />
               </Route>
               <Route path="/gyms/:id" element={<GymOverview />} />
-              <Route path="*" element={<GymOverview />} />
+              <Route path="*" element={<GymSearch />} />
             </Route>
           </Routes>
         </AuthProvider>

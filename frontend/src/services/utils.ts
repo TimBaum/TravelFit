@@ -1,6 +1,13 @@
 import { config } from '@/config'
 import { toast } from 'sonner'
 
+/**
+ * fetchJSON is a wrapper for fetch that abstracts authorization, base url, error handling and JSON parsing
+ * Could be extended by using typescript generics to return the correct type
+ * @param url the url to fetch
+ * @param options any fetch options
+ * @returns the parsed response
+ */
 export async function fetchJSON(url: string, options?: RequestInit) {
   // Token is send to the client with every request
   const authToken = localStorage.getItem('token')
