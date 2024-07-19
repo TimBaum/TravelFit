@@ -233,11 +233,17 @@ function NavigationMenuManager({ className }: { className: string }) {
                     {user?.email}
                   </DropdownMenuLabel>
                   <DropdownMenuGroup>
-                    <DropdownMenuItem onClick={() => navigateToAccount()}>
+                    <DropdownMenuItem
+                      className="cursor-pointer"
+                      onClick={() => navigateToAccount()}
+                    >
                       Manage your account
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => logout()}>
+                    <DropdownMenuItem
+                      className="cursor-pointer"
+                      onClick={() => logout()}
+                    >
                       Log out
                     </DropdownMenuItem>
                   </DropdownMenuGroup>
