@@ -320,12 +320,9 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
             console.log('Deleting images:', flaggedForDeletion)
             await Promise.all(
               flaggedForDeletion.map(async (photoId) => {
-                await fetch(
-                  `${config.BACKEND_URL}/gyms/delete-image/${photoId}`,
-                  {
-                    method: 'DELETE',
-                  },
-                )
+                await fetchJSON(`/gyms/delete-image/${photoId}`, {
+                  method: 'DELETE',
+                })
               }),
             )
           } catch (error) {
