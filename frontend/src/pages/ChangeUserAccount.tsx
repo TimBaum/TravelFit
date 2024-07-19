@@ -6,6 +6,13 @@ import { Button } from '@/components/ui/button'
 import { cancelSubscription } from '@/services/subscriptionService'
 import { useState } from 'react'
 import { Crown } from 'lucide-react'
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbSeparator,
+  BreadcrumbList,
+} from '@/components/ui/breadcrumb'
 
 function ChangeUserAccount() {
   const { hasActiveSubscription, checkSubscriptionStatus } = useAuth()
@@ -13,7 +20,21 @@ function ChangeUserAccount() {
 
   return (
     <div>
-      <h1 className="mb-2 font-bold text-5xl">Account</h1>
+      <div className="breadcrumps">
+        <Breadcrumb>
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/">Home</BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+
+            <BreadcrumbItem>
+              <BreadcrumbLink href="">My account</BreadcrumbLink>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+      </div>
+      <h1 className="mb-2 font-bold text-5xl">My account</h1>
       <Tabs defaultValue="account" className="w-full">
         <TabsList>
           <TabsTrigger value="account">Account</TabsTrigger>

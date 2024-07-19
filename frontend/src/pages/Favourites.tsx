@@ -4,6 +4,7 @@ import {
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
+  BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb'
 
 import { useGetGymsByIds } from '@/services/gymService'
@@ -35,6 +36,10 @@ function Favourites() {
         <div className="breadcrumps">
           <Breadcrumb>
             <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink href="/">Home</BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
               <BreadcrumbItem>
                 <BreadcrumbLink href="/favourites">Favourites</BreadcrumbLink>
               </BreadcrumbItem>

@@ -88,7 +88,7 @@ function GymOverview() {
             <BreadcrumbSeparator />
             <BreadcrumbItem>
               <BreadcrumbLink href={previousPagePath}>
-                {breadcrumbPrevious}
+                Gyms in {breadcrumbPrevious}
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
