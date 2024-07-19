@@ -343,7 +343,6 @@ cloudinary.v2.config({
 
 const deleteImage = async (req: Request, res: Response) => {
   const { ctx } = req
-
   if (!ctx) return res.status(401).json({ error: 'Unauthorized' })
 
   try {

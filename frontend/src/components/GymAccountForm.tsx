@@ -178,7 +178,7 @@ export function GymAccountForm() {
               <FormItem className="w-1/2">
                 <FormLabel>Phone</FormLabel>
                 <FormControl>
-                  <Input placeholder="phone" {...field} />
+                  <Input placeholder="+4912345678" {...field} />
                 </FormControl>
                 <FormMessage>
                   {form.formState.errors.phone?.message}

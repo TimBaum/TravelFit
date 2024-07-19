@@ -90,7 +90,7 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
     'Friday',
     'Saturday',
   ]
-  const [isOpen, setIsOpen] = React.useState(Array(7).fill(false))
+  const [isOpen, setIsOpen] = React.useState<boolean[]>(Array(7).fill(false))
 
   /* highlight options */
   const highlights = [
@@ -182,6 +182,23 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
             country: gym.address.country,
           },
         })
+      setOffers(gym.offers)
+      const newIsOpen = [...isOpen]
+      gym.openingHours.forEach((day) => {
+        if (day.weekday !== null) {
+          newIsOpen[day.weekday] = true
+          form.setValue(`openingTimes.${day.weekday}.weekday`, day.weekday)
+          form.setValue(
+            `openingTimes.${day.weekday}.openingTime`,
+            day.openingTime,
+          )
+          form.setValue(
+            `openingTimes.${day.weekday}.closingTime`,
+            day.closingTime,
+          )
+        }
+      })
+      setIsOpen(newIsOpen)
     }
   }, [mode, gym, form])
 
@@ -249,39 +266,23 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
         new Date().setFullYear(new Date().getFullYear() + 50),
       )
     }
-    // TODO:
-    // const offerData: IOffer = { ...values}
-    // mock offer, can be deleted later
-    const newOffer: IOffer = {
-      title: values.title,
-      type: values.type,
-      isSpecial: values.isSpecial,
-      description: values.description,
-      priceEuro: values.priceEuro,
-      startDate: new Date(),
-      endDate: values.endDate,
-    }
-    setOffers([...offers, newOffer])
+    const offerData: IOffer = { ...values, startDate: new Date() }
+    setOffers([...offers, offerData])
     setIsDialogOpen(false)
   }
 
   /* Form submission */
   async function onSubmit(values: z.infer<typeof gymFormSchema>) {
-    //TODO: calc cheapest offer
-    //  -> gymWithCheapestOffer = { cheapestOffer, ...values}
-
     setPageLoading(true)
 
     /* Opening Times */
     const openingHours = values.openingTimes.filter(
       (day) => day?.weekday !== null, //checks if the day is selected and if not, excludes the day from the array
     )
-    //const gymData = { offers, address: fullAddress, openingHours, ...rest }
     const gymData = { offers, openingHours, ...values }
-    console.log('OI:', gymData)
 
     // set the image id to the gym name
-    const image_id = values.name.replace(/\s+/g, '')
+    const image_id = gymData.name.replace(/\s+/g, '')
 
     /* send data to backend */
     if (mode === 'create') {
@@ -315,18 +316,23 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
 
         // Upload new images
         await uploadFiles(image_id, acceptedFiles)
-        // Delete flagged photos
+        // Delete flagged photos TODO: doesnt work
         if (flaggedForDeletion.length > 0) {
-          await Promise.all(
-            flaggedForDeletion.map(async (photoId) => {
-              await fetch(
-                `${config.BACKEND_URL}/gyms/delete-image/${photoId}`,
-                {
-                  method: 'DELETE',
-                },
-              )
-            }),
-          )
+          try {
+            console.log('Deleting images:', flaggedForDeletion)
+            await Promise.all(
+              flaggedForDeletion.map(async (photoId) => {
+                await fetch(
+                  `${config.BACKEND_URL}/gyms/delete-image/${photoId}`,
+                  {
+                    method: 'DELETE',
+                  },
+                )
+              }),
+            )
+          } catch (error) {
+            console.error(`Error deleting image:`, error)
+          }
           setFlaggedForDeletion([]) // Reset flagged photos
         }
         form.control._reset()
@@ -348,20 +354,22 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           {/* Gym name */}
-          <FormField
-            control={form.control}
-            name="name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Gym Name </FormLabel>
-                <FormControl>
-                  <Input placeholder="Awesome gym" {...field} />
-                </FormControl>
-                <FormDescription>Enter the name of the gym.</FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <div className="w-3/4">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Gym Name </FormLabel>
+                  <FormControl>
+                    <Input placeholder="Awesome gym" {...field} />
+                  </FormControl>
+                  <FormDescription>Enter the name of the gym.</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
 
           {/* WebsiteLink */}
           <FormField
@@ -382,7 +390,7 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
           <AddressFields />
 
           {/* Opening Times */}
-          <div className="mt-4 border-2 border-gray-300 rounded-lg p-4">
+          <div className="mt-4 border-2 border-gray-300 rounded-lg p-2">
             <div className="mb-3">
               <FormLabel className="text-2xl font-bold">
                 Opening Times
@@ -390,16 +398,17 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
             </div>
             <div className="grid grid-cols-7">
               {weekdays.map((day, index) => (
-                <div key={day} className="day-row w-5/6">
+                <div key={day} className="day-row w-5/6 ">
                   <FormField
                     control={form.control}
                     name={`openingTimes.${index}.weekday`}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{day}: open</FormLabel>
+                        <FormLabel className="text-l">
+                          <span className="flex items-center">{day}:</span>
+                        </FormLabel>
                         <FormControl>
                           <Switch
-                            className="flex"
                             checked={isOpen[index]}
                             onCheckedChange={(checked) => {
                               const newIsOpen = [...isOpen]
@@ -410,7 +419,7 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
                                 form.setValue(
                                   `openingTimes.${index}.weekday`,
                                   null,
-                                ), // Setze weekday auf null
+                                ), // closed weekdays saved as null
                                   form.setValue(
                                     `openingTimes.${index}.openingTime`,
                                     '',
@@ -614,8 +623,9 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
           {/* Offers: OfferTile maps over the offer-array filled from the dialog form */}
           <h1 className="text-2xl font-bold mb-2 mt-3">Offers</h1>
           {offers.map((offer, index) => (
-            <>
-              <OfferTile key={index} offer={offer} />
+            <div key={index}>
+              {/* unique key prop around the whole mapped fragment*/}
+              <OfferTile offer={offer} />
               <div className="flex justify-end">
                 <Button
                   variant="destructive"
@@ -624,7 +634,7 @@ export function CreateGymForm({ mode }: CreateGymFormProps) {
                   Delete
                 </Button>
               </div>
-            </>
+            </div>
           ))}
           {/* Dialog form that fills the offer array */}
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>

@@ -57,7 +57,6 @@ function MyGyms() {
     // Abrufen der Gyms vom Backend
     fetchJSON('/gyms/get')
       .then((data) => {
-        console.log(data) //  Struktur der Daten überprüfen
         setGyms(data.gyms)
       })
       .catch((error) => console.error('Error fetching gyms:', error))
@@ -82,7 +81,7 @@ function MyGyms() {
           </BreadcrumbList>
         </Breadcrumb>
       </div>
-      <h1 className="text-5xl font-bold mb-2">My Gyms</h1>
+      <h1 className="text-5xl font-bold mb-4">My Gyms</h1>
 
       {gyms.length === 0 ? (
         <div className="no-gyms-container flex flex-col justify-center text-center">
@@ -101,82 +100,84 @@ function MyGyms() {
         </div>
       ) : (
         <>
-          <div className={`mt-4`}>
-            <Input
-              className="h-10"
-              type="text"
-              placeholder="Filter..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-2/5">Gym name</TableHead>
-                <TableHead>Rating</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredGyms.map((gym) => (
-                <TableRow key={gym._id}>
-                  <TableCell>{gym.name}</TableCell>
-                  <TableCell>
-                    {gym.averageRating?.toString() ?? '?'}/5
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex justify-end items-center gap-2">
-                      <Button
-                        className="px-2.5"
-                        onClick={() =>
-                          navigate(`/gyms/${gym._id}`, {
-                            state: { from: '/my-gyms' },
-                          })
-                        }
-                      >
-                        View
-                      </Button>
-                      <Button
-                        className="px-2.5"
-                        onClick={() => navigate(`/edit-gym/${gym._id}`)}
-                      >
-                        <Pencil className="h-5 w-6" />
-                      </Button>
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button className="px-2.5" variant="destructive">
-                            Delete
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>
-                              Are you sure you want to delete that gym?
-                            </AlertDialogTitle>
-                            <AlertDialogDescription>
-                              This action cannot be undone. This will
-                              permanently delete the gym and remove your data
-                              from our servers.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction
-                              onClick={() => handleDeleteGym(gym._id)}
-                            >
-                              Continue
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    </div>
-                  </TableCell>
+          <div className="border-2 border-gray-300 rounded-lg p-4">
+            <div className={`mt-4`}>
+              <Input
+                className="h-10"
+                type="text"
+                placeholder="Filter..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-2/5">Gym name</TableHead>
+                  <TableHead>Rating</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-          <Button onClick={() => navigate('/create-gym')}>+ Add a Gym</Button>
+              </TableHeader>
+              <TableBody>
+                {filteredGyms.map((gym) => (
+                  <TableRow key={gym._id}>
+                    <TableCell>{gym.name}</TableCell>
+                    <TableCell>
+                      {gym.averageRating?.toString() ?? '?'}/5
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex justify-end items-center gap-2">
+                        <Button
+                          className="px-2.5"
+                          onClick={() =>
+                            navigate(`/gyms/${gym._id}`, {
+                              state: { from: '/my-gyms' },
+                            })
+                          }
+                        >
+                          View
+                        </Button>
+                        <Button
+                          className="px-2.5"
+                          onClick={() => navigate(`/edit-gym/${gym._id}`)}
+                        >
+                          <Pencil className="h-5 w-6" />
+                        </Button>
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button className="px-2.5" variant="destructive">
+                              Delete
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>
+                                Are you sure you want to delete that gym?
+                              </AlertDialogTitle>
+                              <AlertDialogDescription>
+                                This action cannot be undone. This will
+                                permanently delete the gym and remove your data
+                                from our servers.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() => handleDeleteGym(gym._id)}
+                              >
+                                Continue
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+            <Button onClick={() => navigate('/create-gym')}>+ Add a Gym</Button>
+          </div>
         </>
       )}
     </>
