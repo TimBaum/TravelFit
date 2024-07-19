@@ -34,6 +34,13 @@ import {
 import Map from '@/components/map'
 import { Switch } from '@/components/ui/switch'
 import { Highlight } from '@models/gym'
+import {
+  Breadcrumb,
+  BreadcrumbList,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbSeparator,
+} from '@/components/ui/breadcrumb'
 
 function GymSearchResults() {
   const urlParams = new URLSearchParams(window.location.search)
@@ -67,8 +74,6 @@ function GymSearchResults() {
       console.log('Geolocation is not supported by this browser.')
     }
   }, [])
-
-  console.log(position)
 
   const defaultFilters: FilterState = {
     price: {
@@ -125,6 +130,22 @@ function GymSearchResults() {
 
   return (
     <div className="mb-10">
+      <div className="breadcrumps">
+        <Breadcrumb>
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/">Home</BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbLink href="">
+                Gyms in{' '}
+                {searchString.slice(0, 1).toUpperCase() + searchString.slice(1)}
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+      </div>
       <h1 className="text-5xl font-bold mb-2">
         Gyms in {searchString.slice(0, 1).toUpperCase() + searchString.slice(1)}
       </h1>

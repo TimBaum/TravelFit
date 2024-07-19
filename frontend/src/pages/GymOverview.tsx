@@ -83,6 +83,10 @@ function GymOverview() {
               </>
             )}
             <BreadcrumbItem>
+              <BreadcrumbLink href="/">Home</BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
               <BreadcrumbLink href={previousPagePath}>
                 {breadcrumbPrevious}
               </BreadcrumbLink>
